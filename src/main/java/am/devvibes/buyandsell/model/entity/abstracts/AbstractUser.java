@@ -1,5 +1,6 @@
-package am.devvibes.buyandsell.model.entity;
+package am.devvibes.buyandsell.model.entity.abstracts;
 
+import am.devvibes.buyandsell.model.entity.RoleEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,10 +25,14 @@ public class AbstractUser {
 	private String password;
 	private String name;
 	private String secondName;
+	private String verificationCode;
+	private Boolean isVerified;
 	private Boolean isAccountNonExpired;
 	private Boolean isAccountNonLocked;
 	private Boolean isCredentialsNonExpired;
 	private Boolean isEnabled;
+	@ManyToOne(optional = false)
+	private RoleEntity role;
 
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;

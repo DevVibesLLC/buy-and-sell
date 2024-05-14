@@ -1,13 +1,13 @@
-package am.devvibes.buyandsell.service;
+package am.devvibes.buyandsell.service.user;
 
-import am.devvibes.buyandsell.model.dto.UserResponseDto;
-import am.devvibes.buyandsell.model.dto.UserSignUpDto;
+import am.devvibes.buyandsell.model.dto.user.UserResponseDto;
+import am.devvibes.buyandsell.model.dto.user.UserRequestDto;
 
 import java.util.List;
 
 public interface UserService {
 
-	UserResponseDto saveUser(UserSignUpDto signUpDto);
+	UserResponseDto saveUser(UserRequestDto signUpDto);
 
 	UserResponseDto findUserById(Long id);
 

@@ -1,7 +1,8 @@
 package am.devvibes.buyandsell.exception.globalHandler;
 
 import am.devvibes.buyandsell.exception.NotFoundException;
-import am.devvibes.buyandsell.exception.SomethingWentWrong;
+import am.devvibes.buyandsell.exception.SomethingWentWrongException;
+import am.devvibes.buyandsell.exception.VerificationException;
 import am.devvibes.buyandsell.util.ApiError;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -24,9 +25,16 @@ public class GlobalExceptionHandler {
 		return buildResponse(HttpStatus.NOT_FOUND, e.getMessage(), req.getRequestURI());
 	}
 
-	@ExceptionHandler(SomethingWentWrong.class)
+	@ExceptionHandler(SomethingWentWrongException.class)
 	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
-	public ResponseEntity<ApiError> somethingWentWrong(HttpServletRequest req, SomethingWentWrong e) {
+	public ResponseEntity<ApiError> somethingWentWrongException(HttpServletRequest req, SomethingWentWrongException e) {
+		logError(req, e);
+		return buildResponse(HttpStatus.BAD_REQUEST, e.getMessage(), req.getRequestURI());
+	}
+
+	@ExceptionHandler(VerificationException.class)
+	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
+	public ResponseEntity<ApiError> verificationException(HttpServletRequest req, VerificationException e) {
 		logError(req, e);
 		return buildResponse(HttpStatus.BAD_REQUEST, e.getMessage(), req.getRequestURI());
 	}

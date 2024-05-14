@@ -26,6 +26,18 @@ spring:
     baseline-version: 0
     table: migrations
 
+  mail:
+    port: 25
+    host: smtp.gmail.com
+    username: testfortest891@gmail.com
+    password: iabxmmbebumtizqt
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
 server:
   port: ${SERVER_PORT:8080}
 

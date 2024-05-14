@@ -1,9 +1,11 @@
 package am.devvibes.buyandsell.mapper.impl;
 
 import am.devvibes.buyandsell.mapper.UserMapper;
-import am.devvibes.buyandsell.model.dto.UserResponseDto;
-import am.devvibes.buyandsell.model.dto.UserSignUpDto;
+import am.devvibes.buyandsell.model.dto.user.UserResponseDto;
+import am.devvibes.buyandsell.model.dto.user.UserRequestDto;
 import am.devvibes.buyandsell.model.entity.UserEntity;
+import am.devvibes.buyandsell.repository.RoleRepository;
+import am.devvibes.buyandsell.util.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,18 +18,21 @@ import java.util.List;
 public class UserMapperImpl implements UserMapper {
 
 	private final PasswordEncoder passwordEncoder;
+	private final RoleRepository roleRepository;
 
 	@Override
-	public UserEntity mapDtoToEntity(UserSignUpDto userSignUpDto) {
+	public UserEntity mapDtoToEntity(UserRequestDto userSignUpDto) {
 		return UserEntity.builder()
 				.email(userSignUpDto.getEmail())
 				.password(passwordEncoder.encode(userSignUpDto.getPassword()))
 				.name(userSignUpDto.getName())
 				.secondName(userSignUpDto.getSecondName())
+				.isVerified(false)
 				.isAccountNonLocked(true)
 				.isAccountNonExpired(true)
 				.isCredentialsNonExpired(true)
 				.isEnabled(true)
+				.roleEntity(roleRepository.findByRole(Role.ROLE_USER))
 				.build();
 	}
 

@@ -1,4 +1,4 @@
-package am.devvibes.buyandsell.model.dto;
+package am.devvibes.buyandsell.model.dto.user;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class UserSignUpDto {
+public class UserRequestDto {
 
 	@NotBlank
 	private String email;
@@ -18,9 +18,4 @@ public class UserSignUpDto {
 	private String password;
 	@NotBlank
 	private String repeatPassword;
-
-	private Boolean isManager;
-
-	private String selectedManager;
-
 }

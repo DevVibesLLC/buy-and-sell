@@ -1,8 +1,8 @@
 package am.devvibes.buyandsell.controller;
 
-import am.devvibes.buyandsell.model.dto.UserResponseDto;
-import am.devvibes.buyandsell.model.dto.UserSignUpDto;
-import am.devvibes.buyandsell.service.impl.UserServiceImpl;
+import am.devvibes.buyandsell.model.dto.user.UserResponseDto;
+import am.devvibes.buyandsell.model.dto.user.UserRequestDto;
+import am.devvibes.buyandsell.service.user.impl.UserServiceImpl;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +19,8 @@ public class UserController {
 	private final UserServiceImpl userService;
 
 	@PostMapping
-	public ResponseEntity<UserResponseDto> registerUser(@RequestBody @Valid UserSignUpDto signUpDto) {
-		UserResponseDto savedUser = userService.saveUser(signUpDto);
+	public ResponseEntity<UserResponseDto> registerUser(@RequestBody @Valid UserRequestDto userRequestDto) {
+		UserResponseDto savedUser = userService.saveUser(userRequestDto);
 		return ResponseEntity.ok(savedUser);
 	}
 
@@ -34,6 +34,12 @@ public class UserController {
 	public ResponseEntity<List<UserResponseDto>> getAllUsers() {
 		List<UserResponseDto> allUsers = userService.findAllUsers();
 		return ResponseEntity.ok(allUsers);
+	}
+
+	@DeleteMapping("{id}")
+	public ResponseEntity<Void> deleteUser(@PathVariable @Positive Long id) {
+		userService.deleteUser(id);
+		return ResponseEntity.ok().build();
 	}
 
 }
