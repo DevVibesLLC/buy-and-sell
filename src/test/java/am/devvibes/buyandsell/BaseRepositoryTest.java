@@ -27,10 +27,6 @@ public abstract class BaseRepositoryTest {
 
     public static class DataSourceInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
-        /*
-           `initialize` function allows us to set properties dynamically. Since the DataSource is initialized dynamically, 
-            we need to set url, username, and password that is provided/set by the testcontainers.
-         */
         @Override
         public void initialize(@NotNull ConfigurableApplicationContext applicationContext) {
             TestPropertySourceUtils.addInlinedPropertiesToEnvironment(
