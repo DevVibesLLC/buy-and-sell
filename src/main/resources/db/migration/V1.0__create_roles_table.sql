@@ -1,2 +1,10 @@
+create table roles
+(
+    id   bigint
+        primary key,
+    role varchar(255) not null
+        constraint roles_role_check unique
+);
+
 INSERT INTO roles (id, role)
-VALUES ('1','ROLE_USER'),('2','ROLE_ADMIN');
+VALUES (1,'ROLE_USER'),(2,'ROLE_ADMIN');

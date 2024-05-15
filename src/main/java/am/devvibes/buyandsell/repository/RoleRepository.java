@@ -1,6 +1,6 @@
 package am.devvibes.buyandsell.repository;
 
-import am.devvibes.buyandsell.model.entity.RoleEntity;
+import am.devvibes.buyandsell.entity.RoleEntity;
 import am.devvibes.buyandsell.util.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

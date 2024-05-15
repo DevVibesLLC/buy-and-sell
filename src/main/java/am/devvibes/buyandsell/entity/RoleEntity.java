@@ -1,4 +1,4 @@
-package am.devvibes.buyandsell.model.entity;
+package am.devvibes.buyandsell.entity;
 
 import am.devvibes.buyandsell.util.Role;
 import jakarta.persistence.*;
@@ -13,7 +13,7 @@ import lombok.Setter;
 public class RoleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

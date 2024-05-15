@@ -1,4 +1,4 @@
-package am.devvibes.buyandsell.model.dto.product;
+package am.devvibes.buyandsell.dto.itemForSell;
 
 import am.devvibes.buyandsell.util.Category;
 import jakarta.validation.constraints.NotBlank;
@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ProductRequestDto {
+public class ItemForSellRequestDto {
 
 	@NotBlank
 	private String name;

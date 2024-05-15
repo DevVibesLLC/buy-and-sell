@@ -1,6 +1,6 @@
-package am.devvibes.buyandsell.model.entity;
+package am.devvibes.buyandsell.entity;
 
-import am.devvibes.buyandsell.model.entity.abstracts.AbstractUser;
+import am.devvibes.buyandsell.entity.abstracts.AbstractUser;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.Builder;

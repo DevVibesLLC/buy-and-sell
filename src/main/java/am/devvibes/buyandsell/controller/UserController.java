@@ -1,7 +1,7 @@
 package am.devvibes.buyandsell.controller;
 
-import am.devvibes.buyandsell.model.dto.user.UserResponseDto;
-import am.devvibes.buyandsell.model.dto.user.UserRequestDto;
+import am.devvibes.buyandsell.dto.user.UserResponseDto;
+import am.devvibes.buyandsell.dto.user.UserRequestDto;
 import am.devvibes.buyandsell.service.user.impl.UserServiceImpl;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;

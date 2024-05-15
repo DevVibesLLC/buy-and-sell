@@ -1,7 +1,6 @@
-package am.devvibes.buyandsell.model.dto.product;
+package am.devvibes.buyandsell.dto.itemForSell;
 
 import am.devvibes.buyandsell.util.Category;
-import jakarta.persistence.Column;
 import lombok.Builder;
 import lombok.Data;
 
@@ -9,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class ProductResponseDto {
+public class ItemForSellResponseDto {
 
 	private Long id;
 	private String name;

@@ -1,4 +1,4 @@
-package am.devvibes.buyandsell.model.dto.user;
+package am.devvibes.buyandsell.dto.user;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

@@ -1,6 +1,6 @@
-package am.devvibes.buyandsell.model.entity;
+package am.devvibes.buyandsell.entity;
 
-import am.devvibes.buyandsell.model.entity.abstracts.AbstractProduct;
+import am.devvibes.buyandsell.entity.abstracts.AbstractItemForSell;
 import am.devvibes.buyandsell.util.Category;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "products")
-public class ItemForSell extends AbstractProduct {
+@Table(name = "items_for_sell")
+public class ItemForSell extends AbstractItemForSell {
 
 	@Builder
 	public ItemForSell(Long id,
@@ -25,9 +25,10 @@ public class ItemForSell extends AbstractProduct {
 			Category category,
 			Double price,
 			Integer quantity,
+			UserEntity user,
 			LocalDateTime createdAt,
 			LocalDateTime updatedAt) {
-		super(id, name, description, category, price, quantity, createdAt, updatedAt);
+		super(id, name, description, category, price, quantity, user, createdAt, updatedAt);
 
 	}
 

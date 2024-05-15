@@ -13,7 +13,7 @@ spring:
     name: buyAndSell
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
   datasource:
     url: jdbc:postgresql://${JDBC_URL:localhost}:${JDBC_PORT:5432}/${DATABASE_NAME:buyandsell}
     database-platform: org.hibernate.dialect.PostgreSQLDialect

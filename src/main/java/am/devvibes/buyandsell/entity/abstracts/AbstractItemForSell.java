@@ -1,5 +1,6 @@
-package am.devvibes.buyandsell.model.entity.abstracts;
+package am.devvibes.buyandsell.entity.abstracts;
 
+import am.devvibes.buyandsell.entity.UserEntity;
 import am.devvibes.buyandsell.util.Category;
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @MappedSuperclass
-public class AbstractProduct {
+public class AbstractItemForSell {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -24,6 +25,11 @@ public class AbstractProduct {
 	private Category category;
 	private Double price;
 	private Integer quantity;
+
+	@OneToOne
+	@JoinColumn(name = "user_id")
+	private UserEntity user;
+
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 

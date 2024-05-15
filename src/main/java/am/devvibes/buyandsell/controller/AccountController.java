@@ -1,8 +1,8 @@
 package am.devvibes.buyandsell.controller;
 
-import am.devvibes.buyandsell.model.dto.user.UserLoginDto;
-import am.devvibes.buyandsell.model.dto.user.UserResponseDto;
-import am.devvibes.buyandsell.model.dto.user.UserVerifyDto;
+import am.devvibes.buyandsell.dto.user.UserLoginDto;
+import am.devvibes.buyandsell.dto.user.UserResponseDto;
+import am.devvibes.buyandsell.dto.user.UserVerifyDto;
 import am.devvibes.buyandsell.service.account.AccountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

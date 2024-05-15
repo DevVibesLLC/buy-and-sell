@@ -1,6 +1,6 @@
-package am.devvibes.buyandsell.model.dto.user;
+package am.devvibes.buyandsell.dto.user;
 
-import am.devvibes.buyandsell.model.entity.RoleEntity;
+import am.devvibes.buyandsell.entity.RoleEntity;
 import lombok.Builder;
 import lombok.Data;
 

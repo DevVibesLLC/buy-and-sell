@@ -41,8 +41,9 @@ public class UserTestConfiguration {
 	public UserService userService(UserRepository userRepository,
 			UserMapper userMapper,
 			PasswordEncoder passwordEncoder,
-			EmailService emailService) {
-		return new UserServiceImpl(userRepository, userMapper, passwordEncoder, emailService);
+			EmailService emailService,
+			RoleRepository roleRepository) {
+		return new UserServiceImpl(userRepository, userMapper, passwordEncoder, emailService, roleRepository);
 	}
 
 }

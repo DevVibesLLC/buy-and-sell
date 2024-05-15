@@ -1,13 +1,19 @@
 package am.devvibes.buyandsell.service.user.impl;
 
+import am.devvibes.buyandsell.dto.itemForSell.ItemForSellRequestDto;
+import am.devvibes.buyandsell.dto.itemForSell.ItemForSellResponseDto;
+import am.devvibes.buyandsell.dto.user.UserRequestDto;
+import am.devvibes.buyandsell.dto.user.UserResponseDto;
+import am.devvibes.buyandsell.entity.UserEntity;
 import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.exception.SomethingWentWrongException;
 import am.devvibes.buyandsell.mapper.UserMapper;
-import am.devvibes.buyandsell.model.dto.user.UserRequestDto;
-import am.devvibes.buyandsell.model.dto.user.UserResponseDto;
-import am.devvibes.buyandsell.model.entity.UserEntity;
+import am.devvibes.buyandsell.repository.ItemForSellRepository;
+import am.devvibes.buyandsell.repository.RoleRepository;
 import am.devvibes.buyandsell.repository.UserRepository;
 import am.devvibes.buyandsell.service.email.EmailService;
+import am.devvibes.buyandsell.service.itemForSell.ItemForSellService;
+import am.devvibes.buyandsell.service.itemForSell.impl.ItemForSellServiceImpl;
 import am.devvibes.buyandsell.service.user.UserService;
 import am.devvibes.buyandsell.util.ExceptionConstants;
 import am.devvibes.buyandsell.util.RandomGenerator;
@@ -28,6 +34,9 @@ public class UserServiceImpl implements UserService {
 	private final UserMapper userMapper;
 	private final PasswordEncoder passwordEncoder;
 	private final EmailService emailService;
+	private final RoleRepository roleRepository;
+	private final ItemForSellRepository itemForSellRepository;
+	private final ItemForSellService itemForSellService;
 
 	@Override
 	@Transactional
@@ -61,13 +70,11 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
-	public UserResponseDto changePassword(String email,
-			String oldPassword,
-			String newPassword,
-			String repeatNewPassword) {
+	public UserResponseDto changePassword(String email, String newPassword, String repeatNewPassword) {
 
-		UserEntity userEntity = userRepository.findByEmailAndPassword(email, passwordEncoder.encode(oldPassword))
+		UserEntity userEntity = userRepository.findByEmail(email)
 				.orElseThrow(() -> new NotFoundException(ExceptionConstants.USER_NOT_FOUND));
+		//TODO here must be mail sending.
 		comparePasswordsAndValidate(newPassword, repeatNewPassword);
 		userEntity.setPassword(passwordEncoder.encode(newPassword));
 		return userMapper.mapEntityToDto(userRepository.save(userEntity));
@@ -75,8 +82,8 @@ public class UserServiceImpl implements UserService {
 
 	private UserEntity setVerificationCodeAndSendMail(UserEntity userEntity) {
 		userEntity.setVerificationCode(RandomGenerator.generateNumericString());
-		emailService.sendMessage(userEntity.getEmail(), "Verification",
-				"Your verification code is: " + userEntity.getVerificationCode());
+		/*emailService.sendMessage(userEntity.getEmail(), "Verification",
+				"Your verification code is: " + userEntity.getVerificationCode());*/
 		return userRepository.save(userEntity);
 	}
 

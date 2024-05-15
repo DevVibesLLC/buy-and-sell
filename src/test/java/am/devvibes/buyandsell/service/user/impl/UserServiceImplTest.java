@@ -1,12 +1,12 @@
 package am.devvibes.buyandsell.service.user.impl;
 
 import am.devvibes.buyandsell.BaseRepositoryTest;
+import am.devvibes.buyandsell.dto.user.UserRequestDto;
+import am.devvibes.buyandsell.dto.user.UserResponseDto;
 import am.devvibes.buyandsell.exception.NotFoundException;
-import am.devvibes.buyandsell.model.dto.user.UserResponseDto;
-import am.devvibes.buyandsell.model.dto.user.UserRequestDto;
 import am.devvibes.buyandsell.repository.UserRepository;
-import am.devvibes.buyandsell.service.user.UserService;
 import am.devvibes.buyandsell.service.configuration.UserTestConfiguration;
+import am.devvibes.buyandsell.service.user.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -50,10 +50,10 @@ class UserServiceImplTest extends BaseRepositoryTest {
 				.repeatPassword("password")
 				.build());
 
-		UserResponseDto userEntity = userService.findUserById(userResponseDto.getId());
+		UserResponseDto userFindById = userService.findUserById(userResponseDto.getId());
 
-		assertNotNull(userEntity);
-		assertEquals(userEntity.getId(), userResponseDto.getId());
+		assertNotNull(userFindById);
+		assertEquals(userFindById.getId(), userResponseDto.getId());
 	}
 
 	@Test
@@ -95,6 +95,23 @@ class UserServiceImplTest extends BaseRepositoryTest {
 		NotFoundException notFoundException =
 				assertThrows(NotFoundException.class, () -> userService.findUserById(userResponseDto.getId()));
 		assertTrue(notFoundException.getMessage().contains("User not found"));
+	}
+
+	@Test
+	void changePassword() {
+		UserResponseDto userResponseDto = userService.saveUser(UserRequestDto.builder()
+				.email("email@email.com")
+				.name("name")
+				.secondName("secondName")
+				.password("password")
+				.repeatPassword("password")
+				.build());
+
+		UserResponseDto changedPasswordDto =
+				userService.changePassword("email@email.com", "newPassword", "newPassword");
+
+		assertNotNull(changedPasswordDto);
+		assertEquals(changedPasswordDto.getId(), userResponseDto.getId());
 	}
 
 }

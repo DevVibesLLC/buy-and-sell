@@ -1,6 +1,6 @@
 package am.devvibes.buyandsell.service.account;
 
-import am.devvibes.buyandsell.model.dto.user.UserResponseDto;
+import am.devvibes.buyandsell.dto.user.UserResponseDto;
 
 public interface AccountService {
 

@@ -1,9 +1,9 @@
 package am.devvibes.buyandsell.mapper.impl;
 
 import am.devvibes.buyandsell.mapper.UserMapper;
-import am.devvibes.buyandsell.model.dto.user.UserResponseDto;
-import am.devvibes.buyandsell.model.dto.user.UserRequestDto;
-import am.devvibes.buyandsell.model.entity.UserEntity;
+import am.devvibes.buyandsell.dto.user.UserResponseDto;
+import am.devvibes.buyandsell.dto.user.UserRequestDto;
+import am.devvibes.buyandsell.entity.UserEntity;
 import am.devvibes.buyandsell.repository.RoleRepository;
 import am.devvibes.buyandsell.util.Role;
 import lombok.RequiredArgsConstructor;
