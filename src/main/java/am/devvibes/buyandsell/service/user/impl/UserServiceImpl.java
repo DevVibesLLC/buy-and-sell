@@ -1,19 +1,14 @@
 package am.devvibes.buyandsell.service.user.impl;
 
-import am.devvibes.buyandsell.dto.itemForSell.ItemForSellRequestDto;
-import am.devvibes.buyandsell.dto.itemForSell.ItemForSellResponseDto;
 import am.devvibes.buyandsell.dto.user.UserRequestDto;
 import am.devvibes.buyandsell.dto.user.UserResponseDto;
 import am.devvibes.buyandsell.entity.UserEntity;
 import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.exception.SomethingWentWrongException;
 import am.devvibes.buyandsell.mapper.UserMapper;
-import am.devvibes.buyandsell.repository.ItemForSellRepository;
 import am.devvibes.buyandsell.repository.RoleRepository;
 import am.devvibes.buyandsell.repository.UserRepository;
 import am.devvibes.buyandsell.service.email.EmailService;
-import am.devvibes.buyandsell.service.itemForSell.ItemForSellService;
-import am.devvibes.buyandsell.service.itemForSell.impl.ItemForSellServiceImpl;
 import am.devvibes.buyandsell.service.user.UserService;
 import am.devvibes.buyandsell.util.ExceptionConstants;
 import am.devvibes.buyandsell.util.RandomGenerator;
@@ -35,8 +30,6 @@ public class UserServiceImpl implements UserService {
 	private final PasswordEncoder passwordEncoder;
 	private final EmailService emailService;
 	private final RoleRepository roleRepository;
-	private final ItemForSellRepository itemForSellRepository;
-	private final ItemForSellService itemForSellService;
 
 	@Override
 	@Transactional

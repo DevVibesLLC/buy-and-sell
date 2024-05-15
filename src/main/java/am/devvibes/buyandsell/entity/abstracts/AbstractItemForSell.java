@@ -22,6 +22,7 @@ public class AbstractItemForSell {
 	@Column(nullable = false)
 	private String description;
 	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
 	private Category category;
 	private Double price;
 	private Integer quantity;
