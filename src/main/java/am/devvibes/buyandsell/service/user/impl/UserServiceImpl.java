@@ -7,9 +7,7 @@ import am.devvibes.buyandsell.entity.UserEntity;
 import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.exception.SomethingWentWrongException;
 import am.devvibes.buyandsell.mapper.UserMapper;
-import am.devvibes.buyandsell.repository.RoleRepository;
 import am.devvibes.buyandsell.repository.UserRepository;
-import am.devvibes.buyandsell.service.email.EmailService;
 import am.devvibes.buyandsell.service.user.UserService;
 import am.devvibes.buyandsell.util.ExceptionConstants;
 import am.devvibes.buyandsell.util.RandomGenerator;
@@ -37,7 +35,6 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 	@Transactional
 	public UserDetails loadUserByUsername(String email) {
 		var appUser = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email));
-
 		return new MyUserPrincipal(appUser);
 
 	}

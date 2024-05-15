@@ -1,34 +1,17 @@
 spring:
-  web:
-    resources:
-      static-locations: file:src/main/resources/static/
-      cache:
-        period: 0
-  thymeleaf: # Thymeleaf
-    cache: false
-    mode: HTML
-    encoding: UTF-8
-    prefix: file:src/main/resources/templates/
-  application:
-    name: buyAndSell
   jpa:
     hibernate:
       ddl-auto: update
   datasource:
     url: jdbc:postgresql://${JDBC_URL:localhost}:${JDBC_PORT:5432}/${DATABASE_NAME:buyandsell}
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-    username: ${SPRING_DATASOURCE_USERNAME:postgres}
-    password: ${SPRING_DATASOURCE_PASSWORD:0710}
+    username: ${SPRING_DATASOURCE_USERNAME:sandbox}
+    password: ${SPRING_DATASOURCE_PASSWORD:sandbox}
     driver-class-name: org.postgresql.Driver
   flyway:
     enabled: true
     baseline-on-migrate: true
     baseline-version: 0
-    table: migrations
-    locations: classpath:db/migration
-    url: jdbc:postgresql:localhost:5432:buyandsell
-    user: postgres
-    password: 0710
   mail:
     port: 587
     host: smtp.gmail.com
