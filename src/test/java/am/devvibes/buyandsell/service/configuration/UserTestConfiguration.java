@@ -40,10 +40,8 @@ public class UserTestConfiguration {
 	@Bean
 	public UserService userService(UserRepository userRepository,
 			UserMapper userMapper,
-			PasswordEncoder passwordEncoder,
-			EmailService emailService,
-			RoleRepository roleRepository) {
-		return new UserServiceImpl(userRepository, userMapper, passwordEncoder, emailService, roleRepository);
+			PasswordEncoder passwordEncoder) {
+		return new UserServiceImpl(userRepository, userMapper, passwordEncoder);
 	}
 
 }

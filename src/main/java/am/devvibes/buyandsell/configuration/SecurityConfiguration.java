@@ -3,6 +3,7 @@ package am.devvibes.buyandsell.configuration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,10 +14,12 @@ import org.springframework.security.web.SecurityFilterChain;
 import javax.sql.DataSource;
 
 @Configuration
+@EnableSpringConfigured
 @RequiredArgsConstructor
 public class SecurityConfiguration {
 
 	private final UserDetailsService userDetailsService;
+	private final PasswordEncoder passwordEncoder;
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -43,7 +46,7 @@ public class SecurityConfiguration {
 	public DaoAuthenticationProvider authProvider() {
 		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
 		authProvider.setUserDetailsService(userDetailsService);
-		authProvider.setPasswordEncoder(passwordEncoder());
+		authProvider.setPasswordEncoder(passwordEncoder);
 		return authProvider;
 	}
 

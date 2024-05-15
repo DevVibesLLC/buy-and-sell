@@ -2,6 +2,7 @@ package am.devvibes.buyandsell.service.user.impl;
 
 import am.devvibes.buyandsell.dto.user.UserRequestDto;
 import am.devvibes.buyandsell.dto.user.UserResponseDto;
+import am.devvibes.buyandsell.entity.MyUserPrincipal;
 import am.devvibes.buyandsell.entity.UserEntity;
 import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.exception.SomethingWentWrongException;
@@ -14,6 +15,9 @@ import am.devvibes.buyandsell.util.ExceptionConstants;
 import am.devvibes.buyandsell.util.RandomGenerator;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.validator.routines.EmailValidator;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,13 +27,20 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserDetailsService, UserService {
 
 	private final UserRepository userRepository;
 	private final UserMapper userMapper;
 	private final PasswordEncoder passwordEncoder;
-	private final EmailService emailService;
-	private final RoleRepository roleRepository;
+
+	@Override
+	@Transactional
+	public UserDetails loadUserByUsername(String email) {
+		var appUser = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email));
+
+		return new MyUserPrincipal(appUser);
+
+	}
 
 	@Override
 	@Transactional
