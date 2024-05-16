@@ -39,7 +39,7 @@ spring:
             enable: true
 
 server:
-  port: ${SERVER_PORT:8080}
+  port: 8085
 
 app:
   name: SandBox task API
@@ -52,3 +52,9 @@ app:
     contact-email: norayrgh@gmail.com
     swagger:
       enable: true
+
+keycloak:
+  realm: BuyAndSell
+  domain: localhost:8080
+  clientId: buy-and-sell-be
+  clientSecret: JFnDnBmpYzBtI4lzV7CAd8cklQH7N8By

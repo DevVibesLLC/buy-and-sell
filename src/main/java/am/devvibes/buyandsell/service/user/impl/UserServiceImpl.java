@@ -2,7 +2,6 @@ package am.devvibes.buyandsell.service.user.impl;
 
 import am.devvibes.buyandsell.dto.user.UserRequestDto;
 import am.devvibes.buyandsell.dto.user.UserResponseDto;
-import am.devvibes.buyandsell.entity.MyUserPrincipal;
 import am.devvibes.buyandsell.entity.UserEntity;
 import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.exception.SomethingWentWrongException;
@@ -12,40 +11,59 @@ import am.devvibes.buyandsell.service.user.UserService;
 import am.devvibes.buyandsell.util.ExceptionConstants;
 import am.devvibes.buyandsell.util.RandomGenerator;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.validator.routines.EmailValidator;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.representations.idm.CredentialRepresentation;
+import org.keycloak.representations.idm.UserRepresentation;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserDetailsService, UserService {
+public class UserServiceImpl implements UserService {
 
 	private final UserRepository userRepository;
 	private final UserMapper userMapper;
 	private final PasswordEncoder passwordEncoder;
+	private final Keycloak keycloak;
 
-	@Override
-	@Transactional
-	public UserDetails loadUserByUsername(String email) {
-		var appUser = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email));
-		return new MyUserPrincipal(appUser);
-
-	}
+	@Value("${keycloak.realm}")
+	private String realm;
 
 	@Override
 	@Transactional
 	public UserResponseDto saveUser(UserRequestDto signUpDto) {
-		validateUser(signUpDto);
-		UserEntity userEntity = userMapper.mapDtoToEntity(signUpDto);
-		UserEntity savedUser = setVerificationCodeAndSendMail(userEntity);
-		return userMapper.mapEntityToDto(savedUser);
+		//validateUser(signUpDto);
+		//UserEntity userEntity = userMapper.mapDtoToEntity(signUpDto);
+		UserRepresentation userRepresentation = new UserRepresentation();
+		userRepresentation.setEmail(signUpDto.getEmail());
+		userRepresentation.setFirstName(signUpDto.getName());
+		userRepresentation.setLastName(signUpDto.getSecondName());
+		userRepresentation.setEmailVerified(false);
+
+		CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
+		credentialRepresentation.setValue(signUpDto.getPassword());
+		credentialRepresentation.setTemporary(false);
+		credentialRepresentation.setType(CredentialRepresentation.PASSWORD);
+
+		List<CredentialRepresentation> list = new ArrayList<>();
+		list.add(credentialRepresentation);
+		userRepresentation.setCredentials(list);
+
+		keycloak.realm(realm).users().create(userRepresentation);
+
+
+		return null;
+		/*UserEntity savedUser = setVerificationCodeAndSendMail(userEntity);
+		return userMapper.mapEntityToDto(savedUser);*/
 	}
 
 	@Override

@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/users")
+@RequestMapping("/signup")
 public class UserController {
 
 	private final UserServiceImpl userService;
