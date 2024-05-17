@@ -10,6 +10,7 @@ import am.devvibes.buyandsell.repository.UserRepository;
 import am.devvibes.buyandsell.service.user.UserService;
 import am.devvibes.buyandsell.util.ExceptionConstants;
 import am.devvibes.buyandsell.util.RandomGenerator;
+import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.validator.routines.EmailValidator;
@@ -21,7 +22,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -37,6 +37,7 @@ public class UserServiceImpl implements UserService {
 
 	@Value("${keycloak.realm}")
 	private String realm;
+
 
 	@Override
 	@Transactional
@@ -58,9 +59,8 @@ public class UserServiceImpl implements UserService {
 		list.add(credentialRepresentation);
 		userRepresentation.setCredentials(list);
 
-		keycloak.realm(realm).users().create(userRepresentation);
-
-
+		Response response = keycloak.realm(realm).users().create(userRepresentation);
+		System.out.println(response.getStatus());
 		return null;
 		/*UserEntity savedUser = setVerificationCodeAndSendMail(userEntity);
 		return userMapper.mapEntityToDto(savedUser);*/

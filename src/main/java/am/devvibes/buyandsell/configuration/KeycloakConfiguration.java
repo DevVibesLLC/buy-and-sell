@@ -10,28 +10,28 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class KeycloakConfiguration {
 
+	@Value("${keycloak.adminClientId}")
+	private String adminClientId;
+
+	@Value("${keycloak.adminClientSecret}")
+	private String adminClientSecret;
+
+	@Value("${keycloak.urls.auth}")
+	private String authServerUrl;
+
 	@Value("${keycloak.realm}")
 	private String realm;
-
-	@Value("${keycloak.clientId}")
-	private String clientId;
-
-	@Value("${keycloak.clientSecret}")
-	private String clientSecret;
-
-	@Value("${keycloak.domain}")
-	private String domain;
 
 
 	@Bean
 	public Keycloak keycloak(){
 
 		return KeycloakBuilder.builder()
-				.serverUrl(domain)
+				.serverUrl(authServerUrl)
 				.realm(realm)
 				.grantType(OAuth2Constants.CLIENT_CREDENTIALS)
-				.clientId(clientId)
-				.clientSecret(clientSecret)
+				.clientId(adminClientId)
+				.clientSecret("TjgE28OqkbR2laqeAI9GezLXkAlVj8cP")
 				.build();
 	}
 

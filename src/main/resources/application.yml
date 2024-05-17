@@ -1,60 +1,60 @@
-spring:
-  web:
-    resources:
-      static-locations: file:src/main/resources/static/
-      cache:
-        period: 0
-  thymeleaf: # Thymeleaf
-    cache: false
-    mode: HTML
-    encoding: UTF-8
-    prefix: file:src/main/resources/templates/
-  application:
-    name: buyAndSell
-  jpa:
-    hibernate:
-      ddl-auto: update
-  datasource:
-    url: jdbc:postgresql://${JDBC_URL:localhost}:${JDBC_PORT:5432}/${DATABASE_NAME:buyandsell}
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    username: ${SPRING_DATASOURCE_USERNAME:postgres}
-    password: ${SPRING_DATASOURCE_PASSWORD:0710}
-    driver-class-name: org.postgresql.Driver
-  flyway:
-    enabled: true
-    baseline-on-migrate: true
-    baseline-version: 0
-    table: migrations
-
-  mail:
-    port: 25
-    host: smtp.gmail.com
-    username: testfortest891@gmail.com
-    password: iabxmmbebumtizqt
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-
-server:
-  port: 8085
-
-app:
-  name: SandBox task API
-  api:
-    title: Spring Boot APIs
-    version: 1.0.0
-    description: Spring Boot APIs description
-    base-package: am.devvibes.buyandsell
-    contact-name: Norayr Gharibyan
-    contact-email: norayrgh@gmail.com
-    swagger:
-      enable: true
-
-keycloak:
-  realm: BuyAndSell
-  domain: localhost:8080
-  clientId: buy-and-sell-be
-  clientSecret: JFnDnBmpYzBtI4lzV7CAd8cklQH7N8By
+#spring:
+#  web:
+#    resources:
+#      static-locations: file:src/main/resources/static/
+#      cache:
+#        period: 0
+#  thymeleaf: # Thymeleaf
+#    cache: false
+#    mode: HTML
+#    encoding: UTF-8
+#    prefix: file:src/main/resources/templates/
+#  application:
+#    name: buyAndSell
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#  datasource:
+#    url: jdbc:postgresql://${JDBC_URL:localhost}:${JDBC_PORT:5432}/${DATABASE_NAME:buyandsell}
+#    database-platform: org.hibernate.dialect.PostgreSQLDialect
+#    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+#    password: ${SPRING_DATASOURCE_PASSWORD:0710}
+#    driver-class-name: org.postgresql.Driver
+#  flyway:
+#    enabled: true
+#    baseline-on-migrate: true
+#    baseline-version: 0
+#    table: migrations
+#
+#  mail:
+#    port: 25
+#    host: smtp.gmail.com
+#    username: testfortest891@gmail.com
+#    password: iabxmmbebumtizqt
+#    properties:
+#      mail:
+#        smtp:
+#          auth: true
+#          starttls:
+#            enable: true
+#
+#server:
+#  port: 8085
+#
+#app:
+#  name: SandBox task API
+#  api:
+#    title: Spring Boot APIs
+#    version: 1.0.0
+#    description: Spring Boot APIs description
+#    base-package: am.devvibes.buyandsell
+#    contact-name: Norayr Gharibyan
+#    contact-email: norayrgh@gmail.com
+#    swagger:
+#      enable: true
+#
+#keycloak:
+#  realm: BuyAndSell
+#  domain: localhost:8080
+#  clientId: buy-and-sell-be
+#  clientSecret: JFnDnBmpYzBtI4lzV7CAd8cklQH7N8By
