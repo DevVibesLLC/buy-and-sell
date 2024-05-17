@@ -8,9 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.util.Optional;
 
-// Defines beans or customizations for a test.
 @TestConfiguration
-// Enables JPA auditing. auditorAwareRef value must match with the name of AuditorAware bean.
 @EnableJpaAuditing(auditorAwareRef = "testAuditProvider")
 public class TestAuditingConfig {
 

@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
@@ -59,8 +60,12 @@ public class UserServiceImpl implements UserService {
 		list.add(credentialRepresentation);
 		userRepresentation.setCredentials(list);
 
-		Response response = keycloak.realm(realm).users().create(userRepresentation);
-		System.out.println(response.getStatus());
+		UsersResource usersResource =  keycloak.realm(realm).users();
+
+		try (Response response = usersResource.create(userRepresentation)) {
+
+			System.out.println(response.getStatus());
+		}
 		return null;
 		/*UserEntity savedUser = setVerificationCodeAndSendMail(userEntity);
 		return userMapper.mapEntityToDto(savedUser);*/
