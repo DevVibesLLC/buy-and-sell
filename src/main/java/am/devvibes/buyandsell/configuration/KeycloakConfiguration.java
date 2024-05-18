@@ -22,7 +22,6 @@ public class KeycloakConfiguration {
 	@Value("${keycloak.realm}")
 	private String realm;
 
-
 	@Bean
 	public Keycloak keycloak(){
 
@@ -34,6 +33,4 @@ public class KeycloakConfiguration {
 				.clientSecret(adminClientSecret)
 				.build();
 	}
-
-
 }

@@ -12,9 +12,9 @@ import am.devvibes.buyandsell.util.ExceptionConstants;
 import am.devvibes.buyandsell.util.RandomGenerator;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -43,32 +43,41 @@ public class UserServiceImpl implements UserService {
 	@Override
 	@Transactional
 	public UserResponseDto saveUser(UserRequestDto signUpDto) {
-		//validateUser(signUpDto);
-		//UserEntity userEntity = userMapper.mapDtoToEntity(signUpDto);
-		UserRepresentation userRepresentation = new UserRepresentation();
-		userRepresentation.setEmail(signUpDto.getEmail());
-		userRepresentation.setFirstName(signUpDto.getName());
-		userRepresentation.setLastName(signUpDto.getSecondName());
-		userRepresentation.setEmailVerified(false);
+		validateUser(signUpDto);
+		UserRepresentation user=new UserRepresentation();
+		user.setEnabled(true);
+		user.setUsername(signUpDto.getUsername());
+		user.setEmail(signUpDto.getEmail());
+		user.setFirstName(signUpDto.getName());
+		user.setLastName(signUpDto.getSecondName());
+		user.setEmailVerified(false);
 
-		CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
+		CredentialRepresentation credentialRepresentation=new CredentialRepresentation();
 		credentialRepresentation.setValue(signUpDto.getPassword());
 		credentialRepresentation.setTemporary(false);
 		credentialRepresentation.setType(CredentialRepresentation.PASSWORD);
 
 		List<CredentialRepresentation> list = new ArrayList<>();
 		list.add(credentialRepresentation);
-		userRepresentation.setCredentials(list);
+		user.setCredentials(list);
 
-		UsersResource usersResource =  keycloak.realm(realm).users();
+		UsersResource usersResource = getUsersResource();
 
-		try (Response response = usersResource.create(userRepresentation)) {
-
-			System.out.println(response.getStatus());
-		}
+		Response response = usersResource.create(user);
+		System.out.println(response.getStatus());
 		return null;
-		/*UserEntity savedUser = setVerificationCodeAndSendMail(userEntity);
-		return userMapper.mapEntityToDto(savedUser);*/
+	}
+
+	private UsersResource getUsersResource() {
+		RealmResource realm1 = keycloak.realm(realm);
+		return realm1.users();
+	}
+
+	@Override
+	public void emailVerification(String userId){
+
+		UsersResource usersResource = getUsersResource();
+		usersResource.get(userId).sendVerifyEmail();
 	}
 
 	@Override

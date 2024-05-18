@@ -11,6 +11,8 @@ public interface UserService {
 
 	UserResponseDto saveUser(UserRequestDto signUpDto);
 
+	void emailVerification(String userId);
+
 	UserResponseDto findUserById(Long id);
 
 	List<UserResponseDto> findAllUsers();
