@@ -10,20 +10,22 @@ import am.devvibes.buyandsell.repository.UserRepository;
 import am.devvibes.buyandsell.service.user.UserService;
 import am.devvibes.buyandsell.util.ExceptionConstants;
 import am.devvibes.buyandsell.util.RandomGenerator;
-import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.validator.routines.EmailValidator;
+import org.keycloak.KeycloakPrincipal;
+import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.resource.RealmResource;
-import org.keycloak.admin.client.resource.UsersResource;
+import org.keycloak.admin.client.resource.*;
 import org.keycloak.representations.idm.CredentialRepresentation;
+import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -39,78 +41,77 @@ public class UserServiceImpl implements UserService {
 	@Value("${keycloak.realm}")
 	private String realm;
 
-
 	@Override
 	@Transactional
 	public UserResponseDto saveUser(UserRequestDto signUpDto) {
 		validateUser(signUpDto);
-		UserRepresentation user=new UserRepresentation();
-		user.setEnabled(true);
-		user.setUsername(signUpDto.getUsername());
-		user.setEmail(signUpDto.getEmail());
-		user.setFirstName(signUpDto.getName());
-		user.setLastName(signUpDto.getSecondName());
-		user.setEmailVerified(false);
-
-		CredentialRepresentation credentialRepresentation=new CredentialRepresentation();
-		credentialRepresentation.setValue(signUpDto.getPassword());
-		credentialRepresentation.setTemporary(false);
-		credentialRepresentation.setType(CredentialRepresentation.PASSWORD);
-
-		List<CredentialRepresentation> list = new ArrayList<>();
-		list.add(credentialRepresentation);
-		user.setCredentials(list);
-
+		UserRepresentation userRepresentation = userMapper.mapDtoToRepresentation(signUpDto);
 		UsersResource usersResource = getUsersResource();
-
-		Response response = usersResource.create(user);
-		System.out.println(response.getStatus());
-		return null;
+		usersResource.create(userRepresentation);
+		return userMapper.mapRepresentationToDto(userRepresentation);
 	}
+
+	@Override
+	@Transactional
+	public UserResponseDto findUserById(String id) {
+		UserRepresentation userRepresentation = getUsersResource().get(id).toRepresentation();
+		return userMapper.mapRepresentationToDto(userRepresentation);
+	}
+
+	@Override
+	@Transactional
+	public List<UserResponseDto> findAllUsers() {
+		List<UserRepresentation> userRepresentations = getUsersResource().list();
+		return userMapper.mapRepresentationListToDtoList(userRepresentations);
+	}
+
+	@Override
+	@Transactional
+	public void deleteUser(String id) {
+		getUsersResource().delete(id);
+	}
+
+	@Override
+	@Transactional
+	public UserResponseDto changePassword(String email, String newPassword, String repeatNewPassword) {
+		List<UserRepresentation> userRepresentations = getUsersResource().searchByEmail(email, true);
+		if (userRepresentations.isEmpty()) {
+			throw new NotFoundException(ExceptionConstants.USER_NOT_FOUND);
+		}
+		comparePasswordsAndValidate(newPassword, repeatNewPassword);
+		UserRepresentation userRepresentation = userRepresentations.getFirst();
+
+		CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
+		credentialRepresentation.setValue(newPassword);
+		credentialRepresentation.setType(CredentialRepresentation.PASSWORD);
+		credentialRepresentation.setTemporary(false);
+
+		userRepresentation.setCredentials(List.of(credentialRepresentation));
+		return userMapper.mapRepresentationToDto(userRepresentation);
+	}
+
+	@Override
+	public void emailVerification(String userId) {
+		UsersResource usersResource = getUsersResource();
+		usersResource.get(userId).sendVerifyEmail();
+	}
+
+	/*private void assignRoleToUser(String userId) {
+		keycloak.realm(realm).roles();
+		RoleRepresentation roleRepresentation = new RoleRepresentation();
+		roleRepresentation.se
+
+		keycloak.realm(realm).users().get(userId).roles().realmLevel().add(Collections.singletonList(roleRepresentation));
+	}*/
 
 	private UsersResource getUsersResource() {
 		RealmResource realm1 = keycloak.realm(realm);
 		return realm1.users();
 	}
 
-	@Override
-	public void emailVerification(String userId){
-
-		UsersResource usersResource = getUsersResource();
-		usersResource.get(userId).sendVerifyEmail();
-	}
-
-	@Override
-	@Transactional
-	public UserResponseDto findUserById(Long id) {
-		UserEntity user =
-				userRepository.findById(id).orElseThrow(() -> new NotFoundException(ExceptionConstants.USER_NOT_FOUND));
-		return userMapper.mapEntityToDto(user);
-	}
-
-	@Override
-	@Transactional
-	public List<UserResponseDto> findAllUsers() {
-		List<UserEntity> allUsers = userRepository.findAll();
-		return userMapper.mapEntityListToDtoList(allUsers);
-	}
-
-	@Override
-	@Transactional
-	public void deleteUser(Long id) {
-		userRepository.deleteById(id);
-	}
-
-	@Override
-	@Transactional
-	public UserResponseDto changePassword(String email, String newPassword, String repeatNewPassword) {
-
-		UserEntity userEntity = userRepository.findByEmail(email)
-				.orElseThrow(() -> new NotFoundException(ExceptionConstants.USER_NOT_FOUND));
-		//TODO here must be mail sending.
-		comparePasswordsAndValidate(newPassword, repeatNewPassword);
-		userEntity.setPassword(passwordEncoder.encode(newPassword));
-		return userMapper.mapEntityToDto(userRepository.save(userEntity));
+	private RolesResource getRoleResource() {
+		RealmResource realm1 = keycloak.realm(realm);
+		return realm1.roles();
 	}
 
 	private UserEntity setVerificationCodeAndSendMail(UserEntity userEntity) {
@@ -121,16 +122,30 @@ public class UserServiceImpl implements UserService {
 	}
 
 	private void validateUser(UserRequestDto signUpDto) {
-		if (userRepository.existsUserEntityByEmail(signUpDto.getEmail())) {
-			throw new SomethingWentWrongException(ExceptionConstants.USER_WITH_THIS_EMAIL_ALREADY_EXISTS);
-		}
+		UsersResource usersResource = getUsersResource();
+		isEmailUnique(signUpDto.getEmail(), usersResource);
+		isUsernameUnique(signUpDto.getUsername(), usersResource);
 		comparePasswordsAndValidate(signUpDto.getPassword(), signUpDto.getRepeatPassword());
 		EmailValidator.getInstance().isValid(signUpDto.getEmail());
 	}
 
+	private void isEmailUnique(String email, UsersResource usersResource) {
+		List<UserRepresentation> userRepresentations = usersResource.searchByEmail(email, true);
+		if (!userRepresentations.isEmpty()) {
+			throw new SomethingWentWrongException(ExceptionConstants.USER_WITH_THIS_EMAIL_ALREADY_EXISTS);
+		}
+	}
+
+	private void isUsernameUnique(String username, UsersResource usersResource) {
+		List<UserRepresentation> userRepresentations = usersResource.searchByUsername(username, true);
+		if (!userRepresentations.isEmpty()) {
+			throw new SomethingWentWrongException(ExceptionConstants.USER_WITH_THIS_USERNAME_ALREADY_EXISTS);
+		}
+	}
+
 	private void comparePasswordsAndValidate(String password1, String password2) {
 		if (password1.length() < 8 || password2.length() < 8) {
-			throw new SomethingWentWrongException(ExceptionConstants.PASSWORD_LENGTH_IS_LESS_THEN_8);
+			throw new SomethingWentWrongException(ExceptionConstants.PASSWORD_LENGTH_MUST_BE_MORE_THEN_8);
 		}
 		if (!Objects.equals(password1, password2)) {
 			throw new SomethingWentWrongException(ExceptionConstants.PASSWORDS_ARE_DIFFERENT);

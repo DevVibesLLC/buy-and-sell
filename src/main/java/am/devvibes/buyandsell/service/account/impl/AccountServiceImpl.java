@@ -26,7 +26,8 @@ public class AccountServiceImpl implements AccountService {
 	public UserResponseDto login(String email, String password) {
 		UserEntity userEntity = userRepository.findByEmailAndPassword(email, password)
 				.orElseThrow(() -> new NotFoundException(ExceptionConstants.USER_NOT_FOUND));
-		return userMapper.mapEntityToDto(userEntity);
+		return null;
+		//return userMapper.mapEntityToDto(userEntity);
 	}
 
 	@Override

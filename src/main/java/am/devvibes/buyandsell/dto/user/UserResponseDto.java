@@ -3,6 +3,7 @@ package am.devvibes.buyandsell.dto.user;
 import am.devvibes.buyandsell.entity.RoleEntity;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -10,10 +11,11 @@ import java.time.LocalDateTime;
 @Builder
 public class UserResponseDto {
 
-	private Long id;
+	private String id;
 	private String email;
-	private String name;
-	private String secondName;
+	private String username;
+	private String firstName;
+	private String lastName;
 	private String verificationCode;
 	private Boolean isVerified;
 	private Boolean isAccountNonExpired;
@@ -22,5 +24,4 @@ public class UserResponseDto {
 	private Boolean isEnabled;
 	private RoleEntity roleEntity;
 	private LocalDateTime createdAt;
-	private LocalDateTime updatedAt;
 }

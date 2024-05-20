@@ -8,7 +8,8 @@ public enum ExceptionConstants {
 	USER_NOT_FOUND("User not found"),
 	PASSWORDS_ARE_DIFFERENT("Password not muched"),
 	USER_WITH_THIS_EMAIL_ALREADY_EXISTS("User with this email already exists"),
-	PASSWORD_LENGTH_IS_LESS_THEN_8("Password length is less then 8"),
+	USER_WITH_THIS_USERNAME_ALREADY_EXISTS("User with this username already exists"),
+	PASSWORD_LENGTH_MUST_BE_MORE_THEN_8("Password length must be more then 8"),
 	INCORRECT_CODE("Incorrect code"),
 	ITEM_NOT_FOUND("Item not found");
 

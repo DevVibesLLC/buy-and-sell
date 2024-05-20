@@ -1,33 +1,26 @@
 package am.devvibes.buyandsell.controller;
 
 import am.devvibes.buyandsell.dto.user.UserResponseDto;
-import am.devvibes.buyandsell.dto.user.UserRequestDto;
 import am.devvibes.buyandsell.service.user.impl.UserServiceImpl;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/signup")
+@RequestMapping("/api/v1/users")
 public class UserController {
 
 	private final UserServiceImpl userService;
 
-	@PostMapping
-	public ResponseEntity<UserResponseDto> registerUser(@RequestBody @Valid UserRequestDto userRequestDto) {
-		UserResponseDto savedUser = userService.saveUser(userRequestDto);
-		return ResponseEntity.ok(savedUser);
-	}
-
-	@GetMapping("{id}")
-	public ResponseEntity<UserResponseDto> getUserById(@PathVariable @Positive Long id) {
-		UserResponseDto userById = userService.findUserById(id);
-		return ResponseEntity.ok(userById);
+	@GetMapping("/{id}")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public ResponseEntity<UserResponseDto> getUserById(@PathVariable String id) {
+		UserResponseDto userResponseDto = userService.findUserById(id);
+		return ResponseEntity.ok(userResponseDto);
 	}
 
 	@GetMapping
@@ -37,7 +30,8 @@ public class UserController {
 	}
 
 	@DeleteMapping("{id}")
-	public ResponseEntity<Void> deleteUser(@PathVariable @Positive Long id) {
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<Void> deleteUser(@PathVariable String id) {
 		userService.deleteUser(id);
 		return ResponseEntity.ok().build();
 	}

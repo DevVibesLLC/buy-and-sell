@@ -1,3 +1,8 @@
+logging:
+  level:
+    org:
+      springframework:
+        security: debug
 
 server:
   port: 8085
@@ -6,10 +11,10 @@ spring:
     hibernate:
       ddl-auto: create
   datasource:
-    url: jdbc:postgresql://${JDBC_URL:localhost}:${JDBC_PORT:5432}/${DATABASE_NAME:keycloak}
+    url: jdbc:postgresql://${JDBC_URL:localhost}:${JDBC_PORT:5432}/${DATABASE_NAME:buyandsell}
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-    username: ${SPRING_DATASOURCE_USERNAME:keycloak}
-    password: ${SPRING_DATASOURCE_PASSWORD:password}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:456}
     driver-class-name: org.postgresql.Driver
   flyway:
     enabled: true
@@ -62,7 +67,7 @@ keycloak:
   realm: buy-and-sell
   domain: localhost:9081
   adminClientId: buy-and-sell-client-id
-  adminClientSecret: j3A45IK4QreZgJVgjQ7AWPP7Voh1N5Xe
+  adminClientSecret: uVOWl5Cooh4fSS6KcgGW6FCKlQGEh63G
   urls:
     auth: http://${keycloak.domain}
 

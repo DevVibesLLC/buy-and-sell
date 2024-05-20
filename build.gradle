@@ -34,6 +34,7 @@ dependencies {
     implementation group: 'org.keycloak', name: 'keycloak-admin-client', version: '24.0.4'
     implementation group: 'org.jboss.resteasy', name: 'resteasy-jackson2-provider', version: '6.2.5.Final'
     implementation group: 'org.jboss.resteasy', name: 'resteasy-client', version: '6.2.5.Final'
+    implementation group: 'org.keycloak', name: 'keycloak-spring-security-adapter', version: '20.0.1'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.projectlombok:lombok'
