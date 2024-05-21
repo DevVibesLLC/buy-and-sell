@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Table(name = "items_for_sell")
 public class ItemForSellEntity extends AbstractItemForSell {
-	@ManyToOne
+	@OneToOne
 	private UserEntity userEntity;
 	@Builder
 	public ItemForSellEntity(Long id,
