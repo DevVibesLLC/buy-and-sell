@@ -15,7 +15,7 @@ public class ItemForSellRequestDto {
 	@NotBlank
 	private String description;
 	@NotNull
-	private CategoryEntity category;
+	private Long categoryId;
 	@NotNull
 	private Double price;
 	@NotNull

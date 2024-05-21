@@ -7,6 +7,7 @@ import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.exception.SomethingWentWrongException;
 import am.devvibes.buyandsell.mapper.UserMapper;
 import am.devvibes.buyandsell.repository.UserRepository;
+import am.devvibes.buyandsell.service.security.SecurityService;
 import am.devvibes.buyandsell.service.user.UserService;
 import am.devvibes.buyandsell.util.ExceptionConstants;
 import am.devvibes.buyandsell.util.RandomGenerator;
@@ -35,6 +36,7 @@ public class UserServiceImpl implements UserService {
 	private final UserRepository userRepository;
 	private final UserMapper userMapper;
 	private final Keycloak keycloak;
+	private final SecurityService securityService;
 
 	@Value("${keycloak.realm}")
 	private String realm;
@@ -50,10 +52,15 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	@Transactional
-	public UserResponseDto findUserById(String id) {
-		UserRepresentation userRepresentation = getUsersResource().get(id).toRepresentation();
-		return userMapper.mapRepresentationToDto(userRepresentation);
+	public UserEntity findUserById(String id) {
+		return userRepository.findById(id).orElseThrow();
+	}
+
+	@Override
+	public UserResponseDto findUserForUserProfile() {
+		UserEntity userRepresentation =findUserById(securityService.getCurrentUserId());
+		return userMapper.toDto(userRepresentation);
+
 	}
 
 	@Override
@@ -98,12 +105,6 @@ public class UserServiceImpl implements UserService {
 		return realm1.roles();
 	}
 
-	private UserEntity setVerificationCodeAndSendMail(UserEntity userEntity) {
-		userEntity.setVerificationCode(RandomGenerator.generateNumericString());
-		/*emailService.sendMessage(userEntity.getEmail(), "Verification",
-				"Your verification code is: " + userEntity.getVerificationCode());*/
-		return userRepository.save(userEntity);
-	}
 
 	private void validateUser(UserRequestDto signUpDto) {
 		UsersResource usersResource = getUsersResource();

@@ -2,6 +2,7 @@ package am.devvibes.buyandsell.service.user;
 
 import am.devvibes.buyandsell.dto.user.UserRequestDto;
 import am.devvibes.buyandsell.dto.user.UserResponseDto;
+import am.devvibes.buyandsell.entity.UserEntity;
 
 import java.util.List;
 
@@ -9,7 +10,9 @@ public interface UserService {
 
 	UserResponseDto saveUser(UserRequestDto signUpDto);
 
-	UserResponseDto findUserById(String id);
+	UserEntity findUserById(String id);
+
+	UserResponseDto findUserForUserProfile();
 
 	List<UserResponseDto> findAllUsers();
 

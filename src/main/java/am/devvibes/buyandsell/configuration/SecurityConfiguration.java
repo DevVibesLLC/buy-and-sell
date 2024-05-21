@@ -1,26 +1,22 @@
 package am.devvibes.buyandsell.configuration;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtDecoders;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
-
-import javax.sql.DataSource;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableMethodSecurity
@@ -42,20 +38,11 @@ public class SecurityConfiguration {
 						.requestMatchers("/", "/home","/api/v1/public/**","/users","/static/**","/actuator/**", "/h2/**", "/css/**", "/js/**", "/json/**", "/images/**, /img/**")
 						.permitAll()
 						.anyRequest()
-						.authenticated()
-				)
-				.formLogin((form) -> form
-						.loginPage("/login")
-						.failureUrl("/login-error")
-						.defaultSuccessUrl("/dispatch",true)
-						.permitAll()
-				)
+						.authenticated())
+				.formLogin(AbstractHttpConfigurer::disable)
 				.oauth2ResourceServer((oauth2) -> oauth2
-						.jwt(Customizer.withDefaults())
-				)
-				.logout((logout-> logout.logoutSuccessUrl("/login")
-						.permitAll()));
-
+						.jwt(Customizer.withDefaults()))
+				.addFilterBefore(corsFilter(), CorsFilter.class);
 		return http.build();
 	}
 
@@ -69,6 +56,19 @@ public class SecurityConfiguration {
 		JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
 		jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(new CustomJwtAuthenticationConverter());
 		return jwtAuthenticationConverter;
+	}
+
+
+	@Bean
+	public CorsFilter corsFilter() {
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		CorsConfiguration config = new CorsConfiguration();
+		config.setAllowCredentials(true);
+		config.addAllowedOrigin("http://localhost:5173"); // Add your frontend URL here
+		config.addAllowedHeader("*");
+		config.addAllowedMethod("*");
+		source.registerCorsConfiguration("/**", config);
+		return new CorsFilter(source);
 	}
 
 }

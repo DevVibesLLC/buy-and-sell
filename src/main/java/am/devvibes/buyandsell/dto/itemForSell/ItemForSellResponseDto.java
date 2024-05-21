@@ -14,7 +14,7 @@ public class ItemForSellResponseDto {
 	private Long id;
 	private String name;
 	private String description;
-	private CategoryEntity category;
+	private CategoryDto category;
 	private Double price;
 	private Integer quantity;
 	private LocalDateTime createdAt;

@@ -7,8 +7,10 @@ import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.exception.SomethingWentWrongException;
 import am.devvibes.buyandsell.mapper.ItemForSellMapper;
 import am.devvibes.buyandsell.repository.ItemForSellRepository;
+import am.devvibes.buyandsell.repository.UserRepository;
 import am.devvibes.buyandsell.service.itemForSell.ItemForSellService;
 import am.devvibes.buyandsell.service.security.SecurityService;
+import am.devvibes.buyandsell.service.user.UserService;
 import am.devvibes.buyandsell.util.ExceptionConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,12 +25,13 @@ public class ItemForSellServiceImpl implements ItemForSellService {
 	private final ItemForSellRepository itemForSellRepository;
 	private final ItemForSellMapper itemForSellMapper;
 	private final SecurityService securityService;
+	private final UserService userService;
 
 	@Override
 	@Transactional
 	public ItemForSellResponseDto saveItemForSell(ItemForSellRequestDto itemForSellRequestDto) {
 		ItemForSellEntity itemForSellEntity = itemForSellMapper.mapDtoToEntity(itemForSellRequestDto);
-		itemForSellEntity.setUser(securityService.getCurrentUser());
+		itemForSellEntity.setUserEntity(userService.findUserById(securityService.getCurrentUserId()));
 		ItemForSellEntity savedItemForSell = itemForSellRepository.save(itemForSellEntity);
 		return itemForSellMapper.mapEntityToDto(savedItemForSell);
 	}
@@ -53,7 +56,7 @@ public class ItemForSellServiceImpl implements ItemForSellService {
 	public void deleteItemForSell(Long id) {
 		ItemForSellEntity itemForSellEntity = itemForSellRepository.findById(id)
 				.orElseThrow(() -> new NotFoundException(ExceptionConstants.ITEM_NOT_FOUND));
-		if (!itemForSellEntity.getUser().getId().equals(securityService.getCurrentUser().getId())) {
+		if (!itemForSellEntity.getUserEntity().getId().equals(securityService.getCurrentUserId())) {
 			throw new SomethingWentWrongException(ExceptionConstants.INVALID_ACTION);
 		}
 		itemForSellRepository.deleteById(id);

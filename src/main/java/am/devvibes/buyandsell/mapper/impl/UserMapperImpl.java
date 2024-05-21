@@ -76,6 +76,20 @@ public class UserMapperImpl implements UserMapper {
 				.build();
 	}
 
+	@Override
+	public UserResponseDto toDto(UserEntity user) {
+		return UserResponseDto.builder()
+				.id(user.getId())
+				.username(user.getUsername())
+				.firstName(user.getFirstName())
+				.lastName(user.getLastName())
+				.email(user.getEmail())
+				.createdAt(getTimeFromMillis(user.getCreatedTimestamp()))
+				.isEnabled(user.isEnabled())
+				.isVerified(user.isEmailVerified())
+				.build();
+	}
+
 	private LocalDateTime getTimeFromMillis(Long stamp) {
 		return LocalDateTime.ofInstant(Instant.ofEpochMilli(stamp), ZoneId.systemDefault());
 	}

@@ -28,8 +28,6 @@ public class AbstractItemForSell {
 	private Double price;
 	private Integer quantity;
 
-	private UserResponseDto user;
-
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "category_id", nullable = false)
 	private CategoryEntity category;

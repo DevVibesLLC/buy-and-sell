@@ -17,7 +17,7 @@ spring:
     password: ${SPRING_DATASOURCE_PASSWORD:456}
     driver-class-name: org.postgresql.Driver
   flyway:
-    enabled: true
+    enabled: false
     baseline-on-migrate: true
     baseline-version: 0
   mail:
@@ -36,11 +36,6 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://${keycloak.domain}/realms/${keycloak.realm}
-
-jwt:
-  auth:
-    converter:
-      resource-id: authenticationClientId
 
 app:
   name: SandBox task API

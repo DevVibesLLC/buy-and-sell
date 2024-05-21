@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class ItemForSellController {
 	public ResponseEntity<ItemForSellResponseDto> saveItem(
 			@RequestBody @Valid ItemForSellRequestDto itemForSellRequestDto) {
 		ItemForSellResponseDto savedItemForSell = itemForSell.saveItemForSell(itemForSellRequestDto);
+		var auth = SecurityContextHolder.getContext().getAuthentication();
 		return ResponseEntity.ok(savedItemForSell);
 	}
 

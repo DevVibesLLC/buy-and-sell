@@ -14,28 +14,23 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "users")
+@Table(name = "user_entity")
 public class UserEntity extends AbstractUser {
 
-	@Builder
-	public UserEntity(
-			Long id,
+	public UserEntity(String id,
 			String email,
-			String password,
-			String name,
-			String secondName,
-			String verificationCode,
-			Boolean isVerified,
-			Boolean isAccountNonExpired,
-			Boolean isAccountNonLocked,
-			Boolean isCredentialsNonExpired,
-			Boolean isEnabled,
-			RoleEntity roleEntity,
-			LocalDateTime createdAt,
-			LocalDateTime updatedAt) {
-		super(id, email, password, name, secondName, verificationCode, isVerified, isAccountNonExpired,
-				isAccountNonLocked, isCredentialsNonExpired, isEnabled, roleEntity, createdAt, updatedAt);
-
+			String emailConstraint,
+			boolean emailVerified,
+			boolean enabled,
+			String federationLink,
+			String firstName,
+			String lastName,
+			String realmId,
+			String username,
+			Long createdTimestamp,
+			String serviceAccountClientLink,
+			int notBefore) {
+		super(id, email, emailConstraint, emailVerified, enabled, federationLink, firstName, lastName, realmId,
+				username, createdTimestamp, serviceAccountClientLink, notBefore);
 	}
-
 }
