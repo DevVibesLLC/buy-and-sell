@@ -10,7 +10,6 @@ create table if not exists items_for_sell
         primary key,
     updated_at  timestamp(6),
     user_id     bigint
-        unique
         constraint FK_user
             references users,
     description varchar(255)     not null,

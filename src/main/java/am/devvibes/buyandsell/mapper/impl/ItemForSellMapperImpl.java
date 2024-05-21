@@ -17,6 +17,8 @@ import java.util.List;
 public class ItemForSellMapperImpl implements ItemForSellMapper {
 
 	private final CategoryRepository categoryRepository;
+	private final UserMapperImpl userMapper;
+
 	@Override
 	public ItemForSellEntity mapDtoToEntity(ItemForSellRequestDto itemForSellRequestDto) {
 		return ItemForSellEntity.builder()
@@ -35,6 +37,7 @@ public class ItemForSellMapperImpl implements ItemForSellMapper {
 				.name(itemForSellEntity.getName())
 				.description(itemForSellEntity.getDescription())
 				.category(mapCategoryToDto(itemForSellEntity))
+				.userId(itemForSellEntity.getUserEntity().getId())
 				.price(itemForSellEntity.getPrice())
 				.quantity(itemForSellEntity.getQuantity())
 				.createdAt(itemForSellEntity.getCreatedAt())

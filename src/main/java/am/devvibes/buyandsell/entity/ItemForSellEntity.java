@@ -3,6 +3,7 @@ package am.devvibes.buyandsell.entity;
 import am.devvibes.buyandsell.dto.user.UserResponseDto;
 import am.devvibes.buyandsell.entity.abstracts.AbstractItemForSell;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Builder;
@@ -19,7 +20,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Table(name = "items_for_sell")
 public class ItemForSellEntity extends AbstractItemForSell {
-	@OneToOne
+	@ManyToOne
 	private UserEntity userEntity;
 	@Builder
 	public ItemForSellEntity(Long id,
