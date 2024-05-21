@@ -1,5 +1,7 @@
 package am.devvibes.buyandsell.entity.abstracts;
 
+import am.devvibes.buyandsell.dto.user.UserResponseDto;
+import am.devvibes.buyandsell.entity.CategoryEntity;
 import am.devvibes.buyandsell.entity.UserEntity;
 import am.devvibes.buyandsell.util.Category;
 import jakarta.persistence.*;
@@ -22,14 +24,15 @@ public class AbstractItemForSell {
 	@Column(nullable = false)
 	private String description;
 	@Column(nullable = false)
-	@Enumerated(EnumType.STRING)
-	private Category category;
+
 	private Double price;
 	private Integer quantity;
 
-	@OneToOne
-	@JoinColumn(name = "user_id")
-	private UserEntity user;
+	private UserResponseDto user;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "category_id", nullable = false)
+	private CategoryEntity category;
 
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;

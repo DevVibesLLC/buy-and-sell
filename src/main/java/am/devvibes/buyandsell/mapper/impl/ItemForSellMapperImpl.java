@@ -3,7 +3,7 @@ package am.devvibes.buyandsell.mapper.impl;
 import am.devvibes.buyandsell.mapper.ItemForSellMapper;
 import am.devvibes.buyandsell.dto.itemForSell.ItemForSellRequestDto;
 import am.devvibes.buyandsell.dto.itemForSell.ItemForSellResponseDto;
-import am.devvibes.buyandsell.entity.ItemForSell;
+import am.devvibes.buyandsell.entity.ItemForSellEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -13,8 +13,8 @@ import java.util.List;
 public class ItemForSellMapperImpl implements ItemForSellMapper {
 
 	@Override
-	public ItemForSell mapDtoToEntity(ItemForSellRequestDto itemForSellRequestDto) {
-		return ItemForSell.builder()
+	public ItemForSellEntity mapDtoToEntity(ItemForSellRequestDto itemForSellRequestDto) {
+		return ItemForSellEntity.builder()
 				.name(itemForSellRequestDto.getName())
 				.description(itemForSellRequestDto.getDescription())
 				.category(itemForSellRequestDto.getCategory())
@@ -24,7 +24,7 @@ public class ItemForSellMapperImpl implements ItemForSellMapper {
 	}
 
 	@Override
-	public ItemForSellResponseDto mapEntityToDto(ItemForSell itemForSellEntity) {
+	public ItemForSellResponseDto mapEntityToDto(ItemForSellEntity itemForSellEntity) {
 		return ItemForSellResponseDto.builder()
 				.id(itemForSellEntity.getId())
 				.name(itemForSellEntity.getName())
@@ -38,9 +38,9 @@ public class ItemForSellMapperImpl implements ItemForSellMapper {
 	}
 
 	@Override
-	public List<ItemForSellResponseDto> mapEntityListToDtoList(List<ItemForSell> itemForSellEntities) {
+	public List<ItemForSellResponseDto> mapEntityListToDtoList(List<ItemForSellEntity> itemForSellEntities) {
 		List<ItemForSellResponseDto> itemForSellResponseDtoList = new ArrayList<>();
-		for (ItemForSell itemForSellEntity : itemForSellEntities) {
+		for (ItemForSellEntity itemForSellEntity : itemForSellEntities) {
 			ItemForSellResponseDto itemForSellResponseDto = mapEntityToDto(itemForSellEntity);
 			itemForSellResponseDtoList.add(itemForSellResponseDto);
 		}

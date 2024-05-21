@@ -1,4 +1,4 @@
-create table roles
+create table if not exists roles
 (
     id   bigint
         primary key,

@@ -17,7 +17,6 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Collecti
 	public Collection<GrantedAuthority> convert(Jwt jwt) {
 		Collection<GrantedAuthority> authorities = defaultGrantedAuthoritiesConverter.convert(jwt);
 
-		// Extract realm roles
 		Collection<String> realmRoles = (Collection<String>) jwt.getClaimAsMap("realm_access").get("roles");
 
 		if (realmRoles != null) {
@@ -26,5 +25,4 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Collecti
 
 		return authorities;
 	}
-
 }

@@ -2,16 +2,16 @@ package am.devvibes.buyandsell.mapper;
 
 import am.devvibes.buyandsell.dto.itemForSell.ItemForSellRequestDto;
 import am.devvibes.buyandsell.dto.itemForSell.ItemForSellResponseDto;
-import am.devvibes.buyandsell.entity.ItemForSell;
+import am.devvibes.buyandsell.entity.ItemForSellEntity;
 
 import java.util.List;
 
 public interface ItemForSellMapper {
 
-	ItemForSell mapDtoToEntity(ItemForSellRequestDto productRequestDto);
+	ItemForSellEntity mapDtoToEntity(ItemForSellRequestDto productRequestDto);
 
-	ItemForSellResponseDto mapEntityToDto(ItemForSell productEntity);
+	ItemForSellResponseDto mapEntityToDto(ItemForSellEntity productEntity);
 
-	List<ItemForSellResponseDto> mapEntityListToDtoList(List<ItemForSell> productEntities);
+	List<ItemForSellResponseDto> mapEntityListToDtoList(List<ItemForSellEntity> productEntities);
 
 }

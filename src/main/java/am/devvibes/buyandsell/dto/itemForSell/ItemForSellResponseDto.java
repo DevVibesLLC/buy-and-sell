@@ -1,5 +1,6 @@
 package am.devvibes.buyandsell.dto.itemForSell;
 
+import am.devvibes.buyandsell.entity.CategoryEntity;
 import am.devvibes.buyandsell.util.Category;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +14,7 @@ public class ItemForSellResponseDto {
 	private Long id;
 	private String name;
 	private String description;
-	private Category category;
+	private CategoryEntity category;
 	private Double price;
 	private Integer quantity;
 	private LocalDateTime createdAt;

@@ -1,4 +1,4 @@
-create table users
+create table if not exists users
 (
     id                         bigint       not null
         primary key,

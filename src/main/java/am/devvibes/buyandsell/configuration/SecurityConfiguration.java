@@ -35,12 +35,11 @@ public class SecurityConfiguration {
 		return JwtDecoders.fromIssuerLocation(issuer);
 	}
 
-
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(AbstractHttpConfigurer::disable)
 				.authorizeHttpRequests((requests) -> requests
-						.requestMatchers("/", "/home","/signup","/api/*","/users", "/itemForSell", "/static/**","/actuator/**", "/h2/**", "/css/**", "/js/**", "/json/**", "/images/**, /img/**")
+						.requestMatchers("/", "/home","/api/v1/public/**","/users","/static/**","/actuator/**", "/h2/**", "/css/**", "/js/**", "/json/**", "/images/**, /img/**")
 						.permitAll()
 						.anyRequest()
 						.authenticated()

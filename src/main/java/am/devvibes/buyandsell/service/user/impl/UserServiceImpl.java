@@ -13,19 +13,18 @@ import am.devvibes.buyandsell.util.RandomGenerator;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.keycloak.KeycloakPrincipal;
-import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.resource.*;
+import org.keycloak.admin.client.resource.RealmResource;
+import org.keycloak.admin.client.resource.RolesResource;
+import org.keycloak.admin.client.resource.UsersResource;
+import org.keycloak.representations.AccessToken;
 import org.keycloak.representations.idm.CredentialRepresentation;
-import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -35,7 +34,6 @@ public class UserServiceImpl implements UserService {
 
 	private final UserRepository userRepository;
 	private final UserMapper userMapper;
-	private final PasswordEncoder passwordEncoder;
 	private final Keycloak keycloak;
 
 	@Value("${keycloak.realm}")
@@ -89,20 +87,6 @@ public class UserServiceImpl implements UserService {
 		userRepresentation.setCredentials(List.of(credentialRepresentation));
 		return userMapper.mapRepresentationToDto(userRepresentation);
 	}
-
-	@Override
-	public void emailVerification(String userId) {
-		UsersResource usersResource = getUsersResource();
-		usersResource.get(userId).sendVerifyEmail();
-	}
-
-	/*private void assignRoleToUser(String userId) {
-		keycloak.realm(realm).roles();
-		RoleRepresentation roleRepresentation = new RoleRepresentation();
-		roleRepresentation.se
-
-		keycloak.realm(realm).users().get(userId).roles().realmLevel().add(Collections.singletonList(roleRepresentation));
-	}*/
 
 	private UsersResource getUsersResource() {
 		RealmResource realm1 = keycloak.realm(realm);

@@ -1,7 +1,7 @@
 package am.devvibes.buyandsell.entity;
 
+import am.devvibes.buyandsell.dto.user.UserResponseDto;
 import am.devvibes.buyandsell.entity.abstracts.AbstractItemForSell;
-import am.devvibes.buyandsell.util.Category;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.Builder;
@@ -10,25 +10,26 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+
 //https://www.gumtree.com/
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @Table(name = "items_for_sell")
-public class ItemForSell extends AbstractItemForSell {
+public class ItemForSellEntity extends AbstractItemForSell {
 
 	@Builder
-	public ItemForSell(Long id,
+	public ItemForSellEntity(Long id,
 			String name,
 			String description,
-			Category category,
 			Double price,
 			Integer quantity,
-			UserEntity user,
+			UserResponseDto user,
+			CategoryEntity category,
 			LocalDateTime createdAt,
 			LocalDateTime updatedAt) {
-		super(id, name, description, category, price, quantity, user, createdAt, updatedAt);
+		super(id, name, description, price, quantity, user, category, createdAt, updatedAt);
 
 	}
 

@@ -9,7 +9,7 @@ server:
 spring:
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
   datasource:
     url: jdbc:postgresql://${JDBC_URL:localhost}:${JDBC_PORT:5432}/${DATABASE_NAME:buyandsell}
     database-platform: org.hibernate.dialect.PostgreSQLDialect
@@ -67,7 +67,7 @@ keycloak:
   realm: buy-and-sell
   domain: localhost:9081
   adminClientId: buy-and-sell-client-id
-  adminClientSecret: uVOWl5Cooh4fSS6KcgGW6FCKlQGEh63G
+  adminClientSecret: yZYSRo9cDdnmBR24VBJ51FEG1R3FqnuO
   urls:
     auth: http://${keycloak.domain}
 
