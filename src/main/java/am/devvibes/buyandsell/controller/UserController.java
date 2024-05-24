@@ -26,7 +26,6 @@ public class UserController {
 		return ResponseEntity.ok(userResponseDto);
 	}
 
-
 	@GetMapping("/profile")
 	public ResponseEntity<UserResponseDto> getUserByIdForUserProfile() {
 		UserResponseDto userResponseDto = userService.findUserForUserProfile();
@@ -41,7 +40,7 @@ public class UserController {
 	}
 
 	@DeleteMapping("{id}")
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<Void> deleteUser(@PathVariable String id) {
 		userService.deleteUser(id);
 		return ResponseEntity.ok().build();

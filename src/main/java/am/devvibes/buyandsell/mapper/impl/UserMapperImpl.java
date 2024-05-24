@@ -23,9 +23,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserMapperImpl implements UserMapper {
 
-	private final PasswordEncoder passwordEncoder;
-	private final RoleRepository roleRepository;
-
 	@Override
 	public List<UserResponseDto> mapRepresentationListToDtoList(List<UserRepresentation> representations) {
 		List<UserResponseDto> userResponseDtoList = new ArrayList<>();
@@ -42,8 +39,8 @@ public class UserMapperImpl implements UserMapper {
 		userRepresentation.setEnabled(true);
 		userRepresentation.setUsername(userRequestDto.getUsername());
 		userRepresentation.setEmail(userRequestDto.getEmail());
-		userRepresentation.setFirstName(userRequestDto.getName());
-		userRepresentation.setLastName(userRequestDto.getSecondName());
+		userRepresentation.setFirstName(userRequestDto.getFirstName());
+		userRepresentation.setLastName(userRequestDto.getLastName());
 		userRepresentation.setCreatedTimestamp(System.currentTimeMillis());
 		userRepresentation.setEmailVerified(false);
 

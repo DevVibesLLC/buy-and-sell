@@ -13,9 +13,9 @@ public class UserRequestDto {
 	@NotBlank
 	private String username;
 	@NotBlank
-	private String name;
+	private String firstName;
 	@NotBlank
-	private String secondName;
+	private String lastName;
 	@NotBlank
 	private String password;
 	@NotBlank

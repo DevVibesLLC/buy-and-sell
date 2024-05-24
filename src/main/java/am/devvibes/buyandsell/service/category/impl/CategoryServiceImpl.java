@@ -19,9 +19,7 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Override
 	@Transactional
-	public CategoryEntity addCategory(String category) {
-		CategoryEntity categoryEntity = new CategoryEntity();
-		categoryEntity.setCategory(category);
+	public CategoryEntity addCategory(CategoryEntity categoryEntity) {
 		return categoryRepository.save(categoryEntity);
 	}
 

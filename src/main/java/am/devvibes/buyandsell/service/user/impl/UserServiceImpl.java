@@ -10,19 +10,15 @@ import am.devvibes.buyandsell.repository.UserRepository;
 import am.devvibes.buyandsell.service.security.SecurityService;
 import am.devvibes.buyandsell.service.user.UserService;
 import am.devvibes.buyandsell.util.ExceptionConstants;
-import am.devvibes.buyandsell.util.RandomGenerator;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.validator.routines.EmailValidator;
-import org.keycloak.KeycloakPrincipal;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.RolesResource;
 import org.keycloak.admin.client.resource.UsersResource;
-import org.keycloak.representations.AccessToken;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -117,14 +113,14 @@ public class UserServiceImpl implements UserService {
 	private void isEmailUnique(String email, UsersResource usersResource) {
 		List<UserRepresentation> userRepresentations = usersResource.searchByEmail(email, true);
 		if (!userRepresentations.isEmpty()) {
-			throw new SomethingWentWrongException(ExceptionConstants.USER_WITH_THIS_EMAIL_ALREADY_EXISTS);
+			throw new SomethingWentWrongException(ExceptionConstants.USER_WITH_THAT_EMAIL_ALREADY_EXISTS);
 		}
 	}
 
 	private void isUsernameUnique(String username, UsersResource usersResource) {
 		List<UserRepresentation> userRepresentations = usersResource.searchByUsername(username, true);
 		if (!userRepresentations.isEmpty()) {
-			throw new SomethingWentWrongException(ExceptionConstants.USER_WITH_THIS_USERNAME_ALREADY_EXISTS);
+			throw new SomethingWentWrongException(ExceptionConstants.USER_WITH_THAT_USERNAME_ALREADY_EXISTS);
 		}
 	}
 

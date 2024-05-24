@@ -4,7 +4,6 @@ import am.devvibes.buyandsell.BaseRepositoryTest;
 import am.devvibes.buyandsell.dto.itemForSell.ItemForSellRequestDto;
 import am.devvibes.buyandsell.dto.itemForSell.ItemForSellResponseDto;
 import am.devvibes.buyandsell.exception.NotFoundException;
-import am.devvibes.buyandsell.repository.ItemForSellRepository;
 import am.devvibes.buyandsell.service.configuration.ItemForSellTestConfiguration;
 import am.devvibes.buyandsell.service.itemForSell.ItemForSellService;
 import am.devvibes.buyandsell.util.Category;
