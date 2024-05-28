@@ -1,10 +1,9 @@
 package am.devvibes.buyandsell.service.configuration;
 
 import am.devvibes.buyandsell.mapper.UserMapper;
-import am.devvibes.buyandsell.mapper.impl.UserMapperImpl;
-import am.devvibes.buyandsell.repository.RoleRepository;
 import am.devvibes.buyandsell.repository.UserRepository;
 import am.devvibes.buyandsell.service.email.EmailService;
+import am.devvibes.buyandsell.service.security.SecurityService;
 import am.devvibes.buyandsell.service.user.UserService;
 import am.devvibes.buyandsell.service.user.impl.UserServiceImpl;
 import org.keycloak.OAuth2Constants;
@@ -50,10 +49,7 @@ public class UserTestConfiguration {
 		return new BCryptPasswordEncoder();
 	}
 
-	@Bean
-	public UserMapper userMapper(PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
-		return new UserMapperImpl(passwordEncoder, roleRepository);
-	}
+
 
 	@Bean
 	public JavaMailSender javaMailSender() {
@@ -68,9 +64,9 @@ public class UserTestConfiguration {
 	@Bean
 	public UserService userService(UserRepository userRepository,
 			UserMapper userMapper,
-			PasswordEncoder passwordEncoder,
+		SecurityService securityService,
 			Keycloak keycloak) {
-		return new UserServiceImpl(userRepository, userMapper, passwordEncoder, keycloak);
+		return new UserServiceImpl(userRepository, userMapper, keycloak, securityService);
 	}
 
 }

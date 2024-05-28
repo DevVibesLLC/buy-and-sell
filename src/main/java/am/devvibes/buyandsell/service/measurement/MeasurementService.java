@@ -1,6 +1,5 @@
 package am.devvibes.buyandsell.service.measurement;
 
-import am.devvibes.buyandsell.entity.FieldNameEntity;
 import am.devvibes.buyandsell.entity.MeasurementEntity;
 
 import java.util.List;

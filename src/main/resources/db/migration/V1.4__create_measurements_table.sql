@@ -1,8 +1,3 @@
-CREATE TABLE if not exists measurement_entity (
-    id BIGINT PRIMARY KEY,
-    symbol VARCHAR(10) NOT NULL,
-    category VARCHAR(50) NOT NULL
-);
 
 INSERT INTO measurement_entity (id, symbol, category)
 VALUES
