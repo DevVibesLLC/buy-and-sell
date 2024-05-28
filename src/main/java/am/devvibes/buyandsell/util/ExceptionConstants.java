@@ -14,7 +14,10 @@ public enum ExceptionConstants {
 	INCORRECT_CODE("Incorrect code"),
 	ITEM_NOT_FOUND("Item not found"),
 	CATEGORY_NOT_FOUND("Category not found"),
-	LOCATION_NOT_FOUND("Location not found");
+	LOCATION_NOT_FOUND("Location not found"),
+	FIELD_NOT_FOUND("Field not found"),
+	FIELD_NAME_NOT_FOUND("Field name not found"),
+	MEASUREMENT_NOT_FOUND("Measurement not found");
 
 
 	private final String string;

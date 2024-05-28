@@ -1,10 +1,10 @@
-/*
+
 package am.devvibes.buyandsell.controller;
 
-import am.devvibes.buyandsell.classes.Price;
+import am.devvibes.buyandsell.dto.category.CategoryDto;
 import am.devvibes.buyandsell.entity.CategoryEntity;
+import am.devvibes.buyandsell.mapper.category.CategoryMapper;
 import am.devvibes.buyandsell.service.category.CategoryService;
-import am.devvibes.buyandsell.util.CurrencyEnum;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
@@ -21,18 +21,18 @@ import java.util.List;
 public class CategoryController {
 
 	private final CategoryService categoryService;
+	private final CategoryMapper categoryMapper;
 
 	@PostMapping("/{category}")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<CategoryEntity> createCategory(@PathVariable @NotBlank String category) {
-		CategoryEntity savedCategory = categoryService.addCategory(category);
-		return ResponseEntity.ok(savedCategory);
+		//CategoryEntity savedCategory = categoryService.addCategory();
+		return ResponseEntity.ok(null);
 	}
 
 	@GetMapping("/{id}")
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ResponseEntity<CategoryEntity> findCategoryById(@PathVariable @Positive Long id) {
-		CategoryEntity categoryEntity = categoryService.findCategoryById(id);
+	public ResponseEntity<CategoryDto> findCategoryById(@PathVariable @Positive Long id) {
+		CategoryDto categoryEntity = categoryService.findCategoryById(id);
 		return ResponseEntity.ok(categoryEntity);
 	}
 
@@ -51,4 +51,4 @@ public class CategoryController {
 	}
 
 }
-*/
+

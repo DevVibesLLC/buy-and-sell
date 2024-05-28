@@ -41,7 +41,7 @@ public class ItemMapperImpl implements ItemMapper {
 						.city(LocationEnum.getCity(itemRequestDto.getCityId()))
 						.address(itemRequestDto.getAddress())
 						.build())
-				.category(categoryService)
+				//.category()
 				.imgUrl(itemRequestDto.getImgUrl())
 				.build();
 	}

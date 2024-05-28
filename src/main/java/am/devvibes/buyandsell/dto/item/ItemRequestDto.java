@@ -1,5 +1,6 @@
 package am.devvibes.buyandsell.dto.item;
 
+import am.devvibes.buyandsell.dto.category.CategoryDto;
 import am.devvibes.buyandsell.util.CurrencyEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -23,6 +24,8 @@ public class ItemRequestDto {
 
 	@Enumerated(EnumType.STRING)
 	private CurrencyEnum currency;
+
+	private CategoryDto category;
 
 	private String address;
 

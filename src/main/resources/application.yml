@@ -9,7 +9,7 @@ server:
 spring:
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
   datasource:
     url: jdbc:postgresql://${JDBC_URL:localhost}:${JDBC_PORT:5432}/${DATABASE_NAME:buyandsell}
     database-platform: org.hibernate.dialect.PostgreSQLDialect
@@ -17,7 +17,7 @@ spring:
     password: ${SPRING_DATASOURCE_PASSWORD:456}
     driver-class-name: org.postgresql.Driver
   flyway:
-    enabled: false
+    enabled: true
     baseline-on-migrate: true
     baseline-version: 0
   mail:
@@ -62,7 +62,7 @@ keycloak:
   realm: buy-and-sell
   domain: localhost:9081
   adminClientId: buy-and-sell-client-id
-  adminClientSecret: yZYSRo9cDdnmBR24VBJ51FEG1R3FqnuO
+  adminClientSecret: rcMyJf7FQHKLdE2hkvLTW1N6Dl75sZsu
   urls:
     auth: http://${keycloak.domain}
 

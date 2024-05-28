@@ -1,9 +1,7 @@
 package am.devvibes.buyandsell.classes.value.valueTypes;
 
 import am.devvibes.buyandsell.classes.value.Value;
-import am.devvibes.buyandsell.classes.value.ValueAndMeasurement;
 import jakarta.persistence.Embeddable;
-import jakarta.persistence.MappedSuperclass;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

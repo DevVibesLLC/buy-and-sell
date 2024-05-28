@@ -1,5 +1,6 @@
 package am.devvibes.buyandsell.service.category;
 
+import am.devvibes.buyandsell.dto.category.CategoryDto;
 import am.devvibes.buyandsell.entity.CategoryEntity;
 
 import java.util.List;
@@ -10,8 +11,9 @@ public interface CategoryService {
 
 	List<CategoryEntity> findAllCategories();
 
-	CategoryEntity findCategoryById(Long id);
+	CategoryDto findCategoryById(Long id);
 
 	void deleteCategoryById(Long id);
 
+	CategoryDto createCategoryRequestDto(String category);
 }
