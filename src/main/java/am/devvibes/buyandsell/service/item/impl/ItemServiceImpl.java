@@ -5,7 +5,7 @@ import am.devvibes.buyandsell.dto.item.ItemResponseDto;
 import am.devvibes.buyandsell.entity.ItemEntity;
 import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.exception.SomethingWentWrongException;
-import am.devvibes.buyandsell.mapper.ItemMapper;
+import am.devvibes.buyandsell.mapper.item.ItemMapper;
 import am.devvibes.buyandsell.repository.ItemRepository;
 import am.devvibes.buyandsell.service.item.ItemService;
 import am.devvibes.buyandsell.service.security.SecurityService;
@@ -26,8 +26,8 @@ public class ItemServiceImpl implements ItemService {
 
 	@Override
 	@Transactional
-	public ItemResponseDto save(ItemRequestDto itemRequestDto) {
-		ItemEntity itemEntity = itemMapper.mapDtoToEntity(itemRequestDto);
+	public ItemResponseDto save(ItemRequestDto itemRequestDto, Long categoryId) {
+		ItemEntity itemEntity = itemMapper.mapDtoToEntity(itemRequestDto, categoryId);
 		return itemMapper.mapEntityToDto(itemRepository.save(itemEntity));
 	}
 

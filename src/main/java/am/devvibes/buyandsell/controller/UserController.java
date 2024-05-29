@@ -1,12 +1,11 @@
 package am.devvibes.buyandsell.controller;
 
 import am.devvibes.buyandsell.dto.user.UserResponseDto;
-import am.devvibes.buyandsell.mapper.UserMapper;
+import am.devvibes.buyandsell.mapper.user.UserMapper;
 import am.devvibes.buyandsell.service.user.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

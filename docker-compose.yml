@@ -15,7 +15,9 @@ services:
   keycloak:
     image: quay.io/keycloak/keycloak:22.0.4
     command: start-dev
-    restart: always
+    restart: unless-stopped
+    depends_on:
+      - postgres
     links:
       - postgres
     ports:
@@ -24,10 +26,11 @@ services:
       KEYCLOAK_ADMIN : admin
       KEYCLOAK_ADMIN_PASSWORD: admin@1234
       KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/buyandsell
       KC_DB_SCHEMA: public
       KC_DB_USERNAME: postgres
       KC_DB_PASSWORD: 456
-      KC_DB_URL: jdbc:postgresql://postgres:5432/buyandsell
+      KC_DB_NAME: buyandsell
       KC_FEATURES: token-exchange,admin-fine-grained-authz
       KC_HOSTNAME: localhost
     volumes:

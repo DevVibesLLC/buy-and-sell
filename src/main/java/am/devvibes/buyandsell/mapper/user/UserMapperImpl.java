@@ -1,22 +1,17 @@
-package am.devvibes.buyandsell.mapper.impl;
+package am.devvibes.buyandsell.mapper.user;
 
 import am.devvibes.buyandsell.dto.user.UserRequestDto;
 import am.devvibes.buyandsell.dto.user.UserResponseDto;
 import am.devvibes.buyandsell.entity.UserEntity;
-import am.devvibes.buyandsell.mapper.UserMapper;
-import am.devvibes.buyandsell.repository.RoleRepository;
-import am.devvibes.buyandsell.util.Role;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service

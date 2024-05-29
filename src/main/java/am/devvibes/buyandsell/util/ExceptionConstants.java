@@ -16,8 +16,12 @@ public enum ExceptionConstants {
 	CATEGORY_NOT_FOUND("Category not found"),
 	LOCATION_NOT_FOUND("Location not found"),
 	FIELD_NOT_FOUND("Field not found"),
+	VALUE_NOT_FOUND("Value not found"),
 	FIELD_NAME_NOT_FOUND("Field name not found"),
-	MEASUREMENT_NOT_FOUND("Measurement not found");
+	MEASUREMENT_NOT_FOUND("Measurement not found"),
+	MARK_NOT_FOUND("Mark not found"),
+	MODEL_NOT_FOUND("Model not found"),
+	GENERATION_NOT_FOUND("Generation");
 
 
 	private final String string;

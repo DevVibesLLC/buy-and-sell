@@ -1,6 +1,6 @@
 package am.devvibes.buyandsell.service.configuration;
 
-import am.devvibes.buyandsell.mapper.UserMapper;
+import am.devvibes.buyandsell.mapper.user.UserMapper;
 import am.devvibes.buyandsell.repository.UserRepository;
 import am.devvibes.buyandsell.service.email.EmailService;
 import am.devvibes.buyandsell.service.security.SecurityService;

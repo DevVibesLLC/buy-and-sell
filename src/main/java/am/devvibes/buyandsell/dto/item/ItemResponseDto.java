@@ -1,6 +1,8 @@
 package am.devvibes.buyandsell.dto.item;
 
 import am.devvibes.buyandsell.classes.Price;
+import am.devvibes.buyandsell.dto.FieldValuesDto;
+import am.devvibes.buyandsell.dto.category.CategoryDto;
 import am.devvibes.buyandsell.dto.user.UserResponseDto;
 import am.devvibes.buyandsell.entity.CategoryEntity;
 import am.devvibes.buyandsell.entity.Location;
@@ -10,6 +12,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -17,7 +21,7 @@ import lombok.*;
 @Builder
 public class ItemResponseDto {
 
-	private String name;
+	private String title;
 
 	private String description;
 
@@ -25,9 +29,9 @@ public class ItemResponseDto {
 
 	private Location location;
 
-	private UserResponseDto user;
+	private String userId;
 
-	private CategoryEntity category;
+	private List<FieldValuesDto> fields;
 
 	private String imgUrl;
 

@@ -1,5 +1,6 @@
 package am.devvibes.buyandsell.entity.auto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,7 +21,7 @@ public class GenerationItemEntity {
     private int yearStart;
     private Integer yearEnd;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "generation_id")
     private GenerationEntity generation;
 

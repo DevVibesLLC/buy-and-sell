@@ -7,7 +7,8 @@ public enum DescriptionNameEnum {
 
 	SPECIFICATIONS("Specifications"),
 	EXTERIOR("Exterior"),
-	INTERIOR("Interior");
+	INTERIOR("Interior"),
+	ADDITIONAL_INFORMATION("Additional Information"),;
 
 	private final String name;
 

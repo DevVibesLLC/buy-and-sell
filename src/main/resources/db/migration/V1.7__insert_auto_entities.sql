@@ -5,6 +5,7 @@ values (1, 'CAR');
 INSERT INTO auto_mark_entity (id, name, category_id)
 VALUES (1,'BMW',1);
 
+
 INSERT INTO auto_model_entity (id, name, auto_mark_id)
 VALUES (1, '5-Series', 1);
 

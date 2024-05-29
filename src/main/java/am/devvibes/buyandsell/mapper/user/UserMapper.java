@@ -1,4 +1,4 @@
-package am.devvibes.buyandsell.mapper;
+package am.devvibes.buyandsell.mapper.user;
 
 import am.devvibes.buyandsell.dto.user.UserResponseDto;
 import am.devvibes.buyandsell.dto.user.UserRequestDto;

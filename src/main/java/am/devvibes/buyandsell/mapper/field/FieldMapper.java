@@ -1,11 +1,7 @@
-package am.devvibes.buyandsell.mapper;
+package am.devvibes.buyandsell.mapper.field;
 
 import am.devvibes.buyandsell.dto.field.FieldRequestDto;
-import am.devvibes.buyandsell.dto.item.ItemRequestDto;
 import am.devvibes.buyandsell.entity.FieldEntity;
-import am.devvibes.buyandsell.entity.ItemEntity;
-import org.springframework.stereotype.Service;
-
 
 public interface FieldMapper {
 

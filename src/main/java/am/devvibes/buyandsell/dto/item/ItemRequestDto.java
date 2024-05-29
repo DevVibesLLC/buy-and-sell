@@ -1,6 +1,8 @@
 package am.devvibes.buyandsell.dto.item;
 
+import am.devvibes.buyandsell.dto.FieldValuesDto;
 import am.devvibes.buyandsell.dto.category.CategoryDto;
+import am.devvibes.buyandsell.dto.field.FieldRequestDto;
 import am.devvibes.buyandsell.util.CurrencyEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,7 +19,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class ItemRequestDto {
 
-	private String name;
+	private String title;
 
 	private String description;
 
@@ -25,7 +28,7 @@ public class ItemRequestDto {
 	@Enumerated(EnumType.STRING)
 	private CurrencyEnum currency;
 
-	private CategoryDto category;
+	private List<FieldValuesDto> fieldsValue;
 
 	private String address;
 

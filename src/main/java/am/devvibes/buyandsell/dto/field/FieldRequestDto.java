@@ -2,6 +2,8 @@ package am.devvibes.buyandsell.dto.field;
 
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
@@ -10,7 +12,7 @@ import lombok.*;
 public class FieldRequestDto {
 
 	private String fieldName;
-	private String value;
+	private List<String> value;
 	private String measurement;
 
 }

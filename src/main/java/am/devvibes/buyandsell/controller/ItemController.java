@@ -2,7 +2,6 @@ package am.devvibes.buyandsell.controller;
 
 import am.devvibes.buyandsell.dto.item.ItemRequestDto;
 import am.devvibes.buyandsell.dto.item.ItemResponseDto;
-import am.devvibes.buyandsell.entity.ItemEntity;
 import am.devvibes.buyandsell.service.item.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +18,11 @@ public class ItemController {
 
 	private final ItemService itemService;
 
-	@PostMapping
+	@PostMapping("/{categoryId}")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public ResponseEntity<ItemResponseDto> createItem(@RequestBody ItemRequestDto itemRequestDto) {
-		return ResponseEntity.ok(itemService.save(itemRequestDto));
+	public ResponseEntity<ItemResponseDto> createItem(@PathVariable Long categoryId,
+			@RequestBody ItemRequestDto itemRequestDto) {
+		return ResponseEntity.ok(itemService.save(itemRequestDto, categoryId));
 	}
 
 	@GetMapping("/{id}")
@@ -41,6 +41,5 @@ public class ItemController {
 		itemService.deleteById(id);
 		return ResponseEntity.ok().build();
 	}
-
 
 }

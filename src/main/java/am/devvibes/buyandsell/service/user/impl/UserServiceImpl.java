@@ -5,7 +5,7 @@ import am.devvibes.buyandsell.dto.user.UserResponseDto;
 import am.devvibes.buyandsell.entity.UserEntity;
 import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.exception.SomethingWentWrongException;
-import am.devvibes.buyandsell.mapper.UserMapper;
+import am.devvibes.buyandsell.mapper.user.UserMapper;
 import am.devvibes.buyandsell.repository.UserRepository;
 import am.devvibes.buyandsell.service.security.SecurityService;
 import am.devvibes.buyandsell.service.user.UserService;
