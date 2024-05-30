@@ -1,17 +1,16 @@
-version: '3.8'
-
+version: "3.8"
 services:
   postgres:
-    ports:
-      - "5432:5432"
     image: postgres:latest
-    restart: always
-    volumes:
-      - ./pgdata:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: buyandsell
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 456
+    ports:
+      - "5432:5432"
+    command: [ "postgres", "-c", "wal_level=logical" ]
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
   keycloak:
     image: quay.io/keycloak/keycloak:22.0.4
     command: start-dev
@@ -35,25 +34,31 @@ services:
       KC_HOSTNAME: localhost
     volumes:
       - ./extensions:/opt/keycloak/providers/
-  redis:
-    image: redis:alpine3.14
-    command: redis-server --requirepass redis
-    ports:
-      - "6379:6379"
   elasticsearch:
     image: elasticsearch:7.12.1
-    ports:
-      - "9200:9200"
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+        reservations:
+          memory: 1g
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
       - network.host=127.0.0.1
       - http.host=0.0.0.0
       - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+    ports:
+      - "9200:9200"
+  redis:
+    image: redis:alpine3.14
+    command: redis-server --requirepass redis
+    ports:
+      - "6379:6379"
   pgsync:
     image: pgsync:latest
     build:
-      context: ./docker/pgsync
+      context: ./pgsync
       dockerfile: Dockerfile
     sysctls:
       - net.ipv4.tcp_keepalive_time=200
@@ -75,7 +80,6 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
       REDIS_AUTH: redis
-
   kibana:
     image: docker.elastic.co/kibana/kibana:7.10.1
     container_name: kibana
