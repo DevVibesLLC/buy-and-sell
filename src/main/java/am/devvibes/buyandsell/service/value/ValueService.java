@@ -1,6 +1,6 @@
 package am.devvibes.buyandsell.service.value;
 
-import am.devvibes.buyandsell.dto.FieldValuesDto;
+import am.devvibes.buyandsell.dto.value.FieldValuesDto;
 import am.devvibes.buyandsell.entity.ValueEntity;
 
 import java.util.List;

@@ -1,6 +1,6 @@
 package am.devvibes.buyandsell.entity;
 
-import am.devvibes.buyandsell.classes.Price;
+import am.devvibes.buyandsell.classes.price.Price;
 import am.devvibes.buyandsell.entity.base.BaseEntityWithDates;
 import jakarta.persistence.*;
 import lombok.*;

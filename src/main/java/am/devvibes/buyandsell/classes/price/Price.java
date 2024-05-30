@@ -1,11 +1,10 @@
-package am.devvibes.buyandsell.classes;
+package am.devvibes.buyandsell.classes.price;
 
 import am.devvibes.buyandsell.util.CurrencyEnum;
 import jakarta.persistence.Embeddable;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.util.Currency;
 
 @Getter
 @Setter

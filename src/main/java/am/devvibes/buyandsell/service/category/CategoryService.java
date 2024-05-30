@@ -11,9 +11,10 @@ public interface CategoryService {
 
 	List<CategoryEntity> findAllCategories();
 
+	CategoryEntity FindCategoryEntityOrElseThrow(Long categoryId);
+
 	CategoryDto findCategoryById(Long id);
 
 	void deleteCategoryById(Long id);
 
-	CategoryDto createCategoryRequestDto(String category);
 }

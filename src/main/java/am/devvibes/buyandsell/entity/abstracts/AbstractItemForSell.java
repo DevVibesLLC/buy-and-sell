@@ -1,11 +1,11 @@
 package am.devvibes.buyandsell.entity.abstracts;
 
-import am.devvibes.buyandsell.dto.user.UserResponseDto;
 import am.devvibes.buyandsell.entity.CategoryEntity;
-import am.devvibes.buyandsell.entity.UserEntity;
-import am.devvibes.buyandsell.util.Category;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 

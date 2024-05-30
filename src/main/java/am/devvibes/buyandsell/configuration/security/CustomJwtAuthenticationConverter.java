@@ -1,4 +1,4 @@
-package am.devvibes.buyandsell.configuration;
+package am.devvibes.buyandsell.configuration.security;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.core.GrantedAuthority;

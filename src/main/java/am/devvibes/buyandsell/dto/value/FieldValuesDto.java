@@ -1,4 +1,4 @@
-package am.devvibes.buyandsell.dto;
+package am.devvibes.buyandsell.dto.value;
 
 import lombok.*;
 

@@ -1,14 +1,11 @@
 package am.devvibes.buyandsell.mapper.item;
 
-import am.devvibes.buyandsell.classes.Price;
+import am.devvibes.buyandsell.classes.price.Price;
 import am.devvibes.buyandsell.dto.item.ItemRequestDto;
 import am.devvibes.buyandsell.dto.item.ItemResponseDto;
 import am.devvibes.buyandsell.entity.ItemEntity;
 import am.devvibes.buyandsell.entity.Location;
-import am.devvibes.buyandsell.mapper.category.CategoryMapper;
-import am.devvibes.buyandsell.mapper.user.UserMapperImpl;
 import am.devvibes.buyandsell.mapper.value.ValueMapper;
-import am.devvibes.buyandsell.repository.CategoryRepository;
 import am.devvibes.buyandsell.service.category.CategoryService;
 import am.devvibes.buyandsell.service.security.SecurityService;
 import am.devvibes.buyandsell.service.user.impl.UserServiceImpl;
@@ -26,9 +23,6 @@ public class ItemMapperImpl implements ItemMapper {
 	private final UserServiceImpl userService;
 	private final SecurityService securityService;
 	private final CategoryService categoryService;
-	private final CategoryRepository categoryRepository;
-	private final UserMapperImpl userMapper;
-	private final CategoryMapper categoryMapper;
 	private final ValueMapper valueMapper;
 	private final ValueService valueService;
 
@@ -48,7 +42,7 @@ public class ItemMapperImpl implements ItemMapper {
 						.city(LocationEnum.getCity(itemRequestDto.getCityId()))
 						.address(itemRequestDto.getAddress())
 						.build())
-				.category(categoryRepository.findById(categoryId).get())
+				.category(categoryService.FindCategoryEntityOrElseThrow(categoryId))
 				.values(valueService.saveAllValues(itemRequestDto.getFieldsValue()))
 				.imgUrl(itemRequestDto.getImgUrl())
 				.build();

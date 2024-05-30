@@ -20,17 +20,6 @@ spring:
     enabled: true
     baseline-on-migrate: true
     baseline-version: 0
-  mail:
-    port: 587
-    host: smtp.gmail.com
-    username: testfortest891@gmail.com
-    password: iabxmmbebumtizqt
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
   security:
     oauth2:
       resourceserver:
@@ -49,15 +38,6 @@ app:
     swagger:
       enable: true
 
-
-#keycloak:
-#  realm: BuyAndSell
-#  domain: localhost:8080
-#  clientId: buy-and-sell-be
-#  clientSecret: TjgE28OqkbR2laqeAI9GezLXkAlVj8cP
-#  urls:
-#    auth: http://${keycloak.domain}
-
 keycloak:
   realm: buy-and-sell
   domain: localhost:9081
@@ -66,5 +46,6 @@ keycloak:
   urls:
     auth: http://${keycloak.domain}
 
-
-
+springdoc:
+  api-docs:
+    path: /api-docs

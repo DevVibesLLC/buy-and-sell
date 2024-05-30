@@ -1,18 +1,16 @@
 package am.devvibes.buyandsell.controller;
 
-import am.devvibes.buyandsell.entity.FieldEntity;
 import am.devvibes.buyandsell.entity.MeasurementEntity;
 import am.devvibes.buyandsell.service.measurement.MeasurementService;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/admin/measurements")
 public class MeasurementController {
@@ -21,8 +19,9 @@ public class MeasurementController {
 
 	@PostMapping
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ResponseEntity<MeasurementEntity> createMeasurement(@PathVariable @NotBlank String symbol, @NotBlank String category) {
-		return ResponseEntity.ok(measurementService.addMeasurement(symbol,category));
+	public ResponseEntity<MeasurementEntity> createMeasurement(@PathVariable @NotBlank String symbol,
+			@NotBlank String category) {
+		return ResponseEntity.ok(measurementService.addMeasurement(symbol, category));
 	}
 
 	@GetMapping("/{id}")

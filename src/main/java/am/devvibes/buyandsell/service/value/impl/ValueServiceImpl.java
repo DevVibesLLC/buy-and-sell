@@ -1,6 +1,6 @@
 package am.devvibes.buyandsell.service.value.impl;
 
-import am.devvibes.buyandsell.dto.FieldValuesDto;
+import am.devvibes.buyandsell.dto.value.FieldValuesDto;
 import am.devvibes.buyandsell.entity.ValueEntity;
 import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.mapper.value.ValueMapper;

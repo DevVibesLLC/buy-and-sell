@@ -1,4 +1,4 @@
-package am.devvibes.buyandsell.configuration;
+package am.devvibes.buyandsell.configuration.keycloak;
 
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;

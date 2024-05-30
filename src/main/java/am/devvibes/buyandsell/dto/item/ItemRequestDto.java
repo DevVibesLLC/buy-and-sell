@@ -1,10 +1,9 @@
 package am.devvibes.buyandsell.dto.item;
 
-import am.devvibes.buyandsell.dto.FieldValuesDto;
-import am.devvibes.buyandsell.dto.category.CategoryDto;
-import am.devvibes.buyandsell.dto.field.FieldRequestDto;
+import am.devvibes.buyandsell.dto.value.FieldValuesDto;
 import am.devvibes.buyandsell.util.CurrencyEnum;
-import jakarta.persistence.*;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
