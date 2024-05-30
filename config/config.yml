@@ -1,0 +1,5 @@
+# Database connection settings
+from: postgres://postgres:456@postgres:5432/your_database
+
+# Elasticsearch connection settings
+to: http://elasticsearch:9200

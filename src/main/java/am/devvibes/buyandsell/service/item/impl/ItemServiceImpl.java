@@ -11,6 +11,8 @@ import am.devvibes.buyandsell.service.item.ItemService;
 import am.devvibes.buyandsell.service.security.SecurityService;
 import am.devvibes.buyandsell.util.ExceptionConstants;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,8 +43,8 @@ public class ItemServiceImpl implements ItemService {
 
 	@Override
 	@Transactional
-	public List<ItemResponseDto> findAllItems() {
-		return itemMapper.mapEntityListToDtoList(itemRepository.findAll());
+	public Page<ItemResponseDto> findAllItems(PageRequest pageRequest) {
+		return itemRepository.findAll(pageRequest).map(itemMapper::mapEntityToDto);
 	}
 
 	@Override

@@ -21,7 +21,8 @@ public enum ExceptionConstants {
 	MEASUREMENT_NOT_FOUND("Measurement not found"),
 	MARK_NOT_FOUND("Mark not found"),
 	MODEL_NOT_FOUND("Model not found"),
-	GENERATION_NOT_FOUND("Generation");
+	GENERATION_NOT_FOUND("Generation"),
+	PAGE_SIZE_EXCEPTION("Page size exception");
 
 
 	private final String string;
