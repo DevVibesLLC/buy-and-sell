@@ -11,6 +11,7 @@ services:
     command: [ "postgres", "-c", "wal_level=logical" ]
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+
   keycloak:
     image: quay.io/keycloak/keycloak:22.0.4
     command: start-dev
@@ -36,56 +37,30 @@ services:
       - ./extensions:/opt/keycloak/providers/
   elasticsearch:
     image: elasticsearch:7.12.1
-    deploy:
-      resources:
-        limits:
-          memory: 1g
-        reservations:
-          memory: 1g
+    container_name: elasticsearch
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
-      - network.host=127.0.0.1
-      - http.host=0.0.0.0
-      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+      - xpack.monitoring.collection.enabled=true
     ports:
       - "9200:9200"
-  redis:
-    image: redis:alpine3.14
-    command: redis-server --requirepass redis
-    ports:
-      - "6379:6379"
-  pgsync:
-    image: pgsync:latest
-    build:
-      context: ./pgsync
-      dockerfile: Dockerfile
-    sysctls:
-      - net.ipv4.tcp_keepalive_time=200
-      - net.ipv4.tcp_keepalive_intvl=200
-      - net.ipv4.tcp_keepalive_probes=5
-    links:
+      - "9300:9300"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.10.1
+    container_name: logstash
+    volumes:
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+      - ./postgresql-42.6.2.jar:/usr/share/logstash/postgresql-42.6.2.jar
+      - logstash_data:/usr/share/logstash
+    depends_on:
       - postgres
       - elasticsearch
-      - redis
-    environment:
-      PG_HOST: postgres
-      POSTGRES_PORT: 5432
-      PG_USER: postgres
-      PG_PASSWORD: 456
-      LOG_LEVEL: INFO
-      ELASTICSEARCH_HOST: elasticsearch
-      ELASTICSEARCH_PORT: 9200
-      ELASTICSEARCH_SCHEME: http
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      REDIS_AUTH: redis
-  kibana:
-    image: docker.elastic.co/kibana/kibana:7.10.1
-    container_name: kibana
-    environment:
-      ELASTICSEARCH_URL: http://elasticsearch:9200
     ports:
-      - "5601:5601"
-    depends_on:
-      - elasticsearch
+      - "5044:5044"
+      - "9600:9600"
+
+volumes:
+  es_data:
+  logstash_data:
