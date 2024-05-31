@@ -3,15 +3,43 @@ services:
   postgres:
     image: postgres:latest
     environment:
-      POSTGRES_DB: buyandsell
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 456
+      - POSTGRES_DB=buyandsell
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=456
     ports:
       - "5432:5432"
-    command: [ "postgres", "-c", "wal_level=logical" ]
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
-
+    volumes:
+      - postgresvolume:/var/lib/postgresql/data
+  elasticsearch:
+    container_name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.5.3
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elasticvolume:/usr/share/elasticsearch/data
+  logstash:
+    container_name: logstash
+    build:
+      context: ./logstash/
+      dockerfile: Dockerfile
+    ports:
+      - "5050:5050"
+    environment:
+      - CONFIG_SUPPORT_ESCAPE=true
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+      - postgres
+    volumes:
+      - logstashvolume:/usr/share/logstash/data
   keycloak:
     image: quay.io/keycloak/keycloak:22.0.4
     command: start-dev
@@ -35,32 +63,8 @@ services:
       KC_HOSTNAME: localhost
     volumes:
       - ./extensions:/opt/keycloak/providers/
-  elasticsearch:
-    image: elasticsearch:7.12.1
-    container_name: elasticsearch
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-      - xpack.monitoring.collection.enabled=true
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-    volumes:
-      - es_data:/usr/share/elasticsearch/data
-  logstash:
-    image: docker.elastic.co/logstash/logstash:7.10.1
-    container_name: logstash
-    volumes:
-      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
-      - ./postgresql-42.6.2.jar:/usr/share/logstash/postgresql-42.6.2.jar
-      - logstash_data:/usr/share/logstash
-    depends_on:
-      - postgres
-      - elasticsearch
-    ports:
-      - "5044:5044"
-      - "9600:9600"
 
 volumes:
-  es_data:
-  logstash_data:
+  postgresvolume:
+  elasticvolume:
+  logstashvolume:

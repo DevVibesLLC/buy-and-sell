@@ -17,7 +17,7 @@ spring:
     password: ${SPRING_DATASOURCE_PASSWORD:456}
     driver-class-name: org.postgresql.Driver
   flyway:
-    enabled: false
+    enabled: true
     baseline-on-migrate: true
     baseline-version: 0
   security:
@@ -41,8 +41,8 @@ app:
 keycloak:
   realm: buy-and-sell
   domain: localhost:9081
-  adminClientId: buy-and-sell-client-id
-  adminClientSecret: 2MuKTotmf3lFIMdHuqIHC5aiX0B9zBwb
+  adminClientId: buy-and-sell-client-be
+  adminClientSecret: lvIrM0rSapiUsu5oqNuz41ulFdF1aABy
   urls:
     auth: http://${keycloak.domain}
 
