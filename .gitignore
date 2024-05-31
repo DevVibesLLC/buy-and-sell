@@ -13,7 +13,7 @@ build/
 .settings
 .springBeans
 .sts4-cache
-bin/
+logstash/bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
 

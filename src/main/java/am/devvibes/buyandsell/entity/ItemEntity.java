@@ -5,6 +5,7 @@ import am.devvibes.buyandsell.entity.base.BaseEntityWithDates;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
@@ -13,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ItemEntity extends BaseEntityWithDates {
+public class ItemEntity extends BaseEntityWithDates implements Serializable {
 
 	private String title;
 
@@ -29,7 +30,7 @@ public class ItemEntity extends BaseEntityWithDates {
 	@JoinColumn(name = "user_id", nullable = false)
 	private UserEntity userEntity;
 
-	@OneToOne
+	@ManyToOne
 	private CategoryEntity category;
 
 	@OneToMany

@@ -5,6 +5,7 @@ import am.devvibes.buyandsell.util.DescriptionNameEnum;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
@@ -13,7 +14,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DescriptionEntity extends BaseEntity {
+public class DescriptionEntity extends BaseEntity implements Serializable {
 
 	@Enumerated(EnumType.STRING)
 	private DescriptionNameEnum header;

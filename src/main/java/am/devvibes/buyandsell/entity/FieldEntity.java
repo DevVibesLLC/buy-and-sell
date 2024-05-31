@@ -4,6 +4,7 @@ import am.devvibes.buyandsell.entity.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Setter
@@ -12,7 +13,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FieldEntity extends BaseEntity {
+public class FieldEntity extends BaseEntity implements Serializable {
 
 	private String fieldName;
 
