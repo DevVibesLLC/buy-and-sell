@@ -13,8 +13,8 @@ spring:
   datasource:
     url: jdbc:postgresql://${JDBC_URL:localhost}:${JDBC_PORT:5432}/${DATABASE_NAME:buyandsell}
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-    username: ${SPRING_DATASOURCE_USERNAME:postgres}
-    password: ${SPRING_DATASOURCE_PASSWORD:456}
+    username: ${SPRING_DATASOURCE_USERNAME:buyandsell}
+    password: ${SPRING_DATASOURCE_PASSWORD:buyandsell}
     driver-class-name: org.postgresql.Driver
   flyway:
     enabled: true
@@ -42,7 +42,7 @@ keycloak:
   realm: buy-and-sell
   domain: localhost:9081
   adminClientId: buy-and-sell-client-be
-  adminClientSecret: lvIrM0rSapiUsu5oqNuz41ulFdF1aABy
+  adminClientSecret: tjxmBB7y4z2cVbXRDmxai2aDsyVQxM5G
   urls:
     auth: http://${keycloak.domain}
 

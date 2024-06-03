@@ -29,7 +29,8 @@ public class ItemEntity extends BaseEntityWithDates {
 	@JoinColumn(name = "user_id", nullable = false)
 	private UserEntity userEntity;
 
-	@OneToOne
+	@ManyToOne
+	@JoinColumn(name = "category_id", nullable = false)
 	private CategoryEntity category;
 
 	@OneToMany

@@ -4,12 +4,12 @@ services:
     image: postgres:latest
     environment:
       - POSTGRES_DB=buyandsell
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=456
+      - POSTGRES_USER=buyandsell
+      - POSTGRES_PASSWORD=buyandsell
     ports:
       - "5432:5432"
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      test: [ "CMD-SHELL", "pg_isready -U buyandsell" ]
     volumes:
       - postgresvolume:/var/lib/postgresql/data
   elasticsearch:
@@ -52,12 +52,12 @@ services:
       - "9081:8080"
     environment:
       KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin@1234
+      KEYCLOAK_ADMIN_PASSWORD: admin
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres:5432/buyandsell
       KC_DB_SCHEMA: public
-      KC_DB_USERNAME: postgres
-      KC_DB_PASSWORD: 456
+      KC_DB_USERNAME: buyandsell
+      KC_DB_PASSWORD: buyandsell
       KC_DB_NAME: buyandsell
       KC_FEATURES: token-exchange,admin-fine-grained-authz
       KC_HOSTNAME: localhost
