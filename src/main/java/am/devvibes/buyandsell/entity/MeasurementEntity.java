@@ -4,6 +4,7 @@ import am.devvibes.buyandsell.entity.base.BaseEntity;
 import jakarta.persistence.Entity;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
@@ -12,7 +13,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MeasurementEntity extends BaseEntity {
+public class MeasurementEntity extends BaseEntity implements Serializable {
 
     private String symbol;
     private String category;

@@ -6,6 +6,7 @@ import am.devvibes.buyandsell.util.CategoryEnum;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
@@ -14,7 +15,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryEntity extends BaseEntity {
+public class CategoryEntity extends BaseEntity implements Serializable {
 
 	@Enumerated(EnumType.STRING)
 	private CategoryEnum name;
