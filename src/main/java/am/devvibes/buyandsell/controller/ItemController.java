@@ -30,6 +30,14 @@ public class ItemController {
 		return ResponseEntity.ok(itemService.save(itemRequestDto, categoryId));
 	}
 
+	@PutMapping("/{categoryId}/item/{itemId}")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Update item")
+	public ResponseEntity<ItemResponseDto> updateItem(@PathVariable Long categoryId,@PathVariable Long itemId,
+			@RequestBody ItemRequestDto itemRequestDto) {
+		return ResponseEntity.ok(itemService.update(itemRequestDto, categoryId, itemId));
+	}
+
 	@GetMapping("/{id}")
 	@Operation(summary = "Get item by id")
 	public ResponseEntity<ItemResponseDto> getItemById(@PathVariable Long id) {

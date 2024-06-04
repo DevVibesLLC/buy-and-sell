@@ -10,13 +10,12 @@ import am.devvibes.buyandsell.repository.ItemRepository;
 import am.devvibes.buyandsell.service.item.ItemService;
 import am.devvibes.buyandsell.service.security.SecurityService;
 import am.devvibes.buyandsell.util.ExceptionConstants;
+import am.devvibes.buyandsell.util.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -36,8 +35,7 @@ public class ItemServiceImpl implements ItemService {
 	@Override
 	@Transactional
 	public ItemResponseDto findById(Long id) {
-		ItemEntity itemEntity =
-				itemRepository.findById(id).orElseThrow(() -> new NotFoundException(ExceptionConstants.ITEM_NOT_FOUND));
+		ItemEntity itemEntity = getItemByIdOrElseThrow(id);
 		return itemMapper.mapEntityToDto(itemEntity);
 	}
 
@@ -51,13 +49,24 @@ public class ItemServiceImpl implements ItemService {
 	@Transactional
 	public void deleteById(Long id) {
 		String currentUserId = securityService.getCurrentUserId();
-		ItemEntity itemEntity =
-				itemRepository.findById(id).orElseThrow(() -> new NotFoundException(ExceptionConstants.ITEM_NOT_FOUND));
+		ItemEntity itemEntity = getItemByIdOrElseThrow(id);
 
 		if (!itemEntity.getUserEntity().getId().equals(currentUserId)) {
 			throw new SomethingWentWrongException(ExceptionConstants.INVALID_ACTION);
 		}
-		itemRepository.deleteById(id);
+		itemEntity.setStatus(Status.DELETED);
+		itemRepository.save(itemEntity);
+	}
+
+	private ItemEntity getItemByIdOrElseThrow(Long id) {
+		return itemRepository.findById(id).orElseThrow(() -> new NotFoundException(ExceptionConstants.ITEM_NOT_FOUND));
+	}
+
+	@Override
+	public ItemResponseDto update(ItemRequestDto itemRequestDto, Long categoryId, Long itemId) {
+		ItemEntity itemEntity = getItemByIdOrElseThrow(itemId);
+
+		return itemMapper.mapEntityToDto(itemMapper.updateEntity(itemEntity,itemRequestDto));
 	}
 
 }

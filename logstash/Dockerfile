@@ -5,6 +5,6 @@ COPY ./bin/ /usr/share/logstash/logstash-core/lib/jars/
 
 COPY config/ /usr/share/logstash/config/
 
-CMD ["logstash", "-f", "/usr/share/logstash/config/usersync.conf"]
-
+# Run Logstash with the specified configuration file in debug mode
+CMD ["logstash", "--log.level", "debug", "-f", "/usr/share/logstash/config/usersync.conf"]
 

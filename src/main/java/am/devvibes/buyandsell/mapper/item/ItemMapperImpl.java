@@ -11,6 +11,7 @@ import am.devvibes.buyandsell.service.security.SecurityService;
 import am.devvibes.buyandsell.service.user.impl.UserServiceImpl;
 import am.devvibes.buyandsell.service.value.ValueService;
 import am.devvibes.buyandsell.util.LocationEnum;
+import am.devvibes.buyandsell.util.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -44,6 +45,7 @@ public class ItemMapperImpl implements ItemMapper {
 						.build())
 				.category(categoryService.FindCategoryEntityOrElseThrow(categoryId))
 				.values(valueService.saveAllValues(itemRequestDto.getFieldsValue()))
+				.status(Status.CREATED)
 				.imgUrl(itemRequestDto.getImgUrl())
 				.build();
 	}
@@ -61,6 +63,19 @@ public class ItemMapperImpl implements ItemMapper {
 				.imgUrl(itemEntity.getImgUrl())
 				.build();
 	}
+
+	@Override
+	public ItemEntity updateEntity(ItemEntity itemEntity, ItemRequestDto updatedEntity) {
+				itemEntity.setTitle(itemEntity.getTitle());
+				itemEntity.setDescription(itemEntity.getDescription());
+				itemEntity.setPrice(itemEntity.getPrice());
+
+				itemEntity.setDescription(itemEntity.getDescription());
+				itemEntity.setLocation(itemEntity.getLocation());
+				itemEntity.setImgUrl(itemEntity.getImgUrl());
+				return itemEntity;
+	}
+
 
 	@Override
 	public List<ItemResponseDto> mapEntityListToDtoList(List<ItemEntity> itemEntityList) {

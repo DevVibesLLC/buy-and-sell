@@ -1,0 +1,71 @@
+package am.devvibes.buyandsell.repository;
+
+import am.devvibes.buyandsell.BaseRepositoryTest;
+import am.devvibes.buyandsell.entity.*;
+import am.devvibes.buyandsell.util.CategoryEnum;
+import am.devvibes.buyandsell.util.Status;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import static am.devvibes.buyandsell.util.DescriptionNameEnum.SPECIFICATIONS;
+
+@DataJpaTest
+class ItemForSellTest extends BaseRepositoryTest {
+
+	@Autowired
+	private ItemRepository itemRepository;
+
+	@Autowired
+	private CategoryRepository categoryRepository;
+
+
+
+	@Test
+	void updateValueItemForSell() {
+		var categoryEntity = categoryRepository.save(CategoryEntity.builder()
+				.descriptions(Arrays.asList(DescriptionEntity.builder()
+								.header(SPECIFICATIONS)
+								.fields(Arrays.asList(
+										FieldEntity.builder()
+												.fieldName("mark")
+												.measurement(null)
+												.build()
+								))
+						.build()))
+				.name(CategoryEnum.CAR).build());
+
+		var laavBmw = itemRepository.save(ItemEntity.builder()
+				.status(Status.CREATED)
+				.title("LAAV BMW")
+				.category(categoryEntity)
+						.values(Arrays.asList(
+								ValueEntity.builder()
+										.field(categoryEntity.getDescriptions().get(0).getFields().get(0))
+										.fieldValue("BMW")
+										.build()
+						))
+				.userEntity(null)
+				.build());
+		Assertions.assertNotNull(categoryEntity.getId());
+
+		ItemEntity itemForUpdate = itemRepository.findById(laavBmw.getId()).orElseThrow();
+		var mers = ValueEntity.builder()
+				.field(categoryEntity.getDescriptions().get(0).getFields().get(0))
+				.fieldValue("MERS")
+				.build();
+		ArrayList<ValueEntity> objects = new ArrayList<>();
+		objects.add(mers);
+		itemForUpdate.setValues(objects);
+		ItemEntity save = itemRepository.save(itemForUpdate);
+		Assertions.assertEquals(save.getValues().get(0).getFieldValue(),"MERS");
+
+
+	}
+
+
+}

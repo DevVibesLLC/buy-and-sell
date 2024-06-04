@@ -24,7 +24,7 @@ public class FieldEntity extends BaseEntity implements Serializable {
 	@ElementCollection
 	private List<String> value;
 
-	@OneToOne(fetch = FetchType.EAGER)
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name = "measurement_id")
 	private MeasurementEntity measurement;
 

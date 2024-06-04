@@ -2,7 +2,6 @@ package am.devvibes.buyandsell.service.configuration;
 
 import am.devvibes.buyandsell.mapper.user.UserMapper;
 import am.devvibes.buyandsell.repository.UserRepository;
-import am.devvibes.buyandsell.service.email.EmailService;
 import am.devvibes.buyandsell.service.security.SecurityService;
 import am.devvibes.buyandsell.service.user.UserService;
 import am.devvibes.buyandsell.service.user.impl.UserServiceImpl;
@@ -56,10 +55,6 @@ public class UserTestConfiguration {
 		return new JavaMailSenderImpl();
 	}
 
-	@Bean
-	public EmailService emailService(JavaMailSender mailSender) {
-		return new EmailService(mailSender);
-	}
 
 	@Bean
 	public UserService userService(UserRepository userRepository,

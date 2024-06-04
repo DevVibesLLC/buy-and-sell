@@ -5,8 +5,6 @@ import am.devvibes.buyandsell.dto.item.ItemResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
-import java.util.List;
-
 public interface ItemService {
 
 	ItemResponseDto save(ItemRequestDto itemRequestDto, Long categoryId);
@@ -16,5 +14,7 @@ public interface ItemService {
 	Page<ItemResponseDto> findAllItems(PageRequest pageRequest);
 
 	void deleteById(Long id);
+
+	ItemResponseDto update(ItemRequestDto itemRequestDto, Long categoryId, Long itemId);
 
 }

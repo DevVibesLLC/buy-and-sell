@@ -11,5 +11,7 @@ public interface ItemMapper {
 
 	ItemResponseDto mapEntityToDto(ItemEntity itemEntity);
 
+	ItemEntity updateEntity(ItemEntity itemEntity, ItemRequestDto updatedEntity);
+
 	List<ItemResponseDto> mapEntityListToDtoList(List<ItemEntity> itemEntityList);
 }

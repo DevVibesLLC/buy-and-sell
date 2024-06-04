@@ -2,6 +2,7 @@ package am.devvibes.buyandsell.entity;
 
 import am.devvibes.buyandsell.classes.price.Price;
 import am.devvibes.buyandsell.entity.base.BaseEntityWithDates;
+import am.devvibes.buyandsell.util.Status;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,10 +34,12 @@ public class ItemEntity extends BaseEntityWithDates {
 	@JoinColumn(name = "category_id", nullable = false)
 	private CategoryEntity category;
 
-	@OneToMany
+	@OneToMany( cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name = "item_id")
 	private List<ValueEntity> values;
 
 	private String imgUrl;
 
+	@Enumerated(EnumType.STRING)
+	private Status status;
 }
