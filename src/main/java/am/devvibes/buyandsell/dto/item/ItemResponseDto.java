@@ -14,6 +14,8 @@ import java.util.List;
 @Builder
 public class ItemResponseDto {
 
+	private Long id;
+
 	private String title;
 
 	private String description;

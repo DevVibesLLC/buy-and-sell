@@ -53,6 +53,7 @@ public class ItemMapperImpl implements ItemMapper {
 	@Override
 	public ItemResponseDto mapEntityToDto(ItemEntity itemEntity) {
 		return ItemResponseDto.builder()
+				.id(itemEntity.getId())
 				.title(itemEntity.getTitle())
 				.description(itemEntity.getDescription())
 				.price(itemEntity.getPrice())
@@ -62,18 +63,6 @@ public class ItemMapperImpl implements ItemMapper {
 				.location(itemEntity.getLocation())
 				.imgUrl(itemEntity.getImgUrl())
 				.build();
-	}
-
-	@Override
-	public ItemEntity updateEntity(ItemEntity itemEntity, ItemRequestDto updatedEntity) {
-				itemEntity.setTitle(itemEntity.getTitle());
-				itemEntity.setDescription(itemEntity.getDescription());
-				itemEntity.setPrice(itemEntity.getPrice());
-
-				itemEntity.setDescription(itemEntity.getDescription());
-				itemEntity.setLocation(itemEntity.getLocation());
-				itemEntity.setImgUrl(itemEntity.getImgUrl());
-				return itemEntity;
 	}
 
 

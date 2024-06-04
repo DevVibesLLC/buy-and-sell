@@ -42,7 +42,7 @@ keycloak:
   realm: buy-and-sell
   domain: localhost:9081
   adminClientId: buy-and-sell-client-be
-  adminClientSecret: tjxmBB7y4z2cVbXRDmxai2aDsyVQxM5G
+  adminClientSecret: TOeDX10R7b5k8JY7Kf5EsbRhmOrzWaMH
   urls:
     auth: http://${keycloak.domain}
 

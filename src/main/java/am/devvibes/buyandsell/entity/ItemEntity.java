@@ -34,7 +34,7 @@ public class ItemEntity extends BaseEntityWithDates {
 	@JoinColumn(name = "category_id", nullable = false)
 	private CategoryEntity category;
 
-	@OneToMany( cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany( cascade = CascadeType.ALL)
 	@JoinColumn(name = "item_id")
 	private List<ValueEntity> values;
 

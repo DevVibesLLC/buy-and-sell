@@ -17,4 +17,6 @@ public interface ValueService {
 
 	void deleteValueById(Long id);
 
+	List<ValueEntity> updateValues(List<ValueEntity> values,List<FieldValuesDto> fieldsValues);
+
 }
