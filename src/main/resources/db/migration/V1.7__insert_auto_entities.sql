@@ -1,13 +1,5 @@
-insert into category_entity (id, name)
-values (1, 'CAR');
-
-
-INSERT INTO auto_mark_entity (id, name, category_id)
-VALUES (1,'BMW',1);
-
-
-INSERT INTO auto_model_entity (id, name, auto_mark_id)
-VALUES (1, '5-Series', 1);
+/*INSERT INTO auto_model_entity (id, name, auto_mark_id)
+VALUES (1, '5-Series', 18);
 
 INSERT INTO generation_entity (id, generation_number, auto_model_id)
 VALUES (1, 8, 1),
@@ -101,3 +93,4 @@ INSERT INTO generation_item_entity (id, restyling, year_start, year_end, generat
 VALUES (14, 0, 1972, 1976, 8);
 INSERT INTO generation_item_entity_frames (generation_item_entity_id, frames)
 VALUES (14, 'E12');
+*/

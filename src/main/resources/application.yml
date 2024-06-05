@@ -17,9 +17,10 @@ spring:
     password: ${SPRING_DATASOURCE_PASSWORD:buyandsell}
     driver-class-name: org.postgresql.Driver
   flyway:
-    enabled: false
+    enabled: true
     baseline-on-migrate: true
     baseline-version: 0
+    out-of-order: true
   security:
     oauth2:
       resourceserver:
