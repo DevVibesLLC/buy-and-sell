@@ -1,7 +1,4 @@
-/*INSERT INTO auto_model_entity (id, name, auto_mark_id)
-VALUES (1, '5-Series', 18);
-
-INSERT INTO generation_entity (id, generation_number, auto_model_id)
+/*INSERT INTO generation_entity (id, generation_number, auto_model_id)
 VALUES (1, 8, 1),
        (2, 7, 1),
        (3, 6, 1),
@@ -11,7 +8,7 @@ VALUES (1, 8, 1),
        (7, 2, 1),
        (8, 1, 1);
 
-INSERT INTO generation_item_entity (id, restyling, year_start, year_end, generation_id)
+INSERT INTO generation_item_entity (id, restyling, ,year_start year_end, generation_id)
 VALUES (1, 0, 2023, NULL, 1);
 
 INSERT INTO generation_item_entity_frames (generation_item_entity_id, frames)
