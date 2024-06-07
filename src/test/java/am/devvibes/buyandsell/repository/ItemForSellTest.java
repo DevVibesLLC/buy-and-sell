@@ -31,7 +31,7 @@ class ItemForSellTest extends BaseRepositoryTest {
 				.descriptions(Arrays.asList(DescriptionEntity.builder()
 								.header(SPECIFICATIONS)
 								.fields(Arrays.asList(
-										FieldEntity.builder()
+										FieldNameEntity.builder()
 												.fieldName("mark")
 												.measurement(null)
 												.build()
@@ -43,9 +43,9 @@ class ItemForSellTest extends BaseRepositoryTest {
 				.status(Status.CREATED)
 				.title("LAAV BMW")
 				.category(categoryEntity)
-						.values(Arrays.asList(
-								ValueEntity.builder()
-										.field(categoryEntity.getDescriptions().get(0).getFields().get(0))
+						.fields(Arrays.asList(
+								FieldEntity.builder()
+										.fieldName(categoryEntity.getDescriptions().get(0).getFields().get(0))
 										.fieldValue("BMW")
 										.build()
 						))
@@ -54,15 +54,15 @@ class ItemForSellTest extends BaseRepositoryTest {
 		Assertions.assertNotNull(categoryEntity.getId());
 
 		ItemEntity itemForUpdate = itemRepository.findById(laavBmw.getId()).orElseThrow();
-		var mers = ValueEntity.builder()
-				.field(categoryEntity.getDescriptions().get(0).getFields().get(0))
+		var mers = FieldEntity.builder()
+				.fieldName(categoryEntity.getDescriptions().get(0).getFields().get(0))
 				.fieldValue("MERS")
 				.build();
-		ArrayList<ValueEntity> objects = new ArrayList<>();
+		ArrayList<FieldEntity> objects = new ArrayList<>();
 		objects.add(mers);
-		itemForUpdate.setValues(objects);
+		itemForUpdate.setFields(objects);
 		ItemEntity save = itemRepository.save(itemForUpdate);
-		Assertions.assertEquals(save.getValues().get(0).getFieldValue(),"MERS");
+		Assertions.assertEquals(save.getFields().get(0).getFieldValue(),"MERS");
 
 
 	}

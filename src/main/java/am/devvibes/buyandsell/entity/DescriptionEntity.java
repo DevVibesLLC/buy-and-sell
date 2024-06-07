@@ -21,6 +21,6 @@ public class DescriptionEntity extends BaseEntity implements Serializable {
 
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "description_id")
-	private List<FieldEntity> fields;
+	private List<FieldNameEntity> fields;
 
 }

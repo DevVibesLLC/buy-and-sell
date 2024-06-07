@@ -50,5 +50,6 @@ VALUES
 (47, 'mph', 'Speed'),
 (52, 'W', 'Power'),
 (53, 'kW', 'Power'),
-(54, 'hp', 'Power')
+(54, 'hp', 'Power'),
+(55, 'R', 'Wheel')
 ON CONFLICT (id) DO NOTHING;

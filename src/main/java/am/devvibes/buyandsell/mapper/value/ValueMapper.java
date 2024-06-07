@@ -1,18 +1,18 @@
 package am.devvibes.buyandsell.mapper.value;
 
 import am.devvibes.buyandsell.dto.value.FieldValuesDto;
-import am.devvibes.buyandsell.entity.ValueEntity;
+import am.devvibes.buyandsell.entity.FieldEntity;
 
 import java.util.List;
 
 public interface ValueMapper {
 
-	ValueEntity mapDtoToEntity(FieldValuesDto fieldValuesDto);
+	FieldEntity mapDtoToEntity(FieldValuesDto fieldValuesDto);
 
-	List<ValueEntity> mapDtoListToEntityList(List<FieldValuesDto> fieldValuesDtos);
+	List<FieldEntity> mapDtoListToEntityList(List<FieldValuesDto> fieldValuesDtos);
 
-	FieldValuesDto mapEntityToDto(ValueEntity valueEntity);
+	FieldValuesDto mapEntityToDto(FieldEntity valueEntity);
 
-	List<FieldValuesDto> mapEntityListToDtoList(List<ValueEntity> valueEntities);
+	List<FieldValuesDto> mapEntityListToDtoList(List<FieldEntity> valueEntities);
 
 }

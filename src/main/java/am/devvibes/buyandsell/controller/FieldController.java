@@ -1,7 +1,7 @@
 package am.devvibes.buyandsell.controller;
 
 import am.devvibes.buyandsell.dto.field.FieldRequestDto;
-import am.devvibes.buyandsell.entity.FieldEntity;
+import am.devvibes.buyandsell.entity.FieldNameEntity;
 import am.devvibes.buyandsell.service.field.FieldService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -22,25 +22,25 @@ public class FieldController {
 	@PostMapping
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@Operation(summary = "create field")
-	public ResponseEntity<FieldEntity> createField(@RequestBody @Valid FieldRequestDto fieldRequestDto) {
+	public ResponseEntity<FieldNameEntity> createField(@RequestBody @Valid FieldRequestDto fieldRequestDto) {
 		return ResponseEntity.ok(fieldService.addField(fieldRequestDto));
 	}
 
 	@GetMapping("/{id}")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ResponseEntity<FieldEntity> getFieldById(@PathVariable Long id) {
+	public ResponseEntity<FieldNameEntity> getFieldById(@PathVariable Long id) {
 		return ResponseEntity.ok(fieldService.findFieldById(id));
 	}
 
 	@GetMapping
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ResponseEntity<List<FieldEntity>> getAllFields() {
+	public ResponseEntity<List<FieldNameEntity>> getAllFields() {
 		return ResponseEntity.ok(fieldService.findAllFields());
 	}
 
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ResponseEntity<List<FieldEntity>> deleteFieldById(@PathVariable Long id) {
+	public ResponseEntity<List<FieldNameEntity>> deleteFieldById(@PathVariable Long id) {
 		fieldService.deleteFieldById(id);
 		return ResponseEntity.ok().build();
 	}

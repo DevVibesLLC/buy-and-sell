@@ -36,7 +36,7 @@ public class ItemEntity extends BaseEntityWithDates {
 
 	@OneToMany( cascade = CascadeType.ALL)
 	@JoinColumn(name = "item_id")
-	private List<ValueEntity> values;
+	private List<FieldEntity> fields;
 
 	private String imgUrl;
 

@@ -3,10 +3,8 @@ package am.devvibes.buyandsell.service.item.impl;
 import am.devvibes.buyandsell.classes.price.Price;
 import am.devvibes.buyandsell.dto.item.ItemRequestDto;
 import am.devvibes.buyandsell.dto.item.ItemResponseDto;
-import am.devvibes.buyandsell.dto.value.FieldValuesDto;
 import am.devvibes.buyandsell.entity.ItemEntity;
 import am.devvibes.buyandsell.entity.Location;
-import am.devvibes.buyandsell.entity.ValueEntity;
 import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.exception.SomethingWentWrongException;
 import am.devvibes.buyandsell.mapper.item.ItemMapper;
@@ -18,16 +16,12 @@ import am.devvibes.buyandsell.util.ExceptionConstants;
 import am.devvibes.buyandsell.util.LocationEnum;
 import am.devvibes.buyandsell.util.Status;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 
@@ -92,7 +86,7 @@ public class ItemServiceImpl implements ItemService {
 						itemRequestDto.getCurrency())
 				.build());
 
-		itemEntity.setValues(valueService.updateValues(itemEntity.getValues(), itemRequestDto.getFieldsValue()));
+		itemEntity.setFields(valueService.updateValues(itemEntity.getFields(), itemRequestDto.getFieldsValue()));
 
 		itemEntity.setDescription((isNull(itemRequestDto.getDescription()) ? itemEntity.getDescription() :
 				itemRequestDto.getDescription()));

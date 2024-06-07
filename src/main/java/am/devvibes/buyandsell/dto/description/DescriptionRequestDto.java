@@ -1,7 +1,6 @@
 package am.devvibes.buyandsell.dto.description;
 
 import am.devvibes.buyandsell.dto.field.FieldRequestDto;
-import am.devvibes.buyandsell.entity.FieldEntity;
 import am.devvibes.buyandsell.util.DescriptionNameEnum;
 import lombok.*;
 

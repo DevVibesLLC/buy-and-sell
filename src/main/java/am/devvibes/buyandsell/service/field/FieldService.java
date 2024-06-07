@@ -1,17 +1,17 @@
 package am.devvibes.buyandsell.service.field;
 
 import am.devvibes.buyandsell.dto.field.FieldRequestDto;
-import am.devvibes.buyandsell.entity.FieldEntity;
+import am.devvibes.buyandsell.entity.FieldNameEntity;
 
 import java.util.List;
 
 public interface FieldService {
 
-	FieldEntity addField(FieldRequestDto fieldRequestDto);
+	FieldNameEntity addField(FieldRequestDto fieldRequestDto);
 
-	FieldEntity findFieldById(Long id);
+	FieldNameEntity findFieldById(Long id);
 
-	List<FieldEntity> findAllFields();
+	List<FieldNameEntity> findAllFields();
 
 	void deleteFieldById(Long id);
 }

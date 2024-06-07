@@ -44,7 +44,7 @@ public class ItemMapperImpl implements ItemMapper {
 						.address(itemRequestDto.getAddress())
 						.build())
 				.category(categoryService.FindCategoryEntityOrElseThrow(categoryId))
-				.values(valueService.saveAllValues(itemRequestDto.getFieldsValue()))
+				.fields(valueService.saveAllValues(itemRequestDto.getFieldsValue()))
 				.status(Status.CREATED)
 				.imgUrl(itemRequestDto.getImgUrl())
 				.build();
@@ -57,7 +57,7 @@ public class ItemMapperImpl implements ItemMapper {
 				.title(itemEntity.getTitle())
 				.description(itemEntity.getDescription())
 				.price(itemEntity.getPrice())
-				.fields(valueMapper.mapEntityListToDtoList(itemEntity.getValues()))
+				.fields(valueMapper.mapEntityListToDtoList(itemEntity.getFields()))
 				.description(itemEntity.getDescription())
 				.userId(itemEntity.getUserEntity().getId())
 				.location(itemEntity.getLocation())

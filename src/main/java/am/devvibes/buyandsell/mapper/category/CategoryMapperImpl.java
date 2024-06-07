@@ -5,7 +5,7 @@ import am.devvibes.buyandsell.dto.description.DescriptionRequestDto;
 import am.devvibes.buyandsell.dto.field.FieldRequestDto;
 import am.devvibes.buyandsell.entity.CategoryEntity;
 import am.devvibes.buyandsell.entity.DescriptionEntity;
-import am.devvibes.buyandsell.entity.FieldEntity;
+import am.devvibes.buyandsell.entity.FieldNameEntity;
 import am.devvibes.buyandsell.service.measurement.MeasurementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,7 +37,7 @@ public class CategoryMapperImpl implements CategoryMapper {
 				.toList();
 	}
 
-	private List<FieldRequestDto> mapFieldsToDto(List<FieldEntity> fields) {
+	private List<FieldRequestDto> mapFieldsToDto(List<FieldNameEntity> fields) {
 		return fields.stream()
 				.map(fieldEntity -> FieldRequestDto.builder()
 						.fieldName(fieldEntity.getFieldName())

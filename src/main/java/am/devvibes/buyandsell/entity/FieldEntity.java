@@ -5,27 +5,18 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
-import java.util.List;
 
-@Setter
 @Getter
+@Setter
 @Entity
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class FieldEntity extends BaseEntity implements Serializable {
 
-	private String fieldName;
+	private String fieldValue;
 
-	private boolean isRequired;
-
-	private boolean isPrefilled;
-
-	@ElementCollection
-	private List<String> value;
-
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinColumn(name = "measurement_id")
-	private MeasurementEntity measurement;
+	@ManyToOne
+	private FieldNameEntity fieldName;
 
 }

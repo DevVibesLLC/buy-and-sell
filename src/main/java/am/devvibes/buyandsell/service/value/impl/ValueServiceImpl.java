@@ -2,7 +2,6 @@ package am.devvibes.buyandsell.service.value.impl;
 
 import am.devvibes.buyandsell.dto.value.FieldValuesDto;
 import am.devvibes.buyandsell.entity.FieldEntity;
-import am.devvibes.buyandsell.entity.ValueEntity;
 import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.mapper.value.ValueMapper;
 import am.devvibes.buyandsell.repository.ValueRepository;
@@ -12,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -28,26 +26,26 @@ public class ValueServiceImpl implements ValueService {
 
 	@Override
 	@Transactional
-	public ValueEntity saveValue(FieldValuesDto fieldValuesDto) {
+	public FieldEntity saveValue(FieldValuesDto fieldValuesDto) {
 		return valueRepository.save(valueMapper.mapDtoToEntity(fieldValuesDto));
 	}
 
 	@Override
 	@Transactional
-	public List<ValueEntity> saveAllValues(List<FieldValuesDto> fieldValuesDtos) {
+	public List<FieldEntity> saveAllValues(List<FieldValuesDto> fieldValuesDtos) {
 		return fieldValuesDtos.stream().map(this::saveValue).toList();
 	}
 
 	@Override
 	@Transactional
-	public ValueEntity findValueById(Long id) {
+	public FieldEntity findValueById(Long id) {
 		return valueRepository.findById(id)
 				.orElseThrow(() -> new NotFoundException(ExceptionConstants.VALUE_NOT_FOUND));
 	}
 
 	@Override
 	@Transactional
-	public List<ValueEntity> findAllValues() {
+	public List<FieldEntity> findAllValues() {
 		return valueRepository.findAll();
 	}
 
@@ -59,15 +57,15 @@ public class ValueServiceImpl implements ValueService {
 
 	@Override
 	@Transactional
-	public List<ValueEntity> updateValues(List<ValueEntity> values, List<FieldValuesDto> fieldsValues) {
+	public List<FieldEntity> updateValues(List<FieldEntity> values, List<FieldValuesDto> fieldsValues) {
 		if (isNull(fieldsValues) || fieldsValues.isEmpty())
 			return values;
 
-		Map<Long, ValueEntity> existingValuesMap = values.stream()
-				.collect(Collectors.toMap(value -> value.getField().getId(), value -> value));
+		Map<Long, FieldEntity> existingValuesMap = values.stream()
+				.collect(Collectors.toMap(value -> value.getFieldName().getId(), value -> value));
 
 		for (FieldValuesDto dto : fieldsValues) {
-			ValueEntity valueEntity = existingValuesMap.get(dto.getFieldId());
+			FieldEntity valueEntity = existingValuesMap.get(dto.getFieldId());
 			if (valueEntity != null) {
 				valueEntity.setFieldValue(dto.getFieldValue());
 			}
