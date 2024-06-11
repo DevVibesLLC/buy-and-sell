@@ -1,5 +1,7 @@
 package am.devvibes.buyandsell.dto.filter;
 
+import am.devvibes.buyandsell.util.CurrencyEnum;
+import am.devvibes.buyandsell.util.LocationEnum;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -21,14 +23,14 @@ public class FilterAndSearchDto {
 
 		private String bodyType;
 
-		private BigDecimal price;
+		private String startPrice;
+		private String endPrice;
+
+		private Long currency;
 
 		private Long country;
-		private Long city;
 		private Long region;
-		private String address;
-
-		private String item_title;
+		private Long city;
 
 		private String startEngineSize;
 		private String endEngineSize;

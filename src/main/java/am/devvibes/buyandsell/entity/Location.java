@@ -2,7 +2,6 @@ package am.devvibes.buyandsell.entity;
 
 import am.devvibes.buyandsell.util.LocationEnum;
 import jakarta.persistence.Embeddable;
-import jakarta.persistence.Entity;
 import lombok.*;
 
 @Getter

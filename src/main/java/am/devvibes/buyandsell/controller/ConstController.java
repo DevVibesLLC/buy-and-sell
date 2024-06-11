@@ -42,4 +42,10 @@ public class ConstController {
 		return ResponseEntity.ok(generationsByModel);
 	}
 
+	@GetMapping("field/{fieldId}")
+	@Operation(summary = "Get fields by field name id")
+	public ResponseEntity<List<String>> getFieldValues(@PathVariable Long fieldId) {
+		return ResponseEntity.ok(constCategoryService.findByFieldNameId(fieldId));
+	}
+
 }

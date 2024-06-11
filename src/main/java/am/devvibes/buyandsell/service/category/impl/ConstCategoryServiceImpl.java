@@ -4,6 +4,7 @@ import am.devvibes.buyandsell.dto.autoMark.AutoMarkDto;
 import am.devvibes.buyandsell.dto.autoModel.AutoModelDto;
 import am.devvibes.buyandsell.dto.generation.GenerationDto;
 import am.devvibes.buyandsell.entity.CategoryEntity;
+import am.devvibes.buyandsell.entity.FieldNameEntity;
 import am.devvibes.buyandsell.entity.auto.AutoMarkEntity;
 import am.devvibes.buyandsell.entity.auto.AutoModelEntity;
 import am.devvibes.buyandsell.entity.auto.GenerationEntity;
@@ -14,6 +15,7 @@ import am.devvibes.buyandsell.mapper.generation.GenerationMapper;
 import am.devvibes.buyandsell.repository.AutoMarkRepository;
 import am.devvibes.buyandsell.repository.AutoModelRepository;
 import am.devvibes.buyandsell.repository.CategoryRepository;
+import am.devvibes.buyandsell.repository.FieldNameRepository;
 import am.devvibes.buyandsell.service.category.ConstCategoryService;
 import am.devvibes.buyandsell.util.ExceptionConstants;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ public class ConstCategoryServiceImpl implements ConstCategoryService {
 	private final CategoryRepository categoryRepository;
 	private final AutoMarkRepository markRepository;
 	private final AutoModelRepository modelRepository;
+	private final FieldNameRepository fieldRepository;
 	private final AutoMarkMapper autoMarkMapper;
 	private final AutoModelMapper autoModelMapper;
 	private final GenerationMapper generationMapper;
@@ -58,6 +61,13 @@ public class ConstCategoryServiceImpl implements ConstCategoryService {
 				.map(AutoModelEntity::getGenerations)
 				.orElseThrow(() -> new NotFoundException(ExceptionConstants.GENERATION_NOT_FOUND));
 		return generationMapper.mapEntityListToDtoList(generationEntities);
+	}
+
+	@Override
+	public List<String> findByFieldNameId(Long id) {
+		FieldNameEntity fieldNameEntity = fieldRepository.findById(id)
+				.orElseThrow(() -> new NotFoundException(ExceptionConstants.FIELD_NAME_NOT_FOUND));
+		return fieldNameEntity.getValue();
 	}
 
 }

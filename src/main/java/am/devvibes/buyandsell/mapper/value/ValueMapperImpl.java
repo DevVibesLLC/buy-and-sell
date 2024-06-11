@@ -4,7 +4,7 @@ import am.devvibes.buyandsell.dto.value.FieldValuesDto;
 import am.devvibes.buyandsell.entity.FieldNameEntity;
 import am.devvibes.buyandsell.entity.FieldEntity;
 import am.devvibes.buyandsell.exception.NotFoundException;
-import am.devvibes.buyandsell.repository.FieldRepository;
+import am.devvibes.buyandsell.repository.FieldNameRepository;
 import am.devvibes.buyandsell.util.ExceptionConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ValueMapperImpl implements ValueMapper{
 
-	private final FieldRepository fieldRepository;
+	private final FieldNameRepository fieldRepository;
 
 	@Override
 	public FieldEntity mapDtoToEntity(FieldValuesDto fieldValuesDto) {

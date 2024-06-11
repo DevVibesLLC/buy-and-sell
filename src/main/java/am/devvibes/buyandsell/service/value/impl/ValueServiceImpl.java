@@ -4,7 +4,7 @@ import am.devvibes.buyandsell.dto.value.FieldValuesDto;
 import am.devvibes.buyandsell.entity.FieldEntity;
 import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.mapper.value.ValueMapper;
-import am.devvibes.buyandsell.repository.ValueRepository;
+import am.devvibes.buyandsell.repository.FieldRepository;
 import am.devvibes.buyandsell.service.value.ValueService;
 import am.devvibes.buyandsell.util.ExceptionConstants;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ import static java.util.Objects.isNull;
 @RequiredArgsConstructor
 public class ValueServiceImpl implements ValueService {
 
-	private final ValueRepository valueRepository;
+	private final FieldRepository valueRepository;
 	private final ValueMapper valueMapper;
 
 	@Override

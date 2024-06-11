@@ -16,4 +16,6 @@ public interface ConstCategoryService {
 
 	List<GenerationDto> findGenerationsByModel(Long modelId);
 
+	List<String> findByFieldNameId(Long id);
+
 }
