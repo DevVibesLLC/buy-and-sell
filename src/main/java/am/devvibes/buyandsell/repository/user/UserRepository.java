@@ -1,4 +1,4 @@
-package am.devvibes.buyandsell.repository;
+package am.devvibes.buyandsell.repository.user;
 
 import am.devvibes.buyandsell.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

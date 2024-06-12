@@ -4,7 +4,7 @@ import am.devvibes.buyandsell.dto.field.FieldRequestDto;
 import am.devvibes.buyandsell.entity.FieldNameEntity;
 import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.mapper.field.FieldMapper;
-import am.devvibes.buyandsell.repository.FieldNameRepository;
+import am.devvibes.buyandsell.repository.field.FieldNameRepository;
 import am.devvibes.buyandsell.service.field.FieldService;
 import am.devvibes.buyandsell.util.ExceptionConstants;
 import lombok.RequiredArgsConstructor;

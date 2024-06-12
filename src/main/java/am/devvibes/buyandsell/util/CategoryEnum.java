@@ -6,8 +6,8 @@ import lombok.Getter;
 public enum CategoryEnum {
 
 	CAR("Car"),
-	HEALTH("Health"),
-	HOME("Home");
+	TRUCK("Truck"),
+	BUS("Bus");
 
 	private final String name;
 

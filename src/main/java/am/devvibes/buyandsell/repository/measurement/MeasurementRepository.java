@@ -1,4 +1,4 @@
-package am.devvibes.buyandsell.repository;
+package am.devvibes.buyandsell.repository.measurement;
 
 import am.devvibes.buyandsell.entity.MeasurementEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

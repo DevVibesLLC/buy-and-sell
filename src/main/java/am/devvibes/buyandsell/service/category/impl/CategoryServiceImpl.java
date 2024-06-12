@@ -4,7 +4,7 @@ import am.devvibes.buyandsell.dto.category.CategoryDto;
 import am.devvibes.buyandsell.entity.CategoryEntity;
 import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.mapper.category.CategoryMapper;
-import am.devvibes.buyandsell.repository.CategoryRepository;
+import am.devvibes.buyandsell.repository.category.CategoryRepository;
 import am.devvibes.buyandsell.service.category.CategoryService;
 import am.devvibes.buyandsell.service.field.FieldService;
 import am.devvibes.buyandsell.util.ExceptionConstants;

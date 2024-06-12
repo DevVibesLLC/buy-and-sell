@@ -1,6 +1,5 @@
 package am.devvibes.buyandsell.entity.auto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 

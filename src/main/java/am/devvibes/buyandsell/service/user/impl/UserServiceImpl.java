@@ -6,7 +6,7 @@ import am.devvibes.buyandsell.entity.UserEntity;
 import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.exception.SomethingWentWrongException;
 import am.devvibes.buyandsell.mapper.user.UserMapper;
-import am.devvibes.buyandsell.repository.UserRepository;
+import am.devvibes.buyandsell.repository.user.UserRepository;
 import am.devvibes.buyandsell.service.security.SecurityService;
 import am.devvibes.buyandsell.service.user.UserService;
 import am.devvibes.buyandsell.util.ExceptionConstants;
@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.RealmResource;
-import org.keycloak.admin.client.resource.RolesResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -95,12 +94,6 @@ public class UserServiceImpl implements UserService {
 		RealmResource realm1 = keycloak.realm(realm);
 		return realm1.users();
 	}
-
-	private RolesResource getRoleResource() {
-		RealmResource realm1 = keycloak.realm(realm);
-		return realm1.roles();
-	}
-
 
 	private void validateUser(UserRequestDto signUpDto) {
 		UsersResource usersResource = getUsersResource();

@@ -1,7 +1,5 @@
 package am.devvibes.buyandsell.entity.auto;
 
-import am.devvibes.buyandsell.entity.CategoryEntity;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,7 +19,6 @@ public class AutoMarkEntity {
     private String name;
 
     @OneToMany(mappedBy = "autoMark", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    //@JsonIgnore
     private List<AutoModelEntity> models;
 
 }

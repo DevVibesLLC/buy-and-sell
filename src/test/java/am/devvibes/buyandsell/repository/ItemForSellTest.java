@@ -2,6 +2,8 @@ package am.devvibes.buyandsell.repository;
 
 import am.devvibes.buyandsell.BaseRepositoryTest;
 import am.devvibes.buyandsell.entity.*;
+import am.devvibes.buyandsell.repository.category.CategoryRepository;
+import am.devvibes.buyandsell.repository.item.ItemRepository;
 import am.devvibes.buyandsell.util.CategoryEnum;
 import am.devvibes.buyandsell.util.Status;
 import org.junit.jupiter.api.Assertions;

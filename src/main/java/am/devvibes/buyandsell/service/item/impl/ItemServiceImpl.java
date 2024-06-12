@@ -11,7 +11,7 @@ import am.devvibes.buyandsell.entity.Location;
 import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.exception.SomethingWentWrongException;
 import am.devvibes.buyandsell.mapper.item.ItemMapper;
-import am.devvibes.buyandsell.repository.ItemRepository;
+import am.devvibes.buyandsell.repository.item.ItemRepository;
 import am.devvibes.buyandsell.service.item.ItemService;
 import am.devvibes.buyandsell.service.security.SecurityService;
 import am.devvibes.buyandsell.service.value.ValueService;

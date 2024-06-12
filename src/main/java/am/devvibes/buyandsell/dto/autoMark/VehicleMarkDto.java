@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AutoMarkDto {
+public class VehicleMarkDto {
 
 	private Long id;
 	private String mark;
