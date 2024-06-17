@@ -1,4 +1,4 @@
-package am.devvibes.buyandsell.entity;
+package am.devvibes.buyandsell.entity.role;
 
 import am.devvibes.buyandsell.util.Role;
 import jakarta.persistence.*;

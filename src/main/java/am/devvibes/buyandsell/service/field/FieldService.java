@@ -1,7 +1,7 @@
 package am.devvibes.buyandsell.service.field;
 
 import am.devvibes.buyandsell.dto.field.FieldRequestDto;
-import am.devvibes.buyandsell.entity.FieldNameEntity;
+import am.devvibes.buyandsell.entity.field.FieldNameEntity;
 
 import java.util.List;
 

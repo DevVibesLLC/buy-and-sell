@@ -1,7 +1,7 @@
 package am.devvibes.buyandsell.controller;
 
 import am.devvibes.buyandsell.dto.field.FieldRequestDto;
-import am.devvibes.buyandsell.entity.FieldNameEntity;
+import am.devvibes.buyandsell.entity.field.FieldNameEntity;
 import am.devvibes.buyandsell.service.field.FieldService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;

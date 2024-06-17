@@ -1,7 +1,11 @@
 package am.devvibes.buyandsell.repository;
 
 import am.devvibes.buyandsell.BaseRepositoryTest;
-import am.devvibes.buyandsell.entity.*;
+import am.devvibes.buyandsell.entity.category.CategoryEntity;
+import am.devvibes.buyandsell.entity.description.DescriptionEntity;
+import am.devvibes.buyandsell.entity.field.FieldEntity;
+import am.devvibes.buyandsell.entity.field.FieldNameEntity;
+import am.devvibes.buyandsell.entity.item.ItemEntity;
 import am.devvibes.buyandsell.repository.category.CategoryRepository;
 import am.devvibes.buyandsell.repository.item.ItemRepository;
 import am.devvibes.buyandsell.util.CategoryEnum;

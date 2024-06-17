@@ -1,6 +1,6 @@
 package am.devvibes.buyandsell.mapper.auto.autoModel;
 
-import am.devvibes.buyandsell.dto.autoModel.VehicleModelDto;
+import am.devvibes.buyandsell.dto.vehicleModel.VehicleModelDto;
 import am.devvibes.buyandsell.entity.auto.AutoModelEntity;
 import org.springframework.stereotype.Service;
 

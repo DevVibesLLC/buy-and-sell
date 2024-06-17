@@ -1,11 +1,10 @@
-package am.devvibes.buyandsell.entity;
+package am.devvibes.buyandsell.entity.measurement;
 
 import am.devvibes.buyandsell.entity.base.BaseEntity;
 import jakarta.persistence.Entity;
 import lombok.*;
 
 import java.io.Serializable;
-import java.util.List;
 
 @Entity
 @Getter

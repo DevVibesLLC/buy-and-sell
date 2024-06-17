@@ -1,4 +1,4 @@
-package am.devvibes.buyandsell.entity;
+package am.devvibes.buyandsell.entity.field;
 
 import am.devvibes.buyandsell.entity.base.BaseEntity;
 import jakarta.persistence.*;

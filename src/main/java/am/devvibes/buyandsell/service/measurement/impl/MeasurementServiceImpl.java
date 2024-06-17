@@ -1,6 +1,6 @@
 package am.devvibes.buyandsell.service.measurement.impl;
 
-import am.devvibes.buyandsell.entity.MeasurementEntity;
+import am.devvibes.buyandsell.entity.measurement.MeasurementEntity;
 import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.repository.measurement.MeasurementRepository;
 import am.devvibes.buyandsell.service.measurement.MeasurementService;

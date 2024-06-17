@@ -1,6 +1,6 @@
 package am.devvibes.buyandsell.controller;
 
-import am.devvibes.buyandsell.entity.MeasurementEntity;
+import am.devvibes.buyandsell.entity.measurement.MeasurementEntity;
 import am.devvibes.buyandsell.service.measurement.MeasurementService;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;

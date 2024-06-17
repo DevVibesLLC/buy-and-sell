@@ -1,6 +1,6 @@
 package am.devvibes.buyandsell.entity.abstracts;
 
-import am.devvibes.buyandsell.entity.CategoryEntity;
+import am.devvibes.buyandsell.entity.category.CategoryEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

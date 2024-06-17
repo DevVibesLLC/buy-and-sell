@@ -1,34 +1,35 @@
 package am.devvibes.buyandsell.service.category.impl;
 
-import am.devvibes.buyandsell.dto.autoMark.VehicleMarkDto;
-import am.devvibes.buyandsell.dto.autoModel.VehicleModelDto;
-import am.devvibes.buyandsell.entity.CategoryEntity;
-import am.devvibes.buyandsell.entity.FieldNameEntity;
+import am.devvibes.buyandsell.dto.vehicleMark.VehicleMarkDto;
+import am.devvibes.buyandsell.dto.vehicleModel.VehicleModelDto;
+import am.devvibes.buyandsell.entity.category.CategoryEntity;
+import am.devvibes.buyandsell.entity.field.FieldNameEntity;
 import am.devvibes.buyandsell.entity.auto.AutoMarkEntity;
 import am.devvibes.buyandsell.entity.auto.AutoModelEntity;
+import am.devvibes.buyandsell.entity.bus.BusMarkEntity;
+import am.devvibes.buyandsell.entity.bus.BusModelEntity;
 import am.devvibes.buyandsell.entity.truck.TruckMarkEntity;
 import am.devvibes.buyandsell.entity.truck.TruckModelEntity;
 import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.mapper.auto.autoMark.AutoMarkMapper;
 import am.devvibes.buyandsell.mapper.auto.autoModel.AutoModelMapper;
+import am.devvibes.buyandsell.mapper.bus.busMark.BusMarkMapper;
+import am.devvibes.buyandsell.mapper.bus.busModel.BusModelMapper;
 import am.devvibes.buyandsell.mapper.truck.truckMark.TruckMarkMapper;
 import am.devvibes.buyandsell.mapper.truck.truckModel.TruckModelMapper;
 import am.devvibes.buyandsell.repository.auto.AutoMarkRepository;
+import am.devvibes.buyandsell.repository.bus.BusMarkRepository;
 import am.devvibes.buyandsell.repository.category.CategoryRepository;
 import am.devvibes.buyandsell.repository.field.FieldNameRepository;
 import am.devvibes.buyandsell.repository.truck.TruckMarkRepository;
 import am.devvibes.buyandsell.service.category.ConstCategoryService;
 import am.devvibes.buyandsell.util.CategoryEnum;
 import am.devvibes.buyandsell.util.ExceptionConstants;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
-
-import static java.util.Objects.isNull;
 
 @Service
 @RequiredArgsConstructor
@@ -37,29 +38,40 @@ public class ConstCategoryServiceImpl implements ConstCategoryService {
 	private final CategoryRepository categoryRepository;
 	private final AutoMarkRepository autoMarkRepository;
 	private final TruckMarkRepository truckMarkRepository;
+	private final BusMarkRepository busMarkRepository;
 	private final FieldNameRepository fieldRepository;
 	private final AutoMarkMapper autoMarkMapper;
 	private final AutoModelMapper autoModelMapper;
 	private final TruckMarkMapper truckMarkMapper;
 	private final TruckModelMapper truckModelMapper;
+	private final BusMarkMapper busMarkMapper;
+	private final BusModelMapper busModelMapper;
 
 	@Override
 	@Transactional
-	public List<VehicleMarkDto> findMarksByCategory(Long categoryId) {
-		CategoryEntity categoryEntity = categoryRepository.findById(categoryId)
+	public List<VehicleMarkDto> findAutoMarks() {
+		CategoryEntity categoryEntity = categoryRepository.findByName(CategoryEnum.CAR)
 				.orElseThrow(() -> new NotFoundException(ExceptionConstants.CATEGORY_NOT_FOUND));
 
-		switch (categoryEntity.getName()){
-			case CategoryEnum.CAR -> {
-				List<AutoMarkEntity> autoMarks = categoryEntity.getAutoMarks();
-				return autoMarkMapper.mapEntityListToDtoList(autoMarks);
-			}
-			case CategoryEnum.TRUCK -> {
-				List<TruckMarkEntity> truckMarks = categoryEntity.getTruckMarks();
-				return truckMarkMapper.mapEntityListToDtoList(truckMarks);
-			}
-			default -> throw new NotFoundException(ExceptionConstants.CATEGORY_NOT_FOUND);
-		}
+		return autoMarkMapper.mapEntityListToDtoList(categoryEntity.getAutoMarks());
+	}
+
+	@Override
+	@Transactional
+	public List<VehicleMarkDto> findTruckMarks() {
+		CategoryEntity categoryEntity = categoryRepository.findByName(CategoryEnum.TRUCK)
+				.orElseThrow(() -> new NotFoundException(ExceptionConstants.CATEGORY_NOT_FOUND));
+
+		return truckMarkMapper.mapEntityListToDtoList(categoryEntity.getTruckMarks());
+	}
+
+	@Override
+	@Transactional
+	public List<VehicleMarkDto> findBusMarks() {
+		CategoryEntity categoryEntity = categoryRepository.findByName(CategoryEnum.BUS)
+				.orElseThrow(() -> new NotFoundException(ExceptionConstants.CATEGORY_NOT_FOUND));
+
+		return busMarkMapper.mapEntityListToDtoList(categoryEntity.getBusMarks());
 	}
 
 	@Override
@@ -70,13 +82,6 @@ public class ConstCategoryServiceImpl implements ConstCategoryService {
 		return autoModelMapper.mapEntityListToDtoList(autoModelEntities);
 	}
 
-	@Override
-	public List<VehicleMarkDto> findTruckMarksByCategory(Long categoryId) {
-		List<TruckMarkEntity> truckMarkEntities = categoryRepository.findById(categoryId)
-				.map(CategoryEntity::getTruckMarks)
-				.orElseThrow(() -> new NotFoundException(ExceptionConstants.MARK_NOT_FOUND));
-		return truckMarkMapper.mapEntityListToDtoList(truckMarkEntities);
-	}
 
 	@Override
 	public List<VehicleModelDto> findTruckModelsByMark(Long markId) {
@@ -84,6 +89,14 @@ public class ConstCategoryServiceImpl implements ConstCategoryService {
 				.map(TruckMarkEntity::getModels)
 				.orElseThrow(() -> new NotFoundException(ExceptionConstants.MODEL_NOT_FOUND));
 		return truckModelMapper.mapEntityListToDtoList(truckModelEntities);
+	}
+
+	@Override
+	public List<VehicleModelDto> findBusModelsByMark(Long markId) {
+		List<BusModelEntity> busModelEntities = busMarkRepository.findById(markId)
+				.map(BusMarkEntity::getModels)
+				.orElseThrow(() -> new NotFoundException(ExceptionConstants.MODEL_NOT_FOUND));
+		return busModelMapper.mapEntityListToDtoList(busModelEntities);
 	}
 
 	@Override

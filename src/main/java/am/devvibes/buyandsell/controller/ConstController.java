@@ -1,7 +1,7 @@
 package am.devvibes.buyandsell.controller;
 
-import am.devvibes.buyandsell.dto.autoMark.VehicleMarkDto;
-import am.devvibes.buyandsell.dto.autoModel.VehicleModelDto;
+import am.devvibes.buyandsell.dto.vehicleMark.VehicleMarkDto;
+import am.devvibes.buyandsell.dto.vehicleModel.VehicleModelDto;
 import am.devvibes.buyandsell.service.category.ConstCategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -20,10 +20,24 @@ public class ConstController {
 
 	private final ConstCategoryService constCategoryService;
 
-	@GetMapping("/category/{categoryId}/marks")
-	@Operation(summary = "Get all marks by category id")
-	public ResponseEntity<List<VehicleMarkDto>> getAllMarks(@PathVariable Long categoryId) {
-		List<VehicleMarkDto> marksByCategory = constCategoryService.findMarksByCategory(categoryId);
+	@GetMapping("/category/auto/marks")
+	@Operation(summary = "Get all auto marks by category id")
+	public ResponseEntity<List<VehicleMarkDto>> getAllAutoMarks() {
+		List<VehicleMarkDto> marksByCategory = constCategoryService.findAutoMarks();
+		return ResponseEntity.ok(marksByCategory);
+	}
+
+	@GetMapping("/category/truck/marks")
+	@Operation(summary = "Get all truck marks by category id")
+	public ResponseEntity<List<VehicleMarkDto>> getAllTruckMarks() {
+		List<VehicleMarkDto> marksByCategory = constCategoryService.findTruckMarks();
+		return ResponseEntity.ok(marksByCategory);
+	}
+
+	@GetMapping("/category/bus/marks")
+	@Operation(summary = "Get all bus marks by category id")
+	public ResponseEntity<List<VehicleMarkDto>> getAllBusMarks() {
+		List<VehicleMarkDto> marksByCategory = constCategoryService.findBusMarks();
 		return ResponseEntity.ok(marksByCategory);
 	}
 
@@ -38,6 +52,13 @@ public class ConstController {
 	@Operation(summary = "Get all truck models by mark id")
 	public ResponseEntity<List<VehicleModelDto>> getAllTruckModels(@PathVariable Long markId) {
 		List<VehicleModelDto> modelsByMark = constCategoryService.findTruckModelsByMark(markId);
+		return ResponseEntity.ok(modelsByMark);
+	}
+
+	@GetMapping("/busMark/{markId}/models")
+	@Operation(summary = "Get all bus models by mark id")
+	public ResponseEntity<List<VehicleModelDto>> getAllBusModels(@PathVariable Long markId) {
+		List<VehicleModelDto> modelsByMark = constCategoryService.findBusModelsByMark(markId);
 		return ResponseEntity.ok(modelsByMark);
 	}
 

@@ -1,5 +1,6 @@
 package am.devvibes.buyandsell.controller;
 
+import am.devvibes.buyandsell.dto.user.UserChangePasswordDto;
 import am.devvibes.buyandsell.dto.user.UserResponseDto;
 import am.devvibes.buyandsell.mapper.user.UserMapper;
 import am.devvibes.buyandsell.service.user.impl.UserServiceImpl;
@@ -45,6 +46,18 @@ public class UserController {
 	public ResponseEntity<Void> deleteUser(@PathVariable String id) {
 		userService.deleteUser(id);
 		return ResponseEntity.ok().build();
+	}
+
+	@PostMapping("/changePassword")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public ResponseEntity<UserResponseDto> changePassword(@RequestBody UserChangePasswordDto userChangePasswordDto) {
+		UserResponseDto userResponseDto =
+				userService.changePassword(
+						userChangePasswordDto.getEmail(),
+						userChangePasswordDto.getNewPassword(),
+						userChangePasswordDto.getRepeatNewPassword());
+
+		return ResponseEntity.ok(userResponseDto);
 	}
 
 }

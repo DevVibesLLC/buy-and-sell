@@ -1,13 +1,14 @@
 package am.devvibes.buyandsell.service.item.impl;
 
 import am.devvibes.buyandsell.classes.price.Price;
-import am.devvibes.buyandsell.dto.filter.FilterAndSearchDto;
+import am.devvibes.buyandsell.dto.filter.FilterDto;
 import am.devvibes.buyandsell.dto.item.ItemRequestDto;
 import am.devvibes.buyandsell.dto.item.ItemResponseDto;
-import am.devvibes.buyandsell.entity.FieldEntity;
-import am.devvibes.buyandsell.entity.FieldNameEntity;
-import am.devvibes.buyandsell.entity.ItemEntity;
-import am.devvibes.buyandsell.entity.Location;
+import am.devvibes.buyandsell.dto.search.SearchDto;
+import am.devvibes.buyandsell.entity.field.FieldEntity;
+import am.devvibes.buyandsell.entity.field.FieldNameEntity;
+import am.devvibes.buyandsell.entity.item.ItemEntity;
+import am.devvibes.buyandsell.entity.location.Location;
 import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.exception.SomethingWentWrongException;
 import am.devvibes.buyandsell.mapper.item.ItemMapper;
@@ -86,7 +87,7 @@ public class ItemServiceImpl implements ItemService {
 	}
 
 	@Override
-	public List<ItemResponseDto> searchItems(FilterAndSearchDto.SearchDto searchDto) {
+	public List<ItemResponseDto> searchItems(SearchDto searchDto) {
 		Specification<ItemEntity> specification = Specification.where((root, criteriaQuery, criteriaBuilder) -> {
 			var predicates = new ArrayList<Predicate>();
 
@@ -103,7 +104,7 @@ public class ItemServiceImpl implements ItemService {
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(FilterAndSearchDto.FilterDto filterDto) {
+	public List<ItemResponseDto> filterItems(FilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -339,6 +340,11 @@ public class ItemServiceImpl implements ItemService {
 
 	}
 
+	@Override
+	public List<ItemResponseDto> findItemsByCategory(Long categoryId) {
+		List<ItemEntity> itemsByCategoryId = itemRepository.findByCategoryId(categoryId);
+		return itemMapper.mapEntityListToDtoList(itemsByCategoryId);
+	}
 
 	private ItemEntity updateEntity(ItemEntity itemEntity, ItemRequestDto itemRequestDto) {
 

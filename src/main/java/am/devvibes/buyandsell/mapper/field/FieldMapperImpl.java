@@ -1,7 +1,7 @@
 package am.devvibes.buyandsell.mapper.field;
 
 import am.devvibes.buyandsell.dto.field.FieldRequestDto;
-import am.devvibes.buyandsell.entity.FieldNameEntity;
+import am.devvibes.buyandsell.entity.field.FieldNameEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -2,7 +2,7 @@ package am.devvibes.buyandsell.dto.item;
 
 import am.devvibes.buyandsell.classes.price.Price;
 import am.devvibes.buyandsell.dto.value.FieldValuesDto;
-import am.devvibes.buyandsell.entity.Location;
+import am.devvibes.buyandsell.entity.location.Location;
 import lombok.*;
 
 import java.util.List;

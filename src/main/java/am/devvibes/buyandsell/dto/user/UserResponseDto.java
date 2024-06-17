@@ -1,6 +1,5 @@
 package am.devvibes.buyandsell.dto.user;
 
-import am.devvibes.buyandsell.entity.RoleEntity;
 import lombok.*;
 
 import java.time.LocalDateTime;

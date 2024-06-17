@@ -1,4 +1,4 @@
-package am.devvibes.buyandsell.dto.autoModel;
+package am.devvibes.buyandsell.dto.vehicleMark;
 
 import lombok.*;
 
@@ -7,9 +7,9 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class VehicleModelDto {
+public class VehicleMarkDto {
 
 	private Long id;
-	private String model;
+	private String mark;
 
 }

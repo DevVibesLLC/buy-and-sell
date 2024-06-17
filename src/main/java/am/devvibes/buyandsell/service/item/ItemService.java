@@ -1,9 +1,9 @@
 package am.devvibes.buyandsell.service.item;
 
-import am.devvibes.buyandsell.dto.filter.FilterAndSearchDto;
+import am.devvibes.buyandsell.dto.filter.FilterDto;
 import am.devvibes.buyandsell.dto.item.ItemRequestDto;
 import am.devvibes.buyandsell.dto.item.ItemResponseDto;
-import am.devvibes.buyandsell.entity.ItemEntity;
+import am.devvibes.buyandsell.dto.search.SearchDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
@@ -21,8 +21,10 @@ public interface ItemService {
 
 	ItemResponseDto update(ItemRequestDto itemRequestDto, Long categoryId, Long itemId);
 
-	List<ItemResponseDto> searchItems(FilterAndSearchDto.SearchDto searchDto);
+	List<ItemResponseDto> searchItems(SearchDto searchDto);
 
-	List<ItemResponseDto> filterItems(FilterAndSearchDto.FilterDto filterDto);
+	List<ItemResponseDto> filterItems(FilterDto filterDto);
+
+	List<ItemResponseDto> findItemsByCategory(Long categoryId);
 
 }

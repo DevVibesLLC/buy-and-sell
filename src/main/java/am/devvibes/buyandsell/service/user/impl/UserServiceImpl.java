@@ -2,7 +2,7 @@ package am.devvibes.buyandsell.service.user.impl;
 
 import am.devvibes.buyandsell.dto.user.UserRequestDto;
 import am.devvibes.buyandsell.dto.user.UserResponseDto;
-import am.devvibes.buyandsell.entity.UserEntity;
+import am.devvibes.buyandsell.entity.user.UserEntity;
 import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.exception.SomethingWentWrongException;
 import am.devvibes.buyandsell.mapper.user.UserMapper;

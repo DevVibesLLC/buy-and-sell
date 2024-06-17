@@ -1,4 +1,4 @@
-package am.devvibes.buyandsell.entity;
+package am.devvibes.buyandsell.entity.location;
 
 import am.devvibes.buyandsell.util.LocationEnum;
 import jakarta.persistence.Embeddable;

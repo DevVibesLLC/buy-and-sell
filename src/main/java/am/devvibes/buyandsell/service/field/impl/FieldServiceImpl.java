@@ -1,7 +1,7 @@
 package am.devvibes.buyandsell.service.field.impl;
 
 import am.devvibes.buyandsell.dto.field.FieldRequestDto;
-import am.devvibes.buyandsell.entity.FieldNameEntity;
+import am.devvibes.buyandsell.entity.field.FieldNameEntity;
 import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.mapper.field.FieldMapper;
 import am.devvibes.buyandsell.repository.field.FieldNameRepository;

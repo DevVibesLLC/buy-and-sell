@@ -2,7 +2,7 @@ package am.devvibes.buyandsell.mapper.item;
 
 import am.devvibes.buyandsell.dto.item.ItemRequestDto;
 import am.devvibes.buyandsell.dto.item.ItemResponseDto;
-import am.devvibes.buyandsell.entity.ItemEntity;
+import am.devvibes.buyandsell.entity.item.ItemEntity;
 
 import java.util.List;
 

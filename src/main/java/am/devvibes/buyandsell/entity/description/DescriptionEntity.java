@@ -1,5 +1,6 @@
-package am.devvibes.buyandsell.entity;
+package am.devvibes.buyandsell.entity.description;
 
+import am.devvibes.buyandsell.entity.field.FieldNameEntity;
 import am.devvibes.buyandsell.entity.base.BaseEntity;
 import am.devvibes.buyandsell.util.DescriptionNameEnum;
 import jakarta.persistence.*;

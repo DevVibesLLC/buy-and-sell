@@ -2,7 +2,7 @@ package am.devvibes.buyandsell.service.user;
 
 import am.devvibes.buyandsell.dto.user.UserRequestDto;
 import am.devvibes.buyandsell.dto.user.UserResponseDto;
-import am.devvibes.buyandsell.entity.UserEntity;
+import am.devvibes.buyandsell.entity.user.UserEntity;
 
 import java.util.List;
 

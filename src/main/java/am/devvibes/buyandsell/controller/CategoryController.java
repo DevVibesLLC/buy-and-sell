@@ -1,7 +1,7 @@
 package am.devvibes.buyandsell.controller;
 
 import am.devvibes.buyandsell.dto.category.CategoryDto;
-import am.devvibes.buyandsell.entity.CategoryEntity;
+import am.devvibes.buyandsell.entity.category.CategoryEntity;
 import am.devvibes.buyandsell.service.category.CategoryService;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;

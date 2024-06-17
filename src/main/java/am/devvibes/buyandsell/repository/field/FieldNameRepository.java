@@ -1,6 +1,6 @@
 package am.devvibes.buyandsell.repository.field;
 
-import am.devvibes.buyandsell.entity.FieldNameEntity;
+import am.devvibes.buyandsell.entity.field.FieldNameEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,7 +1,7 @@
 package am.devvibes.buyandsell.service.category.impl;
 
 import am.devvibes.buyandsell.dto.category.CategoryDto;
-import am.devvibes.buyandsell.entity.CategoryEntity;
+import am.devvibes.buyandsell.entity.category.CategoryEntity;
 import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.mapper.category.CategoryMapper;
 import am.devvibes.buyandsell.repository.category.CategoryRepository;
