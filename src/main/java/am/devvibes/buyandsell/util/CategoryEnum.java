@@ -1,5 +1,6 @@
 package am.devvibes.buyandsell.util;
 
+import am.devvibes.buyandsell.entity.mobile.MobilePhoneMarkEntity;
 import lombok.Getter;
 
 @Getter
@@ -28,7 +29,9 @@ public enum CategoryEnum {
 	NEW_CONSTRUCTION_HOUSE("New Construction House"),
 
 	APARTMENT_DAILY_RENTAL("Apartment Daily Rental"),
-	HOUSE_DAILY_RENTAL("House Daily Rental");
+	HOUSE_DAILY_RENTAL("House Daily Rental"),
+
+	MOBILE_PHONE("Mobile Phone");
 
 	private final String name;
 

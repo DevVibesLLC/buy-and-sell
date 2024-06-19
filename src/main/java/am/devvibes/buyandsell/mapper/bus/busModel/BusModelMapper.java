@@ -1,7 +1,6 @@
 package am.devvibes.buyandsell.mapper.bus.busModel;
 
-import am.devvibes.buyandsell.dto.vehicleModel.VehicleModelDto;
-import am.devvibes.buyandsell.entity.auto.AutoModelEntity;
+import am.devvibes.buyandsell.dto.vehicle.vehicleModel.VehicleModelDto;
 import am.devvibes.buyandsell.entity.bus.BusModelEntity;
 
 import java.util.List;

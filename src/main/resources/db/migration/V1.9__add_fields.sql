@@ -6,7 +6,7 @@ VALUES
 (2, 'Model', false, true, null, 1),
 (3, 'Year', false, true, null, 1),
 (4, 'Body Type', false, true, null, 1),
-(5, 'Engine',false,true,null,1),
+(5, 'Engine Type',false,true,null,1),
 (6, 'Engine Size', false, true, 40, 1),
 (7, 'Transmission', false, true, null, 1),
 (8, 'Drive Type', false, true, null, 1),
@@ -110,6 +110,7 @@ VALUES
 
 (87, 'Land Area',false,true,31,16),
 
+/*HOUSE RENTAL*/
 (88, 'Type',false,true,null,17),
 (89, 'Construction Type',false,true,null,17),
 (90, 'House Area',false,true,31,17),
@@ -131,6 +132,7 @@ VALUES
 (103, 'Utility Payments', false, true, null, 20),
 (104, 'Prepayment', false, true, null, 20),
 
+/*COMMERCIAL BUY*/
 (105, 'Type',false,true,null,21),
 (106, 'Construction Type',false,true,null,21),
 (107, 'Floor Area',false,true,31,21),
@@ -140,6 +142,7 @@ VALUES
 (111, 'Entrance',false,true,null,21),
 (112, 'Parking',false,true,null,21),
 
+/*COMMERCIAL RENTAL*/
 (113, 'Type',false,true,null,22),
 (114, 'Floor Area',false,true,31,22),
 (115, 'Furniture',false,true,null,22),
@@ -153,11 +156,13 @@ VALUES
 (122, 'Utility Payments', false, true, null, 23),
 (123, 'Prepayment', false, true, null, 23),
 
+/*GARAGE AND PARKING BUY*/
 (124, 'Type',false,true,null,24),
 (125, 'Floor Area',false,true,31,24),
 (126, 'Utilities',false,true,null,24),
 (127, 'Amenities',false,true,null,24),
 
+/*GARAGE AND PARKING RENTAL*/
 (128, 'Type',false,true,null,25),
 (129, 'Floor Area',false,true,31,25),
 (130, 'Utilities',false,true,null,25),
@@ -165,22 +170,26 @@ VALUES
 
 (132, 'Prepayment', false, true, null, 26),
 
+/*LAND BUY*/
 (133, 'Type', false,true,null, 27),
 (134, 'Land Area', false,true,null, 27),
 (135, 'Service Lines', false,true,null, 27),
 
+/*LAND RENTAL*/
 (136, 'Type', false,true,null, 28),
 (137, 'Land Area', false,true,null, 28),
 (138, 'Service Lines', false,true,null, 28),
 
 (139, 'Prepayment', false, true, null, 29),
 
+/*NEW CONSTRUCTION APARTMENT*/
 (140, 'Construction Type', false, true, null, 30),
 (141, 'Elevator', false, true, null, 30),
 (142, 'Floors in the Building', false, true, null, 30),
 (143, 'The House Has', false, true, null, 30),
 (144, 'Parking', false, true, null, 30),
 
+/*NEW CONSTRUCTION HOUSE*/
 (145, 'Floor Area', false, true, 31, 31),
 (146, 'Number of Rooms', false, true, null, 31),
 (147, 'Number of Bathrooms', false, true, null, 31),
@@ -209,6 +218,7 @@ VALUES
 
 (165, 'Mortgage is Possible', false, true, null, 37),
 
+/*APARTMENT DAILY RENTAL*/
 (166, 'Construction Type', false, true, null, 38),
 (167, 'New Construction', false, true, null, 38),
 (168, 'Elevator', false, true, null, 38),
@@ -232,6 +242,7 @@ VALUES
 (184, 'With Children', false, true, null, 40),
 (185, 'With Pets', false, true, null, 40),
 
+/*HOUSE DAILY RENTAL*/
 (186, 'Type', false, true, null, 41),
 (187, 'Construction Type', false, true, null, 41),
 (188, 'House Area', false, true, null, 41),

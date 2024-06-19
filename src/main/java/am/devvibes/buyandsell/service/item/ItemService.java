@@ -1,6 +1,6 @@
 package am.devvibes.buyandsell.service.item;
 
-import am.devvibes.buyandsell.dto.filter.FilterDto;
+import am.devvibes.buyandsell.dto.filter.*;
 import am.devvibes.buyandsell.dto.item.ItemRequestDto;
 import am.devvibes.buyandsell.dto.item.ItemResponseDto;
 import am.devvibes.buyandsell.dto.search.SearchDto;
@@ -23,7 +23,19 @@ public interface ItemService {
 
 	List<ItemResponseDto> searchItems(SearchDto searchDto);
 
-	List<ItemResponseDto> filterItems(FilterDto filterDto);
+	List<ItemResponseDto> filterItems(AutoFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(TruckFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(BusFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(ApartmentBuyFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(ApartmentRentalFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(HouseBuyFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(HouseRentalFilterDto filterDto);
 
 	List<ItemResponseDto> findItemsByCategory(Long categoryId);
 

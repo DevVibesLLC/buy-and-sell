@@ -4,10 +4,8 @@ import lombok.*;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
-public class FilterDto {
+public class AutoFilterDto {
 
 	private String mark;
 	private String model;
@@ -32,6 +30,8 @@ public class FilterDto {
 	private String transmission;
 
 	private String driveType;
+
+	private String engineType;
 
 	private String startMileage;
 	private String endMileage;

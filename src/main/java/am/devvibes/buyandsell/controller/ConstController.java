@@ -1,7 +1,9 @@
 package am.devvibes.buyandsell.controller;
 
-import am.devvibes.buyandsell.dto.vehicleMark.VehicleMarkDto;
-import am.devvibes.buyandsell.dto.vehicleModel.VehicleModelDto;
+import am.devvibes.buyandsell.dto.electronic.electronicMark.ElectronicMarkDto;
+import am.devvibes.buyandsell.dto.electronic.electronicModel.ElectronicModelDto;
+import am.devvibes.buyandsell.dto.vehicle.vehicleMark.VehicleMarkDto;
+import am.devvibes.buyandsell.dto.vehicle.vehicleModel.VehicleModelDto;
 import am.devvibes.buyandsell.service.category.ConstCategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +43,13 @@ public class ConstController {
 		return ResponseEntity.ok(marksByCategory);
 	}
 
+	@GetMapping("/category/mobile/marks")
+	@Operation(summary = "Get all mobile phone marks by category id")
+	public ResponseEntity<List<ElectronicMarkDto>> getAllMobileMarks() {
+		List<ElectronicMarkDto> mobileMarks = constCategoryService.findMobileMarks();
+		return ResponseEntity.ok(mobileMarks);
+	}
+
 	@GetMapping("/autoMark/{markId}/models")
 	@Operation(summary = "Get all auto models by mark id")
 	public ResponseEntity<List<VehicleModelDto>> getAllAutoModels(@PathVariable Long markId) {
@@ -59,6 +68,13 @@ public class ConstController {
 	@Operation(summary = "Get all bus models by mark id")
 	public ResponseEntity<List<VehicleModelDto>> getAllBusModels(@PathVariable Long markId) {
 		List<VehicleModelDto> modelsByMark = constCategoryService.findBusModelsByMark(markId);
+		return ResponseEntity.ok(modelsByMark);
+	}
+
+	@GetMapping("/mobileMark/{markId}/models")
+	@Operation(summary = "Get all mobile phone models by mark id")
+	public ResponseEntity<List<ElectronicModelDto>> getAllMobileModels(@PathVariable Long markId) {
+		List<ElectronicModelDto> modelsByMark = constCategoryService.findMobileModelsByMark(markId);
 		return ResponseEntity.ok(modelsByMark);
 	}
 

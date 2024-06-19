@@ -1,6 +1,6 @@
 package am.devvibes.buyandsell.mapper.bus.busMark;
 
-import am.devvibes.buyandsell.dto.vehicleMark.VehicleMarkDto;
+import am.devvibes.buyandsell.dto.vehicle.vehicleMark.VehicleMarkDto;
 import am.devvibes.buyandsell.entity.bus.BusMarkEntity;
 import org.springframework.stereotype.Service;
 

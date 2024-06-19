@@ -1,4 +1,4 @@
-package am.devvibes.buyandsell.dto.vehicleModel;
+package am.devvibes.buyandsell.dto.vehicle.vehicleModel;
 
 import lombok.*;
 
