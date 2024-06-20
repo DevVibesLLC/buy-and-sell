@@ -5,6 +5,7 @@ import am.devvibes.buyandsell.entity.base.BaseEntity;
 import am.devvibes.buyandsell.entity.bus.BusMarkEntity;
 import am.devvibes.buyandsell.entity.description.DescriptionEntity;
 import am.devvibes.buyandsell.entity.mobile.MobilePhoneMarkEntity;
+import am.devvibes.buyandsell.entity.notebook.NotebookMarkEntity;
 import am.devvibes.buyandsell.entity.truck.TruckMarkEntity;
 import am.devvibes.buyandsell.util.CategoryEnum;
 import jakarta.persistence.*;
@@ -43,5 +44,9 @@ public class CategoryEntity extends BaseEntity implements Serializable {
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "category_id")
 	private List<MobilePhoneMarkEntity> mobilePhoneMarks;
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "category_id")
+	private List<NotebookMarkEntity> notebookMarks;
 
 }

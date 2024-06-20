@@ -37,6 +37,32 @@ public interface ItemService {
 
 	List<ItemResponseDto> filterItems(HouseRentalFilterDto filterDto);
 
+	List<ItemResponseDto> filterItems(CommercialBuyFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(CommercialRentalFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(GarageAndParkingBuyFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(GarageAndParkingRentalFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(LandBuyFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(LandRentalFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(NewConstructionApartmentFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(NewConstructionHouseFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(ApartmentDailyRentalFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(HouseDailyRentalFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(MobilePhoneFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(NotebookFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(ComputerFilterDto filterDto);
+
 	List<ItemResponseDto> findItemsByCategory(Long categoryId);
 
 }

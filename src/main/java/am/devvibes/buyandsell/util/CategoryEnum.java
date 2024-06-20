@@ -31,8 +31,9 @@ public enum CategoryEnum {
 	APARTMENT_DAILY_RENTAL("Apartment Daily Rental"),
 	HOUSE_DAILY_RENTAL("House Daily Rental"),
 
-	MOBILE_PHONE("Mobile Phone");
-
+	MOBILE_PHONE("Mobile Phone"),
+	NOTEBOOK("Notebook"),
+	COMPUTER("Computers");
 	private final String name;
 
 	CategoryEnum(String name) {

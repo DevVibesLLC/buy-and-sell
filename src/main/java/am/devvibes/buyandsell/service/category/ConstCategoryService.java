@@ -17,6 +17,8 @@ public interface ConstCategoryService {
 
 	List<ElectronicMarkDto> findMobileMarks();
 
+	List<ElectronicMarkDto> findNotebookMarks();
+
 	List<VehicleModelDto> findAutoModelsByMark(Long markId);
 
 	List<VehicleModelDto> findTruckModelsByMark(Long markId);

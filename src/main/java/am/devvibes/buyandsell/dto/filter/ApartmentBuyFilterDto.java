@@ -38,7 +38,8 @@ public class ApartmentBuyFilterDto {
 
 	private String ceilingHeight;
 
-	private String floor;
+	private String startFloor;
+	private String endFloor;
 
 	private String balcony;
 

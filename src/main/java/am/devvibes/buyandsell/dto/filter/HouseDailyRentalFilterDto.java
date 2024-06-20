@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class ApartmentRentalFilterDto {
+public class HouseDailyRentalFilterDto {
 
 	private String startPrice;
 	private String endPrice;
@@ -18,46 +18,36 @@ public class ApartmentRentalFilterDto {
 	private Long region;
 	private Long city;
 
-	private String constructionType;
-	private String newConstruction;
+	private String type;
 
-	private String elevator;
+	private String constructionType;
+
+	private String startHouseArea;
+	private String endHouseArea;
 
 	private String floorsInTheBuilding;
-
-	private String theHouseHas;
-
-	private String parking;
-
-	private String startFloorArea;
-	private String endFloorArea;
 
 	private String numberOfRooms;
 
 	private String numberOfBathrooms;
 
-	private String ceilingHeight;
-
-	private String startFloor;
-	private String endFloor;
-
-	private String balcony;
-
-	private String furniture;
+	private String garage;
 
 	private String renovation;
 
-	private String appliances;
+	private String comfort;
 
 	private String amenities;
 
-	private String windowViews;
+	private String appliances;
+
+	private String startLandArea;
+	private String endLandArea;
 
 	private String withPets;
 
 	private String withChildren;
 
-	private String prepayment;
+	private String numberOfGuests;
 
-	private String utilityPayments;
 }

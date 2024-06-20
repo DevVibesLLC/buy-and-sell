@@ -50,6 +50,13 @@ public class ConstController {
 		return ResponseEntity.ok(mobileMarks);
 	}
 
+	@GetMapping("/category/notebook/marks")
+	@Operation(summary = "Get all notebook marks by category id")
+	public ResponseEntity<List<ElectronicMarkDto>> getAllNotebookMarks() {
+		List<ElectronicMarkDto> notebookMarks = constCategoryService.findNotebookMarks();
+		return ResponseEntity.ok(notebookMarks);
+	}
+
 	@GetMapping("/autoMark/{markId}/models")
 	@Operation(summary = "Get all auto models by mark id")
 	public ResponseEntity<List<VehicleModelDto>> getAllAutoModels(@PathVariable Long markId) {

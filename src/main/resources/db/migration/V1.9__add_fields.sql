@@ -189,7 +189,6 @@ VALUES
 (143, 'The House Has', false, true, null, 30),
 (144, 'Parking', false, true, null, 30),
 
-/*NEW CONSTRUCTION HOUSE*/
 (145, 'Floor Area', false, true, 31, 31),
 (146, 'Number of Rooms', false, true, null, 31),
 (147, 'Number of Bathrooms', false, true, null, 31),
@@ -202,6 +201,7 @@ VALUES
 
 (153, 'Mortgage is Possible', false, true, null, 33),
 
+/*NEW CONSTRUCTION HOUSE*/
 (154, 'Type', false, true, null, 34),
 (155, 'Construction Type', false, true, null, 34),
 (156, 'House Area', false, true, null, 34),
@@ -259,5 +259,203 @@ VALUES
 
 (198, 'Number of Guests', false, true, null, 43),
 (199, 'With Children', false, true, null, 43),
-(200, 'With Pets', false, true, null, 43)
+(200, 'With Pets', false, true, null, 43),
+
+/*MOBILE PHONE*/
+(201, 'Mark', false, true, null, 44),
+(202, 'Model', false, true, null, 44),
+(203, 'Condition', false, true, null, 44),
+(204, 'Storage', false, true, null, 44),
+(205, 'Color', false, true, null, 44),
+
+/*NOTEBOOK*/
+(206, 'Mark',false,true,null,45),
+(207, 'Condition',false,true,null,45),
+(208, 'Processor', false, true, null, 45),
+(209, 'Memory (RAM)', false, true, null, 45),
+(210, 'Memory', false, true, null, 45),
+(211, 'Screen Resolution',false,true,null,45),
+(212, 'Screen Size',false,true,null,45),
+
+/*COMPUTER*/
+(213, 'Condition', false, true, null, 46),
+(214, 'Processor', false, true, null, 46),
+(215, 'Memory (RAM)', false, true, null, 46),
+(216, 'Memory', false, true, null, 46),
+(217, 'Screen Resolution', false, true, null, 46),
+(218, 'Screen Size',false,true,null,46)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ON CONFLICT (id) DO NOTHING;
