@@ -1,10 +1,8 @@
 package am.devvibes.buyandsell.dto.filter;
 
-import lombok.*;
+import lombok.Getter;
 
 @Getter
-@Setter
-@Builder
 public class BusFilterDto {
 
 	private String mark;

@@ -216,4 +216,89 @@ public class ItemController {
 		return ResponseEntity.ok(itemService.filterItems(filterDto));
 	}
 
+	@PostMapping("/smartWatch/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter smart watch items")
+	public ResponseEntity<List<ItemResponseDto>> filterSmartWatchItems(@RequestBody SmartWatchFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/tablet/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter tablet items")
+	public ResponseEntity<List<ItemResponseDto>> filterTabletItems(@RequestBody TabletFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/tv/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter TV items")
+	public ResponseEntity<List<ItemResponseDto>> filterTVItems(@RequestBody TVFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/gamingConsole/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter gaming console items")
+	public ResponseEntity<List<ItemResponseDto>> filterGamingConsoleItems(@RequestBody GamingConsoleFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/headphone/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter headphone items")
+	public ResponseEntity<List<ItemResponseDto>> filterHeadphoneItems(@RequestBody HeadphoneFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/computerAndNotebookParts/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter computer and notebook parts items")
+	public ResponseEntity<List<ItemResponseDto>> filterComputerAndNotebookPartsItems(@RequestBody ComputerAndNotebookPartsFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/photoAndVideoCamera/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter photo and video camera items")
+	public ResponseEntity<List<ItemResponseDto>> filterPhotoAndVideoCameraItems(@RequestBody PhotoAndVideoCameraFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/computerGames/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter computer games items")
+	public ResponseEntity<List<ItemResponseDto>> filterComputerGamesItems(@RequestBody ComputerGamesFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/smartHomeAccessories/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter smart home accessories items")
+	public ResponseEntity<List<ItemResponseDto>> filterSmartHomeAccessoriesItems(@RequestBody SmartHomeAccessoriesFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/washer/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter washer items")
+	public ResponseEntity<List<ItemResponseDto>> filterWasherItems(@RequestBody WasherFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/clothesDryer/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter clothes dryer items")
+	public ResponseEntity<List<ItemResponseDto>> filterClothesDryerItems(@RequestBody ClothesDryerFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/ironAndAccessories/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter iron and accessories items")
+	public ResponseEntity<List<ItemResponseDto>> filterIronAndAccessoriesItems(@RequestBody IronAndAccessoriesFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+
 }

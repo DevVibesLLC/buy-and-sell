@@ -1,4 +1,3 @@
-
 INSERT INTO measurement_entity (id, symbol, category)
 VALUES
 (1, 'm', 'Length'),

@@ -63,6 +63,30 @@ public interface ItemService {
 
 	List<ItemResponseDto> filterItems(ComputerFilterDto filterDto);
 
+	List<ItemResponseDto> filterItems(SmartWatchFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(TabletFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(TVFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(GamingConsoleFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(HeadphoneFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(ComputerAndNotebookPartsFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(PhotoAndVideoCameraFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(ComputerGamesFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(SmartHomeAccessoriesFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(WasherFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(ClothesDryerFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(IronAndAccessoriesFilterDto filterDto);
+
 	List<ItemResponseDto> findItemsByCategory(Long categoryId);
 
 }

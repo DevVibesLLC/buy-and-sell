@@ -33,7 +33,31 @@ public enum CategoryEnum {
 
 	MOBILE_PHONE("Mobile Phone"),
 	NOTEBOOK("Notebook"),
-	COMPUTER("Computers");
+	COMPUTER("Computers"),
+
+	SMART_WATCH("Smart Watch"),
+
+	TABLET("Tablet"),
+
+	TV("TV"),
+
+	GAMING_CONSOLE("Gaming Console"),
+
+	HEADPHONE("Headphones"),
+
+	COMPUTER_AND_NOTEBOOK_PARTS("Computer and Notebook Parts"),
+
+	PHOTO_AND_VIDEO_CAMERA("Photo and Video Camera"),
+
+	COMPUTER_GAMES("Computer Games"),
+
+	SMART_HOME_ACCESSORIES("Smart Home Accessories"),
+
+	WASHER("Washer"),
+
+	CLOTHES_DRYER("Clones Dryer"),
+
+	IRON_AND_ACCESSORIES("Iron and Accessories");
 	private final String name;
 
 	CategoryEnum(String name) {

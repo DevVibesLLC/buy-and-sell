@@ -265,197 +265,84 @@ VALUES
 (201, 'Mark', false, true, null, 44),
 (202, 'Model', false, true, null, 44),
 (203, 'Condition', false, true, null, 44),
-(204, 'Storage', false, true, null, 44),
-(205, 'Color', false, true, null, 44),
+(204, 'Memory (RAM)', false, true, null, 44),
+(205, 'Memory', false, true, null, 44),
+(206, 'Color', false, true, null, 44),
 
 /*NOTEBOOK*/
-(206, 'Mark',false,true,null,45),
-(207, 'Condition',false,true,null,45),
-(208, 'Processor', false, true, null, 45),
-(209, 'Memory (RAM)', false, true, null, 45),
-(210, 'Memory', false, true, null, 45),
-(211, 'Screen Resolution',false,true,null,45),
-(212, 'Screen Size',false,true,null,45),
+(207, 'Mark',false,true,null,45),
+(208, 'Condition',false,true,null,45),
+(209, 'Processor', false, true, null, 45),
+(210, 'Memory (RAM)', false, true, null, 45),
+(211, 'Memory', false, true, null, 45),
+(212, 'Screen Resolution',false,true,null,45),
+(213, 'Screen Size',false,true,10,45),
 
 /*COMPUTER*/
-(213, 'Condition', false, true, null, 46),
-(214, 'Processor', false, true, null, 46),
-(215, 'Memory (RAM)', false, true, null, 46),
-(216, 'Memory', false, true, null, 46),
-(217, 'Screen Resolution', false, true, null, 46),
-(218, 'Screen Size',false,true,null,46)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+(214, 'Condition', false, true, null, 46),
+(215, 'Processor', false, true, null, 46),
+(216, 'Memory (RAM)', false, true, null, 46),
+(217, 'Memory', false, true, null, 46),
+(218, 'Screen Resolution', false, true, null, 46),
+(219, 'Screen Size',false,true,10,46),
+
+/*SMART WATCH*/
+(220, 'Mark', false, true, null, 47),
+(221, 'Condition', false, true, null, 47),
+(222, 'Color', false, true, null, 47),
+
+/*TABLET*/
+(223, 'Mark', false, true, null, 48),
+(224, 'Condition', false, true, null, 48),
+(225, 'Screen Size',false,true,10,48),
+(226, 'Memory', false, true, null, 48),
+(227, 'Color', false, true, null, 48),
+
+/*TV*/
+(228, 'Mark', false, true, null, 49),
+(229, 'Condition', false, true, null, 49),
+(230, 'Screen Size',false,true, 10, 49),
+
+/*GAMING CONSOLE*/
+(231, 'Mark', false, true, null, 50),
+(232, 'Type', false, true, null, 50),
+(233, 'Condition', false, true, null, 50),
+
+/*HEADPHONE*/
+(234, 'Mark', false, true, null, 51),
+(235, 'Connection Type', false, true, null, 51),
+(236, 'Condition', false, true, null, 51),
+(237, 'Color', false, true, null, 51),
+
+/*COMPUTER AND NOTEBOOK PARTS*/
+(238, 'Type', false, true, null, 52),
+(239, 'Condition', false, true, null, 52),
+
+/*PHOTO AND VIDEO CAMERA*/
+(240, 'Mark', false, true, null, 53),
+(241, 'Condition', false, true, null, 53),
+
+/*COMPUTER GAMES*/
+(242, 'Type', false, true, null, 54),
+(243, 'Condition', false, true, null, 54),
+
+/*SMART HOME ACCESSORIES*/
+(244, 'Mark', false, true, null, 55),
+(245, 'Type', false, true, null, 55),
+(246, 'Condition', false, true, null, 55),
+
+/*WASHER*/
+(247, 'Mark', false, true, null, 56),
+(248, 'Type', false, true, null, 56),
+(249, 'Maximum Laundry Capacity', false, true, 11, 56),
+(250, 'Laundry Load Type', false, true, null, 56),
+(251, 'Condition', false, true, null, 56),
+
+/*CLOTHES DRYER*/
+(252, 'Condition',false, true, null, 57),
+
+/*IRON AND ACCESSORIES*/
+(253, 'Type', false, true, null, 58),
+(254, 'Condition', false, true, null, 58)
 
 ON CONFLICT (id) DO NOTHING;

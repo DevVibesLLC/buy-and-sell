@@ -3,7 +3,7 @@ package am.devvibes.buyandsell.dto.filter;
 import lombok.Getter;
 
 @Getter
-public class NotebookFilterDto {
+public class ComputerAndNotebookPartsFilterDto {
 
 	private String startPrice;
 	private String endPrice;
@@ -14,18 +14,8 @@ public class NotebookFilterDto {
 	private Long region;
 	private Long city;
 
-	private String mark;
+	private String type;
 
 	private String condition;
-
-	private String processor;
-
-	private String memoryRAM;
-
-	private String memory;
-
-	private String screenResolution;
-
-	private String screenSize;
 
 }

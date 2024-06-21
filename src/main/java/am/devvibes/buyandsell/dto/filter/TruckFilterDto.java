@@ -1,10 +1,8 @@
 package am.devvibes.buyandsell.dto.filter;
 
-import lombok.*;
+import lombok.Getter;
 
 @Getter
-@Setter
-@Builder
 public class TruckFilterDto {
 
 	private String mark;
@@ -36,4 +34,5 @@ public class TruckFilterDto {
 	private String clearedCustom;
 
 	private String color;
+
 }

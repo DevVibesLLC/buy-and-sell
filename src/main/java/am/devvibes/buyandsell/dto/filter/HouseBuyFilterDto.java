@@ -1,12 +1,8 @@
 package am.devvibes.buyandsell.dto.filter;
 
-import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
-@Builder
 public class HouseBuyFilterDto {
 
 	private String startPrice;
@@ -47,4 +43,5 @@ public class HouseBuyFilterDto {
 
 	private String startLandArea;
 	private String endLandArea;
+
 }
