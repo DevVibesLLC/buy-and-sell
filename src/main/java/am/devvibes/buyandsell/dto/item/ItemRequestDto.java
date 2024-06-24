@@ -32,7 +32,4 @@ public class ItemRequestDto {
 	private String address;
 
 	private Long cityId;
-
-	private String imgUrl;
-
 }

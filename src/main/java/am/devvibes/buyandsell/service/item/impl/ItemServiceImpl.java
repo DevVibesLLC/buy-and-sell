@@ -9,8 +9,10 @@ import am.devvibes.buyandsell.entity.field.FieldEntity;
 import am.devvibes.buyandsell.entity.field.FieldNameEntity;
 import am.devvibes.buyandsell.entity.item.ItemEntity;
 import am.devvibes.buyandsell.entity.location.Location;
+import am.devvibes.buyandsell.exception.FileIsNullException;
 import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.exception.SomethingWentWrongException;
+import am.devvibes.buyandsell.exception.UnsupportedExtensionException;
 import am.devvibes.buyandsell.mapper.item.ItemMapper;
 import am.devvibes.buyandsell.repository.item.ItemRepository;
 import am.devvibes.buyandsell.service.item.ItemService;
@@ -28,9 +30,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Objects.isNull;
@@ -48,8 +52,9 @@ public class ItemServiceImpl implements ItemService {
 
 	@Override
 	@Transactional
-	public ItemResponseDto save(ItemRequestDto itemRequestDto, Long categoryId) {
-		ItemEntity itemEntity = itemMapper.mapDtoToEntity(itemRequestDto, categoryId);
+	public ItemResponseDto save(ItemRequestDto itemRequestDto, List<MultipartFile> images, Long categoryId) {
+		imagesValidation(images);
+		ItemEntity itemEntity = itemMapper.mapDtoToEntity(itemRequestDto, images, categoryId);
 		return itemMapper.mapEntityToDto(itemRepository.save(itemEntity));
 	}
 
@@ -57,7 +62,9 @@ public class ItemServiceImpl implements ItemService {
 	@Transactional
 	public ItemResponseDto findById(Long id) {
 		ItemEntity itemEntity = getItemByIdOrElseThrow(id);
-		return itemMapper.mapEntityToDto(itemEntity);
+		if (itemEntity.getStatus().equals(Status.CREATED))
+			return itemMapper.mapEntityToDto(itemEntity);
+		throw new NotFoundException(ExceptionConstants.ITEM_NOT_FOUND);
 	}
 
 	@Override
@@ -92,10 +99,12 @@ public class ItemServiceImpl implements ItemService {
 			var predicates = new ArrayList<Predicate>();
 
 			if (nonNull(searchDto.getStroke())) {
-				Predicate nameLike = criteriaBuilder.like(criteriaBuilder.lower(root.get("title")), "%" + searchDto.getStroke().toLowerCase() + "%");
+				Predicate nameLike = criteriaBuilder.like(criteriaBuilder.lower(root.get("title")),
+						"%" + searchDto.getStroke().toLowerCase() + "%");
 				predicates.add(nameLike);
 
-				Predicate lastNameLike = criteriaBuilder.like(criteriaBuilder.lower(root.get("description")), "%" + searchDto.getStroke().toLowerCase() + "%");
+				Predicate lastNameLike = criteriaBuilder.like(criteriaBuilder.lower(root.get("description")),
+						"%" + searchDto.getStroke().toLowerCase() + "%");
 				predicates.add(lastNameLike);
 			}
 			return criteriaBuilder.or(predicates.toArray(new Predicate[0]));
@@ -117,70 +126,66 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getMark()) && !filterDto.getMark().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mark"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMark())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mark"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMark()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getModel()) && !filterDto.getModel().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Model"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getModel())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Model"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getModel()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getStartYear()) && !filterDto.getStartYear().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Year"),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartYear())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Year"),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartYear()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndYear()) && !filterDto.getEndYear().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Year"),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndYear())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Year"),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndYear()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getBodyType()) && !filterDto.getBodyType().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Body Type"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getBodyType())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Body Type"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getBodyType()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getStartPrice());
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"),
+							filterDto.getStartPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCurrency())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"), filterDto.getCurrency());
+			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"),
+					filterDto.getCurrency());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCountry())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
 			predicates.add(predicate);
 		}
 
@@ -197,150 +202,134 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getStartEngineSize()) && !filterDto.getStartEngineSize().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Engine Size"),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartEngineSize())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Engine Size"),
+							criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getStartEngineSize()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndEngineSize()) && !filterDto.getEndEngineSize().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Engine Size"),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndEngineSize())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Engine Size"),
+							criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getEndEngineSize()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getTransmission()) && !filterDto.getTransmission().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Transmission"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getTransmission())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Transmission"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getTransmission()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getDriveType()) && !filterDto.getDriveType().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Drive Type"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getDriveType())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Drive Type"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getDriveType()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEngineType()) && !filterDto.getEngineType().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Engine Type"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getEngineType())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Engine Type"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getEngineType()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getStartMileage()) && !filterDto.getStartMileage().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mileage"),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartMileage())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mileage"),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+							filterDto.getStartMileage()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndMileage()) && !filterDto.getEndMileage().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mileage"),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndMileage())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mileage"),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndMileage()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getSteeringWheel()) && !filterDto.getSteeringWheel().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Steering Wheel"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getSteeringWheel())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Steering Wheel"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getSteeringWheel()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getClearedCustom()) && !filterDto.getClearedCustom().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Cleared Custom"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getClearedCustom())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Cleared Custom"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getClearedCustom()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getColor()) && !filterDto.getColor().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Color"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getColor())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Color"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getColor()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getWheelSize()) && !filterDto.getWheelSize().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Wheel Size"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getWheelSize())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Wheel Size"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getWheelSize()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getHeadlights()) && !filterDto.getHeadlights().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Headlights"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getHeadlights())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Headlights"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getHeadlights()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getInteriorColor()) && !filterDto.getInteriorColor().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Interior Color"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getInteriorColor())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Interior Color"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getInteriorColor()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getExteriorColor()) && !filterDto.getExteriorColor().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Exterior Color"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getExteriorColor())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Exterior Color"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getExteriorColor()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getSunroof()) && !filterDto.getSunroof().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Sunroof"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getSunroof())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Sunroof"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getSunroof()));
 			predicates.add(predicate);
 		}
 
@@ -366,70 +355,67 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getMark()) && !filterDto.getMark().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mark"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMark())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mark"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMark()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getModel()) && !filterDto.getModel().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Model"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getModel())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Model"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getModel()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getChassiesConfiguration()) && !filterDto.getChassiesConfiguration().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Chassis configuration"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getChassiesConfiguration())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Chassis configuration"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"),
+									filterDto.getChassiesConfiguration()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getStartYear()) && !filterDto.getStartYear().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Year"),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartYear())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Year"),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartYear()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndYear()) && !filterDto.getEndYear().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Year"),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndYear())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Year"),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndYear()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getStartPrice());
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"),
+							filterDto.getStartPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCurrency())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"), filterDto.getCurrency());
+			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"),
+					filterDto.getCurrency());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCountry())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
 			predicates.add(predicate);
 		}
 
@@ -446,70 +432,61 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getSteeringWheel()) && !filterDto.getSteeringWheel().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Steering Wheel"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getSteeringWheel())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Steering Wheel"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getSteeringWheel()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getTransmission()) && !filterDto.getTransmission().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Transmission"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getTransmission())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Transmission"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getTransmission()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEngineType()) && !filterDto.getEngineType().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Engine Type"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getEngineType())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Engine Type"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getEngineType()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getStartMileage()) && !filterDto.getStartMileage().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mileage"),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartMileage())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mileage"),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+							filterDto.getStartMileage()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndMileage()) && !filterDto.getEndMileage().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mileage"),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndMileage())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mileage"),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndMileage()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getClearedCustom()) && !filterDto.getClearedCustom().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Cleared Custom"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getClearedCustom())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Cleared Custom"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getClearedCustom()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getColor()) && !filterDto.getColor().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Color"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getColor())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Color"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getColor()));
 			predicates.add(predicate);
 		}
 
@@ -535,60 +512,57 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getMark()) && !filterDto.getMark().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mark"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMark())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mark"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMark()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getModel()) && !filterDto.getModel().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Model"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getModel())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Model"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getModel()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getStartYear()) && !filterDto.getStartYear().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Year"),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartYear())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Year"),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartYear()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndYear()) && !filterDto.getEndYear().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Year"),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndYear())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Year"),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndYear()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getStartPrice());
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"),
+					 filterDto.getStartPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCurrency())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"), filterDto.getCurrency());
+			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"),
+					filterDto.getCurrency());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCountry())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
 			predicates.add(predicate);
 		}
 
@@ -605,70 +579,61 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getSteeringWheel()) && !filterDto.getSteeringWheel().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Steering Wheel"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getSteeringWheel())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Steering Wheel"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getSteeringWheel()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getTransmission()) && !filterDto.getTransmission().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Transmission"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getTransmission())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Transmission"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getTransmission()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEngineType()) && !filterDto.getEngineType().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Engine Type"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getEngineType())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Engine Type"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getEngineType()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getStartMileage()) && !filterDto.getStartMileage().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mileage"),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartMileage())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mileage"),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+							filterDto.getStartMileage()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndMileage()) && !filterDto.getEndMileage().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mileage"),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndMileage())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mileage"),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndMileage()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getClearedCustom()) && !filterDto.getClearedCustom().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Cleared Custom"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getClearedCustom())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Cleared Custom"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getClearedCustom()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getColor()) && !filterDto.getColor().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Color"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getColor())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Color"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getColor()));
 			predicates.add(predicate);
 		}
 
@@ -689,26 +654,32 @@ public class ItemServiceImpl implements ItemService {
 		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
 		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
 
-		Predicate categoryPredicate = criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.APARTMENT_BUY);
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.APARTMENT_BUY);
 		predicates.add(categoryPredicate);
 
 		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getStartPrice());
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"),
+					 filterDto.getStartPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCurrency())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"), filterDto.getCurrency());
+			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"),
+			 filterDto.getCurrency());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCountry())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
 			predicates.add(predicate);
 		}
 
@@ -725,180 +696,162 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getElevator()) && !filterDto.getElevator().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Elevator"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getElevator())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"),
+			"Elevator"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getElevator()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getConstructionType()) && !filterDto.getConstructionType().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Construction Type"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getConstructionType())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Construction Type"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getConstructionType()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getNewConstruction()) && !filterDto.getNewConstruction().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "New Construction"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNewConstruction())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "New Construction"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNewConstruction()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getFloorsInTheBuilding()) && !filterDto.getFloorsInTheBuilding().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floors in the Building"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getFloorsInTheBuilding())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floors in the " +
+					 "Building"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"),
+									filterDto.getFloorsInTheBuilding()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getAppliances()) && !filterDto.getAppliances().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Appliances"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getAppliances())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Appliances"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getAppliances()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getStartFloor()) && !filterDto.getStartFloor().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor"),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartFloor())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor"),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartFloor()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndFloor()) && !filterDto.getEndFloor().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor"),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndFloor())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor"),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndFloor()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getBalcony()) && !filterDto.getBalcony().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Balcony"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getBalcony())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Balcony"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getBalcony()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCeilingHeight()) && !filterDto.getCeilingHeight().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Ceiling Height"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCeilingHeight())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Ceiling Height"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCeilingHeight()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getFurniture()) && !filterDto.getFurniture().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Furniture"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getFurniture())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Furniture"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getFurniture()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getStartFloorArea()) && !filterDto.getStartFloorArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor Area"),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartFloorArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor Area"),
+							criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getStartFloorArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndFloorArea()) && !filterDto.getEndFloorArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor Area"),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndFloorArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor Area"),
+							criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getEndFloorArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getRenovation()) && !filterDto.getRenovation().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Renovation"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getRenovation())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Renovation"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getRenovation()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getParking()) && !filterDto.getParking().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Parking"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getParking())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Parking"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getParking()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getWindowViews()) && !filterDto.getWindowViews().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Windows Views"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getWindowViews())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Windows Views"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getWindowViews()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getNumberOfRooms()) && !filterDto.getNumberOfRooms().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Rooms"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfRooms())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Rooms"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfRooms()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getNumberOfBathrooms()) && !filterDto.getNumberOfBathrooms().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Bathrooms"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfBathrooms())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Bathrooms"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfBathrooms()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getTheHouseHas()) && !filterDto.getTheHouseHas().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "The House Has"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getTheHouseHas())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "The House Has"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getTheHouseHas()));
 			predicates.add(predicate);
 		}
 
@@ -917,26 +870,32 @@ public class ItemServiceImpl implements ItemService {
 		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
 		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
 
-		Predicate categoryPredicate = criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.APARTMENT_RENTAL);
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.APARTMENT_RENTAL);
 		predicates.add(categoryPredicate);
 
 		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getStartPrice());
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"),
+					 filterDto.getStartPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCurrency())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"), filterDto.getCurrency());
+			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"),
+			 filterDto.getCurrency());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCountry())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
 			predicates.add(predicate);
 		}
 
@@ -953,230 +912,207 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getElevator()) && !filterDto.getElevator().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Elevator"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getElevator())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"),
+			"Elevator"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getElevator()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getConstructionType()) && !filterDto.getConstructionType().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Construction Type"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getConstructionType())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Construction Type"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getConstructionType()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getNewConstruction()) && !filterDto.getNewConstruction().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "New Construction"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNewConstruction())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "New Construction"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNewConstruction()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getFloorsInTheBuilding()) && !filterDto.getFloorsInTheBuilding().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floors in the Building"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getFloorsInTheBuilding())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floors in the " +
+					 "Building"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"),
+							 filterDto.getFloorsInTheBuilding()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getAppliances()) && !filterDto.getAppliances().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Appliances"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getAppliances())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Appliances"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getAppliances()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getAmenities()) && !filterDto.getAmenities().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Amenities"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getAmenities())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Amenities"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getAmenities()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getStartFloor()) && !filterDto.getStartFloor().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor"),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartFloor())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor"),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartFloor()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndFloor()) && !filterDto.getEndFloor().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor"),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndFloor())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor"),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndFloor()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getBalcony()) && !filterDto.getBalcony().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Balcony"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getBalcony())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Balcony"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getBalcony()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCeilingHeight()) && !filterDto.getCeilingHeight().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Ceiling Height"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCeilingHeight())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Ceiling Height"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCeilingHeight()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getFurniture()) && !filterDto.getFurniture().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Furniture"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getFurniture())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Furniture"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getFurniture()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getStartFloorArea()) && !filterDto.getStartFloorArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor Area"),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartFloorArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor Area"),
+							criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getStartFloorArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndFloorArea()) && !filterDto.getEndFloorArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor Area"),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndFloorArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor Area"),
+							criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getEndFloorArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getRenovation()) && !filterDto.getRenovation().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Renovation"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getRenovation())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Renovation"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getRenovation()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getParking()) && !filterDto.getParking().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Parking"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getParking())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Parking"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getParking()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getWindowViews()) && !filterDto.getWindowViews().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Windows Views"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getWindowViews())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Windows Views"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getWindowViews()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getNumberOfRooms()) && !filterDto.getNumberOfRooms().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Rooms"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfRooms())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Rooms"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfRooms()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getNumberOfBathrooms()) && !filterDto.getNumberOfBathrooms().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Bathrooms"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfBathrooms())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Bathrooms"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfBathrooms()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getTheHouseHas()) && !filterDto.getTheHouseHas().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "The House Has"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getTheHouseHas())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "The House Has"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getTheHouseHas()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getWithPets()) && !filterDto.getWithPets().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "With Pets"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getWithPets())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "With Pets"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getWithPets()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getWithChildren()) && !filterDto.getWithChildren().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "With Children"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getWithChildren())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "With Children"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getWithChildren()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getPrepayment()) && !filterDto.getPrepayment().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Prepayment"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getPrepayment())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Prepayment"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getPrepayment()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getUtilityPayments()) && !filterDto.getUtilityPayments().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Utility Payments"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getUtilityPayments())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Utility Payments"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getUtilityPayments()));
 			predicates.add(predicate);
 		}
 
@@ -1196,26 +1132,32 @@ public class ItemServiceImpl implements ItemService {
 		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
 		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
 
-		Predicate categoryPredicate = criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.HOUSE_BUY);
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.HOUSE_BUY);
 		predicates.add(categoryPredicate);
 
 		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getStartPrice());
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"),
+					 filterDto.getStartPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCurrency())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"), filterDto.getCurrency());
+			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"),
+			 filterDto.getCurrency());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCountry())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
 			predicates.add(predicate);
 		}
 
@@ -1232,160 +1174,148 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getType()) && !filterDto.getType().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Type"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getType())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Type"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getConstructionType()) && !filterDto.getConstructionType().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Construction Type"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getConstructionType())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Construction Type"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getConstructionType()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getFurniture()) && !filterDto.getFurniture().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Furniture"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getFurniture())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Furniture"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getFurniture()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getStartHouseArea()) && !filterDto.getStartHouseArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "House Area"),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartHouseArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "House Area"),
+							criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getStartHouseArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndHouseArea()) && !filterDto.getEndHouseArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "House Area"),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndHouseArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "House Area"),
+							criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getEndHouseArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getRenovation()) && !filterDto.getRenovation().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Renovation"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getRenovation())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Renovation"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getRenovation()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCondition()) && !filterDto.getCondition().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Condition"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCondition())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Condition"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getGarage()) && !filterDto.getGarage().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Garage"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getGarage())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Garage"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getGarage()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getAppliances()) && !filterDto.getAppliances().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Appliances"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getAppliances())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Appliances"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getAppliances()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getFacilities()) && !filterDto.getFacilities().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Facilities"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getFacilities())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Facilities"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getFacilities()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getServiceLines()) && !filterDto.getServiceLines().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Service Lines"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getServiceLines())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Service Lines"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getServiceLines()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getStartLandArea()) && !filterDto.getStartLandArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Land Area"),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartLandArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Land Area"),
+							criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getStartLandArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndLandArea()) && !filterDto.getEndLandArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Land Area"),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndLandArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Land Area"),
+							criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getEndLandArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getFloorsInTheBuilding()) && !filterDto.getFloorsInTheBuilding().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floors in the Building"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getFloorsInTheBuilding())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floors in the " +
+					 "Building"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"),
+							 filterDto.getFloorsInTheBuilding()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getNumberOfRooms()) && !filterDto.getNumberOfRooms().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Rooms"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfRooms())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Rooms"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfRooms()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getNumberOfBathrooms()) && !filterDto.getNumberOfBathrooms().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Bathrooms"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfBathrooms())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Bathrooms"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfBathrooms()));
 			predicates.add(predicate);
 		}
 
@@ -1404,26 +1334,32 @@ public class ItemServiceImpl implements ItemService {
 		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
 		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
 
-		Predicate categoryPredicate = criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.HOUSE_RENTAL);
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.HOUSE_RENTAL);
 		predicates.add(categoryPredicate);
 
 		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getStartPrice());
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"),
+					 filterDto.getStartPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCurrency())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"), filterDto.getCurrency());
+			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"),
+			 filterDto.getCurrency());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCountry())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
 			predicates.add(predicate);
 		}
 
@@ -1440,200 +1376,184 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getType()) && !filterDto.getType().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Type"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getType())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Type"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getConstructionType()) && !filterDto.getConstructionType().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Construction Type"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getConstructionType())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Construction Type"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getConstructionType()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getFurniture()) && !filterDto.getFurniture().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Furniture"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getFurniture())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Furniture"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getFurniture()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getStartHouseArea()) && !filterDto.getStartHouseArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "House Area"),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartHouseArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "House Area"),
+							criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getStartHouseArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndHouseArea()) && !filterDto.getEndHouseArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "House Area"),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndHouseArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "House Area"),
+							criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getEndHouseArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getRenovation()) && !filterDto.getRenovation().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Renovation"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getRenovation())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Renovation"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getRenovation()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getGarage()) && !filterDto.getGarage().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Garage"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getGarage())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Garage"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getGarage()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getAppliances()) && !filterDto.getAppliances().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Appliances"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getAppliances())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Appliances"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getAppliances()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getAmenities()) && !filterDto.getAmenities().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Amenities"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getAmenities())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Amenities"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getAmenities()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getFacilities()) && !filterDto.getFacilities().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Facilities"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getFacilities())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Facilities"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getFacilities()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getServiceLines()) && !filterDto.getServiceLines().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Service Lines"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getServiceLines())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Service Lines"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getServiceLines()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getStartLandArea()) && !filterDto.getStartLandArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Land Area"),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartLandArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Land Area"),
+							criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getStartLandArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndLandArea()) && !filterDto.getEndLandArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Land Area"),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndLandArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Land Area"),
+							criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getEndLandArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getFloorsInTheBuilding()) && !filterDto.getFloorsInTheBuilding().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floors in the Building"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getFloorsInTheBuilding())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floors in the " +
+ "Building"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"),
+									filterDto.getFloorsInTheBuilding()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getNumberOfRooms()) && !filterDto.getNumberOfRooms().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Rooms"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfRooms())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Rooms"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfRooms()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getNumberOfBathrooms()) && !filterDto.getNumberOfBathrooms().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Bathrooms"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfBathrooms())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Bathrooms"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfBathrooms()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getWithChildren()) && !filterDto.getWithChildren().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "With Children"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getWithChildren())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "With Children"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getWithChildren()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getWithPets()) && !filterDto.getWithPets().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "With Pets"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getWithPets())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "With Pets"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getWithPets()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getUtilityPayments()) && !filterDto.getUtilityPayments().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Utility Payments"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getUtilityPayments())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Utility Payments"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getUtilityPayments()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getPrepayment()) && !filterDto.getPrepayment().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Prepayment"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getPrepayment())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Prepayment"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getPrepayment()));
 			predicates.add(predicate);
 		}
 
@@ -1653,26 +1573,32 @@ public class ItemServiceImpl implements ItemService {
 		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
 		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
 
-		Predicate categoryPredicate = criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.COMMERCIAL_BUY);
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.COMMERCIAL_BUY);
 		predicates.add(categoryPredicate);
 
 		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getStartPrice());
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"),
+							filterDto.getStartPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCurrency())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"), filterDto.getCurrency());
+			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"),
+			 filterDto.getCurrency());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCountry())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
 			predicates.add(predicate);
 		}
 
@@ -1689,80 +1615,72 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getType()) && !filterDto.getType().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Type"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getType())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Type"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getConstructionType()) && !filterDto.getConstructionType().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Construction Type"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getConstructionType())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Construction Type"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getConstructionType()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getStartFloorArea()) && !filterDto.getStartFloorArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor Area"),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartFloorArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor Area"),
+							criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getStartFloorArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndFloorArea()) && !filterDto.getEndFloorArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor Area"),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndFloorArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor Area"),
+							criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getEndFloorArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getParking()) && !filterDto.getParking().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Parking"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getParking())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Parking"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getParking()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getFurniture()) && !filterDto.getFurniture().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Furniture"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getFurniture())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Furniture"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getFurniture()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getElevator()) && !filterDto.getElevator().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Elevator"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getElevator())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"),
+			"Elevator"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getElevator()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEntrance()) && !filterDto.getEntrance().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Entrance"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getEntrance())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"),
+					"Entrance"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getEntrance()));
 			predicates.add(predicate);
 		}
 
@@ -1771,8 +1689,7 @@ public class ItemServiceImpl implements ItemService {
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Location from the Street"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getLocationFromTheStreet())
-			);
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getLocationFromTheStreet()));
 			predicates.add(predicate);
 		}
 
@@ -1792,26 +1709,32 @@ public class ItemServiceImpl implements ItemService {
 		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
 		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
 
-		Predicate categoryPredicate = criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.COMMERCIAL_RENTAL);
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.COMMERCIAL_RENTAL);
 		predicates.add(categoryPredicate);
 
 		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getStartPrice());
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"),
+					 filterDto.getStartPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCurrency())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"), filterDto.getCurrency());
+			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"),
+					filterDto.getCurrency());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCountry())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
 			predicates.add(predicate);
 		}
 
@@ -1828,70 +1751,63 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getType()) && !filterDto.getType().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Type"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getType())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Type"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getStartFloorArea()) && !filterDto.getStartFloorArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor Area"),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartFloorArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor Area"),
+							criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getStartFloorArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndFloorArea()) && !filterDto.getEndFloorArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor Area"),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndFloorArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor Area"),
+							criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getEndFloorArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getParking()) && !filterDto.getParking().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Parking"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getParking())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Parking"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getParking()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getFurniture()) && !filterDto.getFurniture().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Furniture"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getFurniture())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Furniture"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getFurniture()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getElevator()) && !filterDto.getElevator().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Elevator"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getElevator())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"),
+			"Elevator"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getElevator()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEntrance()) && !filterDto.getEntrance().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Entrance"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getEntrance())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"),
+							"Entrance"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getEntrance()));
 			predicates.add(predicate);
 		}
 
@@ -1900,48 +1816,44 @@ public class ItemServiceImpl implements ItemService {
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Location from the Street"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getLocationFromTheStreet())
-			);
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getLocationFromTheStreet()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getUtilityPayments()) && !filterDto.getUtilityPayments().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Utility Payments"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getUtilityPayments())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Utility Payments"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getUtilityPayments()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getPrepayment()) && !filterDto.getPrepayment().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Prepayment"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getPrepayment())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Prepayment"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getPrepayment()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getMinimumRentalPeriod()) && !filterDto.getMinimumRentalPeriod().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Minimum Rental Period"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMinimumRentalPeriod())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Minimum Rental Period"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"),
+							 filterDto.getMinimumRentalPeriod()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getLeaseType()) && !filterDto.getLeaseType().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Lease Type"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getLeaseType())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Lease Type"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getLeaseType()));
 			predicates.add(predicate);
 		}
 
@@ -1960,26 +1872,32 @@ public class ItemServiceImpl implements ItemService {
 		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
 		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
 
-		Predicate categoryPredicate = criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.GARAGE_AND_PARKING_BUY);
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.GARAGE_AND_PARKING_BUY);
 		predicates.add(categoryPredicate);
 
 		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getStartPrice());
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"),
+					 filterDto.getStartPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCurrency())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"), filterDto.getCurrency());
+			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"),
+			 filterDto.getCurrency());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCountry())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
 			predicates.add(predicate);
 		}
 
@@ -1996,50 +1914,46 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getType()) && !filterDto.getType().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Type"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getType())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Type"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getStartFloorArea()) && !filterDto.getStartFloorArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor Area"),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartFloorArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor Area"),
+							criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getStartFloorArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndFloorArea()) && !filterDto.getEndFloorArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor Area"),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndFloorArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor Area"),
+							criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getEndFloorArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getAmenities()) && !filterDto.getAmenities().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Amenities"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getAmenities())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Amenities"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getAmenities()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getUtilities()) && !filterDto.getUtilities().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Utilities"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getUtilities())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Utilities"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getUtilities()));
 			predicates.add(predicate);
 		}
 
@@ -2058,26 +1972,32 @@ public class ItemServiceImpl implements ItemService {
 		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
 		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
 
-		Predicate categoryPredicate = criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.GARAGE_AND_PARKING_RENTAL);
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.GARAGE_AND_PARKING_RENTAL);
 		predicates.add(categoryPredicate);
 
 		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getStartPrice());
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"),
+filterDto.getStartPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCurrency())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"), filterDto.getCurrency());
+			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"),
+					filterDto.getCurrency());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCountry())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
 			predicates.add(predicate);
 		}
 
@@ -2094,60 +2014,55 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getType()) && !filterDto.getType().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Type"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getType())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Type"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getStartFloorArea()) && !filterDto.getStartFloorArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor Area"),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartFloorArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor Area"),
+							criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getStartFloorArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndFloorArea()) && !filterDto.getEndFloorArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor Area"),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndFloorArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor Area"),
+							criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getEndFloorArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getAmenities()) && !filterDto.getAmenities().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Amenities"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getAmenities())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Amenities"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getAmenities()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getUtilities()) && !filterDto.getUtilities().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Utilities"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getUtilities())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Utilities"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getUtilities()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getPrepayment()) && !filterDto.getPrepayment().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Prepayment"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getPrepayment())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Prepayment"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getPrepayment()));
 			predicates.add(predicate);
 		}
 
@@ -2166,26 +2081,32 @@ public class ItemServiceImpl implements ItemService {
 		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
 		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
 
-		Predicate categoryPredicate = criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.LAND_BUY);
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.LAND_BUY);
 		predicates.add(categoryPredicate);
 
 		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getStartPrice());
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"),
+							filterDto.getStartPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCurrency())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"), filterDto.getCurrency());
+			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"),
+filterDto.getCurrency());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCountry())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
 			predicates.add(predicate);
 		}
 
@@ -2202,40 +2123,37 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getType()) && !filterDto.getType().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Type"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getType())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Type"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getStartLandArea()) && !filterDto.getStartLandArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Land Area"),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartLandArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Land Area"),
+							criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getStartLandArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndLandArea()) && !filterDto.getEndLandArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Land Area"),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndLandArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Land Area"),
+							criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getEndLandArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getServiceLines()) && !filterDto.getServiceLines().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Service Lines"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getServiceLines())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Service Lines"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getServiceLines()));
 			predicates.add(predicate);
 		}
 
@@ -2254,26 +2172,32 @@ public class ItemServiceImpl implements ItemService {
 		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
 		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
 
-		Predicate categoryPredicate = criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.LAND_RENTAL);
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.LAND_RENTAL);
 		predicates.add(categoryPredicate);
 
 		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getStartPrice());
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"),
+							filterDto.getStartPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCurrency())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"), filterDto.getCurrency());
+			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"),
+					filterDto.getCurrency());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCountry())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
 			predicates.add(predicate);
 		}
 
@@ -2290,50 +2214,46 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getType()) && !filterDto.getType().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Type"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getType())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Type"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getStartLandArea()) && !filterDto.getStartLandArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Land Area"),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartLandArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Land Area"),
+							criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getStartLandArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndLandArea()) && !filterDto.getEndLandArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Land Area"),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndLandArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Land Area"),
+							criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getEndLandArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getServiceLines()) && !filterDto.getServiceLines().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Service Lines"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getServiceLines())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Service Lines"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getServiceLines()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getPrepayment()) && !filterDto.getPrepayment().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Prepayment"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getPrepayment())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Prepayment"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getPrepayment()));
 			predicates.add(predicate);
 		}
 
@@ -2352,26 +2272,32 @@ public class ItemServiceImpl implements ItemService {
 		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
 		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
 
-		Predicate categoryPredicate = criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.NEW_CONSTRUCTION_APARTMENT);
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.NEW_CONSTRUCTION_APARTMENT);
 		predicates.add(categoryPredicate);
 
 		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getStartPrice());
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"),
+					 filterDto.getStartPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCurrency())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"), filterDto.getCurrency());
+			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"),
+			 filterDto.getCurrency());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCountry())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
 			predicates.add(predicate);
 		}
 
@@ -2388,20 +2314,18 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getElevator()) && !filterDto.getElevator().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Elevator"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getElevator())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"),
+			"Elevator"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getElevator()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getConstructionType()) && !filterDto.getConstructionType().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Construction Type"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getConstructionType())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Construction Type"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getConstructionType()));
 			predicates.add(predicate);
 		}
 
@@ -2409,128 +2333,116 @@ public class ItemServiceImpl implements ItemService {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
 			Predicate predicate =
-					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floors in the Building"),
-							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getFloorsInTheBuilding()));
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floors in the " +
+					 "Building"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"),
+							 filterDto.getFloorsInTheBuilding()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getStartFloor()) && !filterDto.getStartFloor().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor"),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartFloor())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor"),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartFloor()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndFloor()) && !filterDto.getEndFloor().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor"),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndFloor())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor"),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndFloor()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getTheHouseHas()) && !filterDto.getTheHouseHas().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "The House Has"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getTheHouseHas())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "The House Has"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getTheHouseHas()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getBalcony()) && !filterDto.getBalcony().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Balcony"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getBalcony())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Balcony"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getBalcony()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCeilingHeight()) && !filterDto.getCeilingHeight().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Ceiling Height"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCeilingHeight())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Ceiling Height"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCeilingHeight()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getStartFloorArea()) && !filterDto.getStartFloorArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor Area"),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartFloorArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor Area"),
+							criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getStartFloorArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndFloorArea()) && !filterDto.getEndFloorArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor Area"),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndFloorArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor Area"),
+							criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getEndFloorArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getParking()) && !filterDto.getParking().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Parking"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getParking())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Parking"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getParking()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getNumberOfRooms()) && !filterDto.getNumberOfRooms().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Rooms"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfRooms())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Rooms"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfRooms()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getNumberOfBathrooms()) && !filterDto.getNumberOfBathrooms().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Bathrooms"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfBathrooms())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Bathrooms"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfBathrooms()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getInteriorFinishing()) && !filterDto.getInteriorFinishing().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Interior Finishing"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getInteriorFinishing())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Interior Finishing"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getInteriorFinishing()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getMortgageIsPossible()) && !filterDto.getMortgageIsPossible().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mortgage is Possible"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMortgageIsPossible())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mortgage is Possible"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMortgageIsPossible()));
 			predicates.add(predicate);
 		}
 
@@ -2549,26 +2461,32 @@ public class ItemServiceImpl implements ItemService {
 		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
 		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
 
-		Predicate categoryPredicate = criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.NEW_CONSTRUCTION_APARTMENT);
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.NEW_CONSTRUCTION_APARTMENT);
 		predicates.add(categoryPredicate);
 
 		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getStartPrice());
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"),
+					 filterDto.getStartPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCurrency())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"), filterDto.getCurrency());
+			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"),
+			 filterDto.getCurrency());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCountry())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
 			predicates.add(predicate);
 		}
 
@@ -2585,20 +2503,17 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getType()) && !filterDto.getType().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Type"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getType())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Type"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getConstructionType()) && !filterDto.getConstructionType().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Construction Type"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getConstructionType())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Construction Type"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getConstructionType()));
 			predicates.add(predicate);
 		}
 
@@ -2606,108 +2521,103 @@ public class ItemServiceImpl implements ItemService {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
 			Predicate predicate =
-					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floors in the Building"),
-							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getFloorsInTheBuilding()));
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floors in the " +
+					 "Building"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"),
+							 filterDto.getFloorsInTheBuilding()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getStartHouseArea()) && !filterDto.getStartHouseArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "House Area"),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartHouseArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "House Area"),
+							criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getStartHouseArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndHouseArea()) && !filterDto.getEndHouseArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "House Area"),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndHouseArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "House Area"),
+							criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getEndHouseArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getStartLandArea()) && !filterDto.getStartLandArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Land Area"),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartLandArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Land Area"),
+							criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getStartLandArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndLandArea()) && !filterDto.getEndLandArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Land Area"),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndLandArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Land Area"),
+							criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getEndLandArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getGarage()) && !filterDto.getGarage().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Garage"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getGarage())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Garage"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getGarage()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getNumberOfRooms()) && !filterDto.getNumberOfRooms().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Rooms"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfRooms())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Rooms"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfRooms()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getNumberOfBathrooms()) && !filterDto.getNumberOfBathrooms().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Bathrooms"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfBathrooms())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Bathrooms"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfBathrooms()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getServiceLines()) && !filterDto.getServiceLines().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Service Lines"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getServiceLines())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Service Lines"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getServiceLines()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getInteriorFinishing()) && !filterDto.getInteriorFinishing().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Interior Finishing"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getInteriorFinishing())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Interior Finishing"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getInteriorFinishing()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getMortgageIsPossible()) && !filterDto.getMortgageIsPossible().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mortgage is Possible"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMortgageIsPossible())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mortgage is Possible"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMortgageIsPossible()));
 			predicates.add(predicate);
 		}
 
@@ -2726,26 +2636,32 @@ public class ItemServiceImpl implements ItemService {
 		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
 		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
 
-		Predicate categoryPredicate = criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.APARTMENT_DAILY_RENTAL);
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.APARTMENT_DAILY_RENTAL);
 		predicates.add(categoryPredicate);
 
 		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getStartPrice());
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"),
+					 filterDto.getStartPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCurrency())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"), filterDto.getCurrency());
+			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"),
+			 filterDto.getCurrency());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCountry())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
 			predicates.add(predicate);
 		}
 
@@ -2762,30 +2678,27 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getConstructionType()) && !filterDto.getConstructionType().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Construction Type"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getConstructionType())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Construction Type"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getConstructionType()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getNewConstruction()) && !filterDto.getNewConstruction().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "New Construction"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNewConstruction())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "New Construction"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNewConstruction()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getTheHouseHas()) && !filterDto.getTheHouseHas().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "The House Has"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getTheHouseHas())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "The House Has"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getTheHouseHas()));
 			predicates.add(predicate);
 		}
 
@@ -2793,188 +2706,169 @@ public class ItemServiceImpl implements ItemService {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
 			Predicate predicate =
-					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floors in the Building"),
-							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getFloorsInTheBuilding()));
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floors in the " +
+					 "Building"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"),
+							 filterDto.getFloorsInTheBuilding()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getStartFloorArea()) && !filterDto.getStartFloorArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor Area"),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartFloorArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor Area"),
+							criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getStartFloorArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndFloorArea()) && !filterDto.getEndFloorArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor Area"),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndFloorArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor Area"),
+							criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getEndFloorArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getStartFloor()) && !filterDto.getStartFloor().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor"),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartFloor())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor"),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartFloor()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndFloor()) && !filterDto.getEndFloor().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor"),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndFloor())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floor"),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndFloor()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getParking()) && !filterDto.getParking().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Parking"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getParking())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Parking"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getParking()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getAmenities()) && !filterDto.getAmenities().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Amenities"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getAmenities())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Amenities"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getAmenities()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getAppliances()) && !filterDto.getAppliances().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Appliances"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getAppliances())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Appliances"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getAppliances()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getWindowViews()) && !filterDto.getWindowViews().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Window Views"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getWindowViews())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Window Views"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getWindowViews()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getWithPets()) && !filterDto.getWithPets().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "With Pets"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getWithPets())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "With Pets"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getWithPets()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getWithChildren()) && !filterDto.getWithChildren().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "With Children"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getWithChildren())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "With Children"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getWithChildren()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getNumberOfGuests()) && !filterDto.getNumberOfGuests().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Guests"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfGuests())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Guests"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfGuests()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getRenovation()) && !filterDto.getRenovation().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Renovation"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getRenovation())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Renovation"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getRenovation()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getBalcony()) && !filterDto.getBalcony().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Balcony"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getBalcony())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Balcony"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getBalcony()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getElevator()) && !filterDto.getElevator().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Elevator"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getElevator())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"),
+			"Elevator"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getElevator()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCeilingHeight()) && !filterDto.getCeilingHeight().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Ceiling Height"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCeilingHeight())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Ceiling Height"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCeilingHeight()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getNumberOfRooms()) && !filterDto.getNumberOfRooms().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Rooms"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfRooms())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Rooms"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfRooms()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getNumberOfBathrooms()) && !filterDto.getNumberOfBathrooms().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Bathrooms"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfBathrooms())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Bathrooms"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfBathrooms()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getComfort()) && !filterDto.getComfort().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Comfort"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getComfort())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Comfort"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getComfort()));
 			predicates.add(predicate);
 		}
 
@@ -2993,26 +2887,32 @@ public class ItemServiceImpl implements ItemService {
 		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
 		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
 
-		Predicate categoryPredicate = criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.APARTMENT_DAILY_RENTAL);
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.APARTMENT_DAILY_RENTAL);
 		predicates.add(categoryPredicate);
 
 		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getStartPrice());
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"),
+					 filterDto.getStartPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCurrency())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"), filterDto.getCurrency());
+			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"),
+			 filterDto.getCurrency());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCountry())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
 			predicates.add(predicate);
 		}
 
@@ -3029,20 +2929,17 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getType()) && !filterDto.getType().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Type"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getType())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Type"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getConstructionType()) && !filterDto.getConstructionType().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Construction Type"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getConstructionType())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Construction Type"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getConstructionType()));
 			predicates.add(predicate);
 		}
 
@@ -3050,128 +2947,118 @@ public class ItemServiceImpl implements ItemService {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
 			Predicate predicate =
-					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floors in the Building"),
-							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getFloorsInTheBuilding()));
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Floors in the " +
+									"Building"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"),
+							 filterDto.getFloorsInTheBuilding()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getStartHouseArea()) && !filterDto.getStartHouseArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "House Area"),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartHouseArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "House Area"),
+							criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getStartHouseArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndHouseArea()) && !filterDto.getEndHouseArea().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "House Area"),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndHouseArea())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "House Area"),
+							criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"),
+									filterDto.getEndHouseArea()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getGarage()) && !filterDto.getGarage().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Garage"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getGarage())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Garage"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getGarage()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getAmenities()) && !filterDto.getAmenities().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Amenities"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getAmenities())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Amenities"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getAmenities()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getAppliances()) && !filterDto.getAppliances().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Appliances"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getAppliances())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Appliances"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getAppliances()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getWithPets()) && !filterDto.getWithPets().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "With Pets"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getWithPets())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "With Pets"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getWithPets()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getWithChildren()) && !filterDto.getWithChildren().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "With Children"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getWithChildren())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "With Children"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getWithChildren()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getNumberOfGuests()) && !filterDto.getNumberOfGuests().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Guests"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfGuests())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Guests"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfGuests()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getRenovation()) && !filterDto.getRenovation().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Renovation"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getRenovation())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Renovation"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getRenovation()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getNumberOfRooms()) && !filterDto.getNumberOfRooms().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Rooms"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfRooms())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Rooms"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfRooms()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getNumberOfBathrooms()) && !filterDto.getNumberOfBathrooms().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Bathrooms"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfBathrooms())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Number of Bathrooms"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getNumberOfBathrooms()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getComfort()) && !filterDto.getComfort().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Comfort"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getComfort())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Comfort"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getComfort()));
 			predicates.add(predicate);
 		}
 
@@ -3190,26 +3077,32 @@ public class ItemServiceImpl implements ItemService {
 		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
 		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
 
-		Predicate categoryPredicate = criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.MOBILE_PHONE);
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.MOBILE_PHONE);
 		predicates.add(categoryPredicate);
 
 		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getStartPrice());
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"),
+					 filterDto.getStartPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCurrency())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"), filterDto.getCurrency());
+			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"),
+			 filterDto.getCurrency());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCountry())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
 			predicates.add(predicate);
 		}
 
@@ -3226,50 +3119,41 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getMark()) && !filterDto.getMark().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mark"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMark())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mark"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMark()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getModel()) && !filterDto.getModel().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Model"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getModel())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Model"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getModel()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCondition()) && !filterDto.getCondition().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Condition"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCondition())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Condition"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getStorage()) && !filterDto.getStorage().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Storage"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getStorage())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Storage"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getStorage()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getColor()) && !filterDto.getColor().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Color"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getColor())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Color"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getColor()));
 			predicates.add(predicate);
 		}
 
@@ -3288,26 +3172,32 @@ public class ItemServiceImpl implements ItemService {
 		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
 		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
 
-		Predicate categoryPredicate = criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.NOTEBOOK);
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.NOTEBOOK);
 		predicates.add(categoryPredicate);
 
 		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getStartPrice());
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"),
+					 filterDto.getStartPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCurrency())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"), filterDto.getCurrency());
+			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"),
+					filterDto.getCurrency());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCountry())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
 			predicates.add(predicate);
 		}
 
@@ -3324,70 +3214,61 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getMark()) && !filterDto.getMark().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mark"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMark())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mark"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMark()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getMemory()) && !filterDto.getMemory().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Memory"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMemory())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Memory"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMemory()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getMemoryRAM()) && !filterDto.getMemoryRAM().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Memory (RAM)"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMemoryRAM())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Memory (RAM)"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMemoryRAM()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getProcessor()) && !filterDto.getProcessor().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Processor"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getProcessor())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Processor"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getProcessor()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCondition()) && !filterDto.getCondition().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Condition"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCondition())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Condition"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getScreenSize()) && !filterDto.getScreenSize().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Screen Size"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getScreenSize())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Screen Size"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getScreenSize()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getScreenResolution()) && !filterDto.getScreenResolution().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Screen Resolution"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getScreenResolution())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Screen Resolution"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getScreenResolution()));
 			predicates.add(predicate);
 		}
 
@@ -3406,26 +3287,32 @@ public class ItemServiceImpl implements ItemService {
 		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
 		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
 
-		Predicate categoryPredicate = criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.COMPUTER);
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.COMPUTER);
 		predicates.add(categoryPredicate);
 
 		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getStartPrice());
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"),
+filterDto.getStartPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCurrency())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"), filterDto.getCurrency());
+			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"),
+filterDto.getCurrency());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCountry())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
 			predicates.add(predicate);
 		}
 
@@ -3442,60 +3329,53 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getMemory()) && !filterDto.getMemory().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Memory"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMemory())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Memory"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMemory()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getMemoryRAM()) && !filterDto.getMemoryRAM().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Memory (RAM)"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMemoryRAM())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Memory (RAM)"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMemoryRAM()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getProcessor()) && !filterDto.getProcessor().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Processor"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getProcessor())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Processor"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getProcessor()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCondition()) && !filterDto.getCondition().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Condition"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCondition())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Condition"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getScreenSize()) && !filterDto.getScreenSize().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Screen Size"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getScreenSize())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Screen Size"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getScreenSize()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getScreenResolution()) && !filterDto.getScreenResolution().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Screen Resolution"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getScreenResolution())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Screen Resolution"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getScreenResolution()));
 			predicates.add(predicate);
 		}
 
@@ -3514,26 +3394,32 @@ public class ItemServiceImpl implements ItemService {
 		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
 		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
 
-		Predicate categoryPredicate = criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.SMART_WATCH);
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.SMART_WATCH);
 		predicates.add(categoryPredicate);
 
 		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getStartPrice());
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"),
+							filterDto.getStartPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCurrency())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"), filterDto.getCurrency());
+			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"),
+			 filterDto.getCurrency());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCountry())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
 			predicates.add(predicate);
 		}
 
@@ -3550,30 +3436,25 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getMark()) && !filterDto.getMark().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mark"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMark())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mark"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMark()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCondition()) && !filterDto.getCondition().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Condition"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCondition())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Condition"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getColor()) && !filterDto.getColor().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Color"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getColor())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Color"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getColor()));
 			predicates.add(predicate);
 		}
 
@@ -3596,22 +3477,27 @@ public class ItemServiceImpl implements ItemService {
 		predicates.add(categoryPredicate);
 
 		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getStartPrice());
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"),
+							filterDto.getStartPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCurrency())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"), filterDto.getCurrency());
+			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"),
+filterDto.getCurrency());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCountry())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
 			predicates.add(predicate);
 		}
 
@@ -3628,50 +3514,42 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getMark()) && !filterDto.getMark().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mark"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMark())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mark"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMark()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getScreenSize()) && !filterDto.getScreenSize().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Screen Size"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getScreenSize())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Screen Size"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getScreenSize()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getMemory()) && !filterDto.getMemory().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Memory"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMemory())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Memory"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMemory()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCondition()) && !filterDto.getCondition().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Condition"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCondition())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Condition"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getColor()) && !filterDto.getColor().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Color"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getColor())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Color"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getColor()));
 			predicates.add(predicate);
 		}
 
@@ -3694,22 +3572,27 @@ public class ItemServiceImpl implements ItemService {
 		predicates.add(categoryPredicate);
 
 		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getStartPrice());
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"),
+filterDto.getStartPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCurrency())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"), filterDto.getCurrency());
+			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"),
+			 filterDto.getCurrency());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCountry())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
 			predicates.add(predicate);
 		}
 
@@ -3726,30 +3609,26 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getMark()) && !filterDto.getMark().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mark"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMark())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mark"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMark()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getScreenSize()) && !filterDto.getScreenSize().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Screen Size"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getScreenSize())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Screen Size"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getScreenSize()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCondition()) && !filterDto.getCondition().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Condition"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCondition())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Condition"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -3768,26 +3647,32 @@ public class ItemServiceImpl implements ItemService {
 		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
 		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
 
-		Predicate categoryPredicate = criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.GAMING_CONSOLE);
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.GAMING_CONSOLE);
 		predicates.add(categoryPredicate);
 
 		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getStartPrice());
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"),
+					 filterDto.getStartPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCurrency())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"), filterDto.getCurrency());
+			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"),
+			 filterDto.getCurrency());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCountry())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
 			predicates.add(predicate);
 		}
 
@@ -3804,34 +3689,27 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getMark()) && !filterDto.getMark().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mark"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMark())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mark"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMark()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getType()) && !filterDto.getType().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Type"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getType())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Type"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getType()));
 			predicates.add(predicate);
 		}
-
 
 		if (nonNull(filterDto.getCondition()) && !filterDto.getCondition().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Condition"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCondition())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Condition"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
-
 
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
@@ -3848,26 +3726,32 @@ public class ItemServiceImpl implements ItemService {
 		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
 		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
 
-		Predicate categoryPredicate = criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.HEADPHONE);
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.HEADPHONE);
 		predicates.add(categoryPredicate);
 
 		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getStartPrice());
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"),
+							filterDto.getStartPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCurrency())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"), filterDto.getCurrency());
+			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"),
+					filterDto.getCurrency());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCountry())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
 			predicates.add(predicate);
 		}
 
@@ -3884,44 +3768,36 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getMark()) && !filterDto.getMark().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mark"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMark())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mark"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMark()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getConnectionType()) && !filterDto.getConnectionType().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Connection Type"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getConnectionType())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Connection Type"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getConnectionType()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getColor()) && !filterDto.getColor().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Color"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getColor())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Color"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getColor()));
 			predicates.add(predicate);
 		}
-
 
 		if (nonNull(filterDto.getCondition()) && !filterDto.getCondition().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Condition"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCondition())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Condition"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
-
 
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
@@ -3938,26 +3814,32 @@ public class ItemServiceImpl implements ItemService {
 		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
 		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
 
-		Predicate categoryPredicate = criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.COMPUTER_AND_NOTEBOOK_PARTS);
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.COMPUTER_AND_NOTEBOOK_PARTS);
 		predicates.add(categoryPredicate);
 
 		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getStartPrice());
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"),
+					 filterDto.getStartPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCurrency())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"), filterDto.getCurrency());
+			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"),
+			 filterDto.getCurrency());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCountry())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
 			predicates.add(predicate);
 		}
 
@@ -3974,23 +3856,19 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getType()) && !filterDto.getType().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Type"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getType())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Type"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCondition()) && !filterDto.getCondition().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Condition"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCondition())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Condition"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
-
 
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
@@ -4007,26 +3885,32 @@ public class ItemServiceImpl implements ItemService {
 		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
 		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
 
-		Predicate categoryPredicate = criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.PHOTO_AND_VIDEO_CAMERA);
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.PHOTO_AND_VIDEO_CAMERA);
 		predicates.add(categoryPredicate);
 
 		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getStartPrice());
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"),
+					 filterDto.getStartPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCurrency())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"), filterDto.getCurrency());
+			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"),
+			 filterDto.getCurrency());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCountry())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
 			predicates.add(predicate);
 		}
 
@@ -4043,23 +3927,19 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getMark()) && !filterDto.getMark().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mark"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMark())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mark"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMark()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCondition()) && !filterDto.getCondition().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Condition"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCondition())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Condition"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
-
 
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
@@ -4076,26 +3956,32 @@ public class ItemServiceImpl implements ItemService {
 		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
 		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
 
-		Predicate categoryPredicate = criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.COMPUTER_GAMES);
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.COMPUTER_GAMES);
 		predicates.add(categoryPredicate);
 
 		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getStartPrice());
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"),
+					 filterDto.getStartPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCurrency())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"), filterDto.getCurrency());
+			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"),
+			 filterDto.getCurrency());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCountry())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
 			predicates.add(predicate);
 		}
 
@@ -4112,23 +3998,19 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getType()) && !filterDto.getType().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Type"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getType())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Type"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCondition()) && !filterDto.getCondition().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Condition"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCondition())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Condition"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
-
 
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
@@ -4145,26 +4027,32 @@ public class ItemServiceImpl implements ItemService {
 		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
 		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
 
-		Predicate categoryPredicate = criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.SMART_HOME_ACCESSORIES);
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.SMART_HOME_ACCESSORIES);
 		predicates.add(categoryPredicate);
 
 		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getStartPrice());
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"),
+							filterDto.getStartPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCurrency())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"), filterDto.getCurrency());
+			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"),
+			 filterDto.getCurrency());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCountry())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
 			predicates.add(predicate);
 		}
 
@@ -4181,33 +4069,27 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getMark()) && !filterDto.getMark().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mark"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMark())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mark"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMark()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getType()) && !filterDto.getType().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Type"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getType())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Type"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCondition()) && !filterDto.getCondition().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Condition"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCondition())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Condition"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
-
 
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
@@ -4228,22 +4110,27 @@ public class ItemServiceImpl implements ItemService {
 		predicates.add(categoryPredicate);
 
 		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getStartPrice());
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"),
+					 filterDto.getStartPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCurrency())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"), filterDto.getCurrency());
+			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"),
+			 filterDto.getCurrency());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCountry())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
 			predicates.add(predicate);
 		}
 
@@ -4260,20 +4147,16 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getMark()) && !filterDto.getMark().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mark"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMark())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mark"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMark()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getType()) && !filterDto.getType().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Type"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getType())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Type"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -4282,31 +4165,27 @@ public class ItemServiceImpl implements ItemService {
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Maximum Laundry Capacity"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMaximumLaundryCapacity())
-			);
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMaximumLaundryCapacity()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getLaundryLoadType()) && !filterDto.getLaundryLoadType().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Laundry Load Type"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getLaundryLoadType())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Laundry Load Type"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getLaundryLoadType()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCondition()) && !filterDto.getCondition().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Condition"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCondition())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Condition"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
-
 
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
@@ -4323,26 +4202,32 @@ public class ItemServiceImpl implements ItemService {
 		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
 		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
 
-		Predicate categoryPredicate = criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.CLOTHES_DRYER);
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.CLOTHES_DRYER);
 		predicates.add(categoryPredicate);
 
 		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getStartPrice());
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"),
+					 filterDto.getStartPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCurrency())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"), filterDto.getCurrency());
+			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"),
+			 filterDto.getCurrency());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCountry())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
 			predicates.add(predicate);
 		}
 
@@ -4359,10 +4244,9 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getCondition()) && !filterDto.getCondition().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Condition"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCondition())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Condition"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -4381,26 +4265,32 @@ public class ItemServiceImpl implements ItemService {
 		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
 		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
 
-		Predicate categoryPredicate = criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.IRON_AND_ACCESSORIES);
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.IRON_AND_ACCESSORIES);
 		predicates.add(categoryPredicate);
 
 		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getStartPrice());
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get("price").get("price"),
+					 filterDto.getStartPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
-			Predicate predicate = criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get("price").get("price"), filterDto.getEndPrice());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCurrency())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"), filterDto.getCurrency());
+			Predicate predicate = criteriaBuilder.equal(itemRoot.get("price").get("currency"),
+			 filterDto.getCurrency());
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCountry())) {
-			Predicate predicate = criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get("location").get("country"), filterDto.getCountry());
 			predicates.add(predicate);
 		}
 
@@ -4417,20 +4307,17 @@ public class ItemServiceImpl implements ItemService {
 		if (nonNull(filterDto.getType()) && !filterDto.getType().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Type"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getType())
-			);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Type"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
 		if (nonNull(filterDto.getCondition()) && !filterDto.getCondition().isEmpty()) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Condition"),
-					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCondition())
-			);
+			Predicate predicate =
+					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Condition"),
+							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -4447,6 +4334,37 @@ public class ItemServiceImpl implements ItemService {
 		return itemMapper.mapEntityListToDtoList(itemsByCategoryId);
 	}
 
+	private void imagesValidation(List<MultipartFile> images) {
+		if(images.size() >= 15)
+			throw new SomethingWentWrongException(ExceptionConstants.COUNT_OF_IMAGES_MUST_BE_LESS_THEN_15);
+		areAllFilesWithAllowedExtensions(images);
+	}
+
+	private void areAllFilesWithAllowedExtensions(List<MultipartFile> images) {
+		List<String> allowedExtensions = Arrays.asList("jpg", "jpeg", "png", "svg");
+
+		for (MultipartFile image : images) {
+			String fileName = image.getOriginalFilename();
+			if (!isNull(fileName)) {
+				String extension = getFileExtension(fileName);
+				if (!allowedExtensions.contains(extension.toLowerCase())) {
+					throw new UnsupportedExtensionException(ExceptionConstants.UNSUPPORTED_FILE_EXTENSION);
+				}
+			} else {
+				throw new FileIsNullException(ExceptionConstants.FILE_NAME_IS_NULL);
+			}
+		}
+	}
+
+	private String getFileExtension(String fileName) {
+		int dotIndex = fileName.lastIndexOf('.');
+		if (dotIndex >= 0 && dotIndex < fileName.length() - 1) {
+			return fileName.substring(dotIndex + 1);
+		} else {
+			return "";
+		}
+	}
+
 	private ItemEntity updateEntity(ItemEntity itemEntity, ItemRequestDto itemRequestDto) {
 
 		itemEntity.setTitle(isNull(itemRequestDto.getTitle()) ? itemEntity.getTitle() : itemRequestDto.getTitle());
@@ -4454,7 +4372,7 @@ public class ItemServiceImpl implements ItemService {
 				itemRequestDto.getDescription());
 		itemEntity.setPrice(Price.builder()
 				.price(isNull(itemRequestDto.getPrice()) ? itemEntity.getPrice().getPrice() :
-						itemRequestDto.getPrice())
+				 itemRequestDto.getPrice())
 				.currency(isNull(itemRequestDto.getCurrency()) ? itemEntity.getPrice().getCurrency() :
 						itemRequestDto.getCurrency())
 				.build());
@@ -4465,12 +4383,18 @@ public class ItemServiceImpl implements ItemService {
 				itemRequestDto.getDescription()));
 
 		itemEntity.setLocation(Location.builder()
-				.country(LocationEnum.getCountry(isNull(itemRequestDto.getCityId()) ? itemEntity.getLocation().getCity().getId() : itemRequestDto.getCityId()))
-				.city(LocationEnum.getCity(isNull(itemRequestDto.getCityId()) ? itemEntity.getLocation().getCity().getId() : itemRequestDto.getCityId()))
-				.region(LocationEnum.getRegion(isNull(itemRequestDto.getCityId()) ? itemEntity.getLocation().getCity().getId() : itemRequestDto.getCityId()))
-				.address(isNull(itemRequestDto.getAddress()) ? itemEntity.getLocation().getAddress(): itemRequestDto.getAddress())
+				.country(LocationEnum.getCountry(
+						isNull(itemRequestDto.getCityId()) ? itemEntity.getLocation().getCity().getId() :
+								itemRequestDto.getCityId()))
+				.city(LocationEnum.getCity(
+						isNull(itemRequestDto.getCityId()) ? itemEntity.getLocation().getCity().getId() :
+								itemRequestDto.getCityId()))
+				.region(LocationEnum.getRegion(
+						isNull(itemRequestDto.getCityId()) ? itemEntity.getLocation().getCity().getId() :
+								itemRequestDto.getCityId()))
+				.address(isNull(itemRequestDto.getAddress()) ? itemEntity.getLocation().getAddress() :
+						itemRequestDto.getAddress())
 				.build());
-		itemEntity.setImgUrl(isNull(itemRequestDto.getImgUrl()) ? itemEntity.getImgUrl() : itemRequestDto.getImgUrl());
 		itemEntity.setUpdatedAt(ZonedDateTime.now());
 		return itemRepository.save(itemEntity);
 	}

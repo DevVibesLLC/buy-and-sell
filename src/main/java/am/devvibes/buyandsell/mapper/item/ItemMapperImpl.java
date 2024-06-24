@@ -7,6 +7,7 @@ import am.devvibes.buyandsell.entity.item.ItemEntity;
 import am.devvibes.buyandsell.entity.location.Location;
 import am.devvibes.buyandsell.mapper.value.ValueMapper;
 import am.devvibes.buyandsell.service.category.CategoryService;
+import am.devvibes.buyandsell.service.s3.impl.S3ServiceImpl;
 import am.devvibes.buyandsell.service.security.SecurityService;
 import am.devvibes.buyandsell.service.user.impl.UserServiceImpl;
 import am.devvibes.buyandsell.service.value.ValueService;
@@ -14,6 +15,7 @@ import am.devvibes.buyandsell.util.LocationEnum;
 import am.devvibes.buyandsell.util.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -26,9 +28,10 @@ public class ItemMapperImpl implements ItemMapper {
 	private final CategoryService categoryService;
 	private final ValueMapper valueMapper;
 	private final ValueService valueService;
+	private final S3ServiceImpl s3Service;
 
 	@Override
-	public ItemEntity mapDtoToEntity(ItemRequestDto itemRequestDto, Long categoryId) {
+	public ItemEntity mapDtoToEntity(ItemRequestDto itemRequestDto, List<MultipartFile> images, Long categoryId) {
 		return ItemEntity.builder()
 				.title(itemRequestDto.getTitle())
 				.description(itemRequestDto.getDescription())
@@ -46,7 +49,7 @@ public class ItemMapperImpl implements ItemMapper {
 				.category(categoryService.FindCategoryEntityOrElseThrow(categoryId))
 				.fields(valueService.saveAllValues(itemRequestDto.getFieldsValue()))
 				.status(Status.CREATED)
-				.imgUrl(itemRequestDto.getImgUrl())
+				.imgUrls(s3Service.uploadFiles(images))
 				.build();
 	}
 
@@ -61,7 +64,7 @@ public class ItemMapperImpl implements ItemMapper {
 				.description(itemEntity.getDescription())
 				.userId(itemEntity.getUserEntity().getId())
 				.location(itemEntity.getLocation())
-				.imgUrl(itemEntity.getImgUrl())
+				.imgUrls(itemEntity.getImgUrls())
 				.build();
 	}
 

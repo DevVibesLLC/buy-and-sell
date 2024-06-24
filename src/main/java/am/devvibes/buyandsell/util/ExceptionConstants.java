@@ -22,7 +22,11 @@ public enum ExceptionConstants {
 	MARK_NOT_FOUND("Mark not found"),
 	MODEL_NOT_FOUND("Model not found"),
 	GENERATION_NOT_FOUND("Generation"),
-	PAGE_SIZE_EXCEPTION("Page size exception");
+	PAGE_SIZE_EXCEPTION("Page size exception"),
+	FILE_IS_NULL("File is null"),
+	FILE_NAME_IS_NULL("File name is null for one of the uploaded images"),
+	UNSUPPORTED_FILE_EXTENSION("Unsupported file extension"),
+	COUNT_OF_IMAGES_MUST_BE_LESS_THEN_15("Count of images must be less then 15");
 
 
 	private final String string;

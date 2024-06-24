@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -24,12 +25,13 @@ public class ItemController {
 
 	private final ItemService itemService;
 
-	@PostMapping("/{categoryId}")
+	@PostMapping(value = "/{categoryId}")
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@Operation(summary = "Create item")
 	public ResponseEntity<ItemResponseDto> createItem(@PathVariable Long categoryId,
-			@RequestBody ItemRequestDto itemRequestDto) {
-		return ResponseEntity.ok(itemService.save(itemRequestDto, categoryId));
+			@RequestPart(value = "dto") ItemRequestDto itemRequestDto,
+			@RequestParam(value = "images") List<MultipartFile> images) {
+		return ResponseEntity.ok(itemService.save(itemRequestDto, images, categoryId));
 	}
 
 	@GetMapping("/category/{categoryId}")

@@ -28,6 +28,6 @@ public class ItemResponseDto {
 
 	private List<FieldValuesDto> fields;
 
-	private String imgUrl;
+	private List<String> imgUrls;
 
 }

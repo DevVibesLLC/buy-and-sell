@@ -37,6 +37,8 @@ dependencies {
     implementation group: 'org.keycloak', name: 'keycloak-spring-security-adapter', version: '20.0.1'
     implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version:'2.2.0'
     implementation 'org.modelmapper:modelmapper:2.4.4'
+    implementation 'com.amazonaws:aws-java-sdk:1.11.486'
+    implementation 'commons-fileupload:commons-fileupload:1.4'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.projectlombok:lombok'

@@ -1,8 +1,6 @@
 package am.devvibes.buyandsell.exception.globalHandler;
 
-import am.devvibes.buyandsell.exception.NotFoundException;
-import am.devvibes.buyandsell.exception.SomethingWentWrongException;
-import am.devvibes.buyandsell.exception.VerificationException;
+import am.devvibes.buyandsell.exception.*;
 import am.devvibes.buyandsell.util.ApiError;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +33,20 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(VerificationException.class)
 	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
 	public ResponseEntity<ApiError> verificationException(HttpServletRequest req, VerificationException e) {
+		logError(req, e);
+		return buildResponse(HttpStatus.BAD_REQUEST, e.getMessage(), req.getRequestURI());
+	}
+
+	@ExceptionHandler(FileIsNullException.class)
+	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
+	public ResponseEntity<ApiError> fileIsNullException(HttpServletRequest req, FileIsNullException e) {
+		logError(req, e);
+		return buildResponse(HttpStatus.BAD_REQUEST, e.getMessage(), req.getRequestURI());
+	}
+
+	@ExceptionHandler(UnsupportedExtensionException.class)
+	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
+	public ResponseEntity<ApiError> unsupportedExtensionException(HttpServletRequest req, UnsupportedExtensionException e) {
 		logError(req, e);
 		return buildResponse(HttpStatus.BAD_REQUEST, e.getMessage(), req.getRequestURI());
 	}

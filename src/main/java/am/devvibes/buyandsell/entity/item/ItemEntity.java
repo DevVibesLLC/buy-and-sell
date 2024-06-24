@@ -42,7 +42,8 @@ public class ItemEntity extends BaseEntityWithDates {
 	@JoinColumn(name = "item_id")
 	private List<FieldEntity> fields;
 
-	private String imgUrl;
+	@ElementCollection
+	private List<String> imgUrls;
 
 	@Enumerated(EnumType.STRING)
 	private Status status;

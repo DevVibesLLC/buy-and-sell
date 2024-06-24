@@ -31,6 +31,25 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://${keycloak.domain}/realms/${keycloak.realm}
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      file-size-threshold: 12MB
+
+cloud:
+  aws:
+    credentials:
+      access-key: AKIASC5CP3WN5NVQGO47
+      secret-key: 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
+    region:
+      static: eu-north-1
+    stack:
+      auto: false
+
+application:
+  bucket:
+    name: buyandsellimages
 
 app:
   name: SandBox task API
