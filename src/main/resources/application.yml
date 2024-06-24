@@ -37,15 +37,6 @@ spring:
       max-file-size: 10MB
       file-size-threshold: 12MB
 
-cloud:
-  aws:
-    credentials:
-      access-key:
-      secret-key:
-    region:
-      static: eu-north-1
-    stack:
-      auto: false
 
 application:
   bucket:
