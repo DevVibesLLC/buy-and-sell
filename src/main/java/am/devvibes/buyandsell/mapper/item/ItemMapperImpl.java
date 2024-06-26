@@ -49,7 +49,7 @@ public class ItemMapperImpl implements ItemMapper {
 				.category(categoryService.FindCategoryEntityOrElseThrow(categoryId))
 				.fields(valueService.saveAllValues(itemRequestDto.getFieldsValue()))
 				.status(Status.CREATED)
-				.imgUrls(s3Service.uploadFiles(images))
+				.imgUrls(s3Service.uploadItemImages(images))
 				.build();
 	}
 
@@ -63,11 +63,11 @@ public class ItemMapperImpl implements ItemMapper {
 				.fields(valueMapper.mapEntityListToDtoList(itemEntity.getFields()))
 				.description(itemEntity.getDescription())
 				.userId(itemEntity.getUserEntity().getId())
+				.status(itemEntity.getStatus())
 				.location(itemEntity.getLocation())
 				.imgUrls(itemEntity.getImgUrls())
 				.build();
 	}
-
 
 	@Override
 	public List<ItemResponseDto> mapEntityListToDtoList(List<ItemEntity> itemEntityList) {

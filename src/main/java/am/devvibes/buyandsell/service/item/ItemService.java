@@ -88,6 +88,18 @@ public interface ItemService {
 
 	List<ItemResponseDto> filterItems(IronAndAccessoriesFilterDto filterDto);
 
+	List<ItemResponseDto> filterItems(RefrigeratorFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(FreezerFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(DishwasherFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(MicrowaveFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(StoveFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(CoffeeMakerAndAccessoriesFilterDto filterDto);
+
 	List<ItemResponseDto> findItemsByCategory(Long categoryId);
 
 }

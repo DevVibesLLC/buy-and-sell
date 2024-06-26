@@ -36,11 +36,22 @@ spring:
       enabled: true
       max-file-size: 10MB
       file-size-threshold: 12MB
+cloud:
+  aws:
+    credentials:
+      access-key: ${AWS_ACCESS_KEY_ID}
+      secret-key: ${AWS_SECRET_ACCESS_KEY}
+    region:
+      static: ${AWS_REGION}
+    stack:
+      auto: false
 
 
 application:
-  bucket:
+  imagesBucket:
     name: buyandsellimages
+  storiesBucket:
+    name: buyandsellstories
 
 app:
   name: SandBox task API

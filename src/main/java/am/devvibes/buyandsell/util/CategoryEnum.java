@@ -57,7 +57,20 @@ public enum CategoryEnum {
 
 	CLOTHES_DRYER("Clones Dryer"),
 
-	IRON_AND_ACCESSORIES("Iron and Accessories");
+	IRON_AND_ACCESSORIES("Iron and Accessories"),
+
+	REFRIGERATOR("Refrigerator"),
+
+	FREEZER("Freezer"),
+
+	DISHWASHER("Dishwasher"),
+
+	MICROWAVE("Microwave"),
+
+	STOVE("Stove"),
+
+	COFFEE_MAKER_AND_ACCESSORIES("Coffee Maker and Accessories");
+
 	private final String name;
 
 	CategoryEnum(String name) {

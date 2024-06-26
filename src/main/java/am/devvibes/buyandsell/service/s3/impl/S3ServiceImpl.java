@@ -22,27 +22,48 @@ public class S3ServiceImpl implements S3Service {
 
 	private final AmazonS3 amazonS3;
 
-	@Value("${application.bucket.name}")
-	private String bucketName;
+	@Value("${application.imagesBucket.name}")
+	private String imagesBucketName;
+
+	@Value("${application.storiesBucket.name}")
+	private String storiesBucketName;
 
 	@Override
-	public List<String> uploadFiles(List<MultipartFile> files) {
-		List<String> imageNames = files.stream().map(this::uploadFile).toList();
-		return getUrlsByImageNames(imageNames);
+	public List<String> uploadItemImages(List<MultipartFile> files) {
+		List<String> imageNames = files.stream().map(this::uploadImageFile).toList();
+		return getUrlsByItemImageNames(imageNames);
 	}
 
-	private List<String> getUrlsByImageNames(List<String> imageNames) {
-		return imageNames.stream().map(this::getUrlForImage).toList();
+	@Override
+	public String uploadStory(MultipartFile story) {
+		String storyName = uploadStoryFile(story);
+		return getUrlForStory(storyName);
 	}
 
-	private String getUrlForImage(String imageName) {
-		return amazonS3.getUrl(bucketName, imageName).toString();
+	private List<String> getUrlsByItemImageNames(List<String> imageNames) {
+		return imageNames.stream().map(this::getUrlForItemImage).toList();
 	}
 
-	private String uploadFile(MultipartFile file) {
+	private String getUrlForItemImage(String imageName) {
+		return amazonS3.getUrl(imagesBucketName, imageName).toString();
+	}
+
+	private String getUrlForStory(String storyName) {
+		return amazonS3.getUrl(storiesBucketName, storyName).toString();
+	}
+
+	private String uploadImageFile(MultipartFile file) {
 		File fileObj = convertMultiPartFileToFile(file);
 		String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-		amazonS3.putObject(new PutObjectRequest(bucketName, fileName, fileObj));
+		amazonS3.putObject(new PutObjectRequest(imagesBucketName, fileName, fileObj));
+		fileObj.delete();
+		return fileName;
+	}
+
+	private String uploadStoryFile(MultipartFile file) {
+		File fileObj = convertMultiPartFileToFile(file);
+		String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+		amazonS3.putObject(new PutObjectRequest(storiesBucketName, fileName, fileObj));
 		fileObj.delete();
 		return fileName;
 	}

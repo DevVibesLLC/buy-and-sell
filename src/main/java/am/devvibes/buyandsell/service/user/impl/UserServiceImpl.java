@@ -6,10 +6,14 @@ import am.devvibes.buyandsell.entity.user.UserEntity;
 import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.exception.SomethingWentWrongException;
 import am.devvibes.buyandsell.mapper.user.UserMapper;
+import am.devvibes.buyandsell.repository.item.ItemRepository;
 import am.devvibes.buyandsell.repository.user.UserRepository;
+import am.devvibes.buyandsell.service.favoriteItems.FavoriteItemsService;
+import am.devvibes.buyandsell.service.item.ItemService;
 import am.devvibes.buyandsell.service.security.SecurityService;
 import am.devvibes.buyandsell.service.user.UserService;
 import am.devvibes.buyandsell.util.ExceptionConstants;
+import am.devvibes.buyandsell.util.Status;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.keycloak.admin.client.Keycloak;
@@ -32,6 +36,8 @@ public class UserServiceImpl implements UserService {
 	private final UserMapper userMapper;
 	private final Keycloak keycloak;
 	private final SecurityService securityService;
+	private final ItemRepository itemRepository;
+	private final FavoriteItemsService favoriteItemsService;
 
 	@Value("${keycloak.realm}")
 	private String realm;
@@ -48,12 +54,12 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserEntity findUserById(String id) {
-		return userRepository.findById(id).orElseThrow();
+		return userRepository.findById(id).orElseThrow(() -> new NotFoundException(ExceptionConstants.USER_NOT_FOUND));
 	}
 
 	@Override
 	public UserResponseDto findUserForUserProfile() {
-		UserEntity userRepresentation =findUserById(securityService.getCurrentUserId());
+		UserEntity userRepresentation = findUserById(securityService.getCurrentUserId());
 		return userMapper.toDto(userRepresentation);
 
 	}
@@ -68,6 +74,8 @@ public class UserServiceImpl implements UserService {
 	@Override
 	@Transactional
 	public void deleteUser(String id) {
+		itemRepository.findByUserEntityId(id).forEach(i -> i.setStatus(Status.DELETED));
+		favoriteItemsService.deleteAllByUserId(id);
 		getUsersResource().delete(id);
 	}
 

@@ -2,6 +2,8 @@ package am.devvibes.buyandsell.dto.filter;
 
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 public class AutoFilterDto {
 

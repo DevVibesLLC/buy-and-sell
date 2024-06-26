@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface S3Service {
 
-	List<String> uploadFiles(List<MultipartFile> files);
+	List<String> uploadItemImages(List<MultipartFile> files);
+
+	String uploadStory(MultipartFile story);
 
 }

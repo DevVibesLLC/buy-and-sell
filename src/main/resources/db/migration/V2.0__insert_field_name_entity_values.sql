@@ -140,7 +140,7 @@ VALUES
 (4,'Cabriolet'),
 (4,'Sportcar'),
 (4,'Supercar'),
-(4,'Hipercar'),
+(4,'Hypercar'),
 
 (5,'Gasoline'),
 (5,'Diesel'),
@@ -2714,4 +2714,77 @@ VALUES
 
 (254, 'New'),
 (254, 'Used'),
-(254, 'Faulty')
+(254, 'Faulty'),
+
+(255, 'AEg'),
+(255, 'Atlant'),
+(255, 'Beko'),
+(255, 'Berg'),
+(255, 'Bosch'),
+(255, 'Daewoo'),
+(255, 'Danby'),
+(255, 'Elecrolux'),
+(255, 'Frigidaire'),
+(255, 'GE'),
+(255, 'Gorenje'),
+(255, 'Hisense'),
+(255, 'Hitachi'),
+(255, 'Hotpoint Ariston'),
+(255, 'Indesit'),
+(255, 'LG'),
+(255, 'Liebherr'),
+(255, 'Maytag'),
+(255, 'Nordfrost'),
+(255, 'Pozis'),
+(255, 'Samsung'),
+(255, 'Sharp'),
+(255, 'Siemens'),
+(255, 'Stinol'),
+(255, 'Sub-Zero'),
+(255, 'Thermador'),
+(255, 'Vestel'),
+(255, 'Whirlpool'),
+(255, 'Xiaomi'),
+(255, 'Биряюса'),
+(255, 'Минск'),
+(255, 'Саратов'),
+(255, 'Other'),
+
+(256, 'Refrigerators'),
+(256, 'Refrigerated Display Cases'),
+(256, 'Accessories and Parts'),
+
+(257, 'New'),
+(257, 'Used'),
+(257, 'Faulty'),
+
+(258, 'New'),
+(258, 'Used'),
+(258, 'Faulty'),
+
+(259, 'New'),
+(259, 'Used'),
+(259, 'Faulty'),
+
+(260, 'New'),
+(260, 'Used'),
+(260, 'Faulty'),
+
+(261, 'Stove'),
+(261, 'Ovens'),
+(261, 'Cooktops'),
+
+(262, 'Electric Burners'),
+(262, 'Gas Burners'),
+(262, 'Combined Burners'),
+
+(263, 'New'),
+(263, 'Used'),
+(263, 'Faulty'),
+
+(264, 'Coffee Machines'),
+(264, 'Coffee Grinders'),
+
+(265, 'New'),
+(265, 'Used'),
+(265, 'Faulty')

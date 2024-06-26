@@ -6,7 +6,7 @@ import lombok.Getter;
 public enum ExceptionConstants {
 
 	USER_NOT_FOUND("User not found"),
-	PASSWORDS_ARE_DIFFERENT("Passwords not muched"),
+	PASSWORDS_ARE_DIFFERENT("Passwords not matched"),
 	USER_WITH_THAT_EMAIL_ALREADY_EXISTS("User with that email already exists"),
 	USER_WITH_THAT_USERNAME_ALREADY_EXISTS("User with that username already exists"),
 	PASSWORD_LENGTH_MUST_BE_MORE_THEN_8("Password length must be more then 8"),
@@ -26,7 +26,9 @@ public enum ExceptionConstants {
 	FILE_IS_NULL("File is null"),
 	FILE_NAME_IS_NULL("File name is null for one of the uploaded images"),
 	UNSUPPORTED_FILE_EXTENSION("Unsupported file extension"),
-	COUNT_OF_IMAGES_MUST_BE_LESS_THEN_15("Count of images must be less then 15");
+	COUNT_OF_IMAGES_MUST_BE_LESS_THEN_15("Count of images must be less then 15"),
+	ITEM_ALREADY_EXISTS_IN_FAVORITES("Item already exists in Favorites"),
+	STORY_NOT_FOUND("Story not found");
 
 
 	private final String string;

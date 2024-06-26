@@ -27,7 +27,7 @@ public class ItemController {
 
 	@PostMapping(value = "/{categoryId}")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Create item")
+	@Operation(summary = "Create Item")
 	public ResponseEntity<ItemResponseDto> createItem(@PathVariable Long categoryId,
 			@RequestPart(value = "dto") ItemRequestDto itemRequestDto,
 			@RequestParam(value = "images") List<MultipartFile> images) {
@@ -36,27 +36,27 @@ public class ItemController {
 
 	@GetMapping("/category/{categoryId}")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Get item by category id")
+	@Operation(summary = "Get Item by Category Id")
 	public ResponseEntity<List<ItemResponseDto>> getItemsByCategoryId(@PathVariable Long categoryId) {
 		return ResponseEntity.ok(itemService.findItemsByCategory(categoryId));
 	}
 
 	@PutMapping("/{categoryId}/item/{itemId}")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Update item")
+	@Operation(summary = "Update Item")
 	public ResponseEntity<ItemResponseDto> updateItem(@PathVariable Long categoryId,@PathVariable Long itemId,
 			@RequestBody ItemRequestDto itemRequestDto) {
 		return ResponseEntity.ok(itemService.update(itemRequestDto, categoryId, itemId));
 	}
 
 	@GetMapping("/{id}")
-	@Operation(summary = "Get item by id")
+	@Operation(summary = "Get Item by Id")
 	public ResponseEntity<ItemResponseDto> getItemById(@PathVariable Long id) {
 		return ResponseEntity.ok(itemService.findById(id));
 	}
 
 	@GetMapping
-	@Operation(summary = "Get all items")
+	@Operation(summary = "Get All Items")
 	public ResponseEntity<Page<ItemResponseDto>> getAllItem(@RequestParam(required = false) Integer page,
 															@RequestParam(required = false) Integer size) {
 		PageRequest pageRequest = CustomPageRequest.from(page, size, Sort.unsorted());
@@ -65,7 +65,7 @@ public class ItemController {
 
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Delete item by id")
+	@Operation(summary = "Delete Item by Id")
 	public ResponseEntity<List<ItemResponseDto>> deleteItemById(@PathVariable Long id) {
 		itemService.deleteById(id);
 		return ResponseEntity.ok().build();
@@ -73,154 +73,154 @@ public class ItemController {
 
 	@PostMapping("/search")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Search items")
+	@Operation(summary = "Search Items")
 	public ResponseEntity<List<ItemResponseDto>> searchItem(@RequestBody SearchDto searchDto) {
 		return ResponseEntity.ok(itemService.searchItems(searchDto));
 	}
 
 	@PostMapping("/auto/filter")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Filter auto items")
+	@Operation(summary = "Filter Auto Items")
 	public ResponseEntity<List<ItemResponseDto>> filterAutoItems(@RequestBody AutoFilterDto filterDto) {
 		return ResponseEntity.ok(itemService.filterItems(filterDto));
 	}
 
 	@PostMapping("/truck/filter")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Filter truck items")
+	@Operation(summary = "Filter Truck Items")
 	public ResponseEntity<List<ItemResponseDto>> filterTruckItems(@RequestBody TruckFilterDto filterDto) {
 		return ResponseEntity.ok(itemService.filterItems(filterDto));
 	}
 
 	@PostMapping("/bus/filter")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Filter bus items")
+	@Operation(summary = "Filter Bus Items")
 	public ResponseEntity<List<ItemResponseDto>> filterBusItems(@RequestBody BusFilterDto filterDto) {
 		return ResponseEntity.ok(itemService.filterItems(filterDto));
 	}
 
 	@PostMapping("/apartmentBuy/filter")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Filter apartment buy items")
+	@Operation(summary = "Filter Apartment Buy Items")
 	public ResponseEntity<List<ItemResponseDto>> filterApartmentBuyItems(@RequestBody ApartmentBuyFilterDto filterDto) {
 		return ResponseEntity.ok(itemService.filterItems(filterDto));
 	}
 
 	@PostMapping("/apartmentRental/filter")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Filter apartment rental items")
+	@Operation(summary = "Filter Apartment Rental Items")
 	public ResponseEntity<List<ItemResponseDto>> filterApartmentRentalItems(@RequestBody ApartmentRentalFilterDto filterDto) {
 		return ResponseEntity.ok(itemService.filterItems(filterDto));
 	}
 
 	@PostMapping("/houseBuy/filter")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Filter house buy items")
+	@Operation(summary = "Filter House Buy Items")
 	public ResponseEntity<List<ItemResponseDto>> filterHouseBuyItems(@RequestBody HouseBuyFilterDto filterDto) {
 		return ResponseEntity.ok(itemService.filterItems(filterDto));
 	}
 
 	@PostMapping("/houseRental/filter")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Filter house rental items")
+	@Operation(summary = "Filter House Rental Items")
 	public ResponseEntity<List<ItemResponseDto>> filterHouseRentalItems(@RequestBody HouseRentalFilterDto filterDto) {
 		return ResponseEntity.ok(itemService.filterItems(filterDto));
 	}
 
 	@PostMapping("/commercialBuy/filter")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Filter commercial buy items")
+	@Operation(summary = "Filter Commercial Buy Items")
 	public ResponseEntity<List<ItemResponseDto>> filterCommercialBuyItems(@RequestBody CommercialBuyFilterDto filterDto) {
 		return ResponseEntity.ok(itemService.filterItems(filterDto));
 	}
 
 	@PostMapping("/commercialRental/filter")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Filter commercial rental items")
+	@Operation(summary = "Filter Commercial Rental Items")
 	public ResponseEntity<List<ItemResponseDto>> filterCommercialRentalItems(@RequestBody CommercialRentalFilterDto filterDto) {
 		return ResponseEntity.ok(itemService.filterItems(filterDto));
 	}
 
 	@PostMapping("/garageAndParkingBuy/filter")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Filter garage and parking buy items")
+	@Operation(summary = "Filter Garage and Parking Buy Items")
 	public ResponseEntity<List<ItemResponseDto>> filterGarageAndParkingBuyItems(@RequestBody GarageAndParkingBuyFilterDto filterDto) {
 		return ResponseEntity.ok(itemService.filterItems(filterDto));
 	}
 
 	@PostMapping("/garageAndParkingRental/filter")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Filter garage and parking rental items")
+	@Operation(summary = "Filter Garage and Parking Rental Items")
 	public ResponseEntity<List<ItemResponseDto>> filterGarageAndParkingRentalItems(@RequestBody GarageAndParkingRentalFilterDto filterDto) {
 		return ResponseEntity.ok(itemService.filterItems(filterDto));
 	}
 
 	@PostMapping("/landBuy/filter")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Filter land buy items")
+	@Operation(summary = "Filter Land Buy Items")
 	public ResponseEntity<List<ItemResponseDto>> filterLandBuyItems(@RequestBody LandBuyFilterDto filterDto) {
 		return ResponseEntity.ok(itemService.filterItems(filterDto));
 	}
 
 	@PostMapping("/landRental/filter")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Filter land rental items")
+	@Operation(summary = "Filter Land Rental Items")
 	public ResponseEntity<List<ItemResponseDto>> filterLandRentalItems(@RequestBody LandRentalFilterDto filterDto) {
 		return ResponseEntity.ok(itemService.filterItems(filterDto));
 	}
 
 	@PostMapping("/newConstructionApartment/filter")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Filter new construction apartment items")
+	@Operation(summary = "Filter New Construction Apartment Items")
 	public ResponseEntity<List<ItemResponseDto>> filterNewConstructionApartmentItems(@RequestBody NewConstructionApartmentFilterDto filterDto) {
 		return ResponseEntity.ok(itemService.filterItems(filterDto));
 	}
 
 	@PostMapping("/newConstructionHouse/filter")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Filter new construction house items")
+	@Operation(summary = "Filter New Construction House Items")
 	public ResponseEntity<List<ItemResponseDto>> filterNewConstructionHouseItems(@RequestBody NewConstructionHouseFilterDto filterDto) {
 		return ResponseEntity.ok(itemService.filterItems(filterDto));
 	}
 
 	@PostMapping("/apartmentDailyRental/filter")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Filter apartment daily rental items")
+	@Operation(summary = "Filter Apartment Daily Rental Items")
 	public ResponseEntity<List<ItemResponseDto>> filterApartmentDailyRentalItems(@RequestBody ApartmentDailyRentalFilterDto filterDto) {
 		return ResponseEntity.ok(itemService.filterItems(filterDto));
 	}
 
 	@PostMapping("/houseDailyRental/filter")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Filter house daily rental items")
+	@Operation(summary = "Filter House Daily Rental Items")
 	public ResponseEntity<List<ItemResponseDto>> filterHouseDailyRentalItems(@RequestBody HouseDailyRentalFilterDto filterDto) {
 		return ResponseEntity.ok(itemService.filterItems(filterDto));
 	}
 
 	@PostMapping("/mobile/filter")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Filter mobile phone items")
+	@Operation(summary = "Filter Mobile Phone Items")
 	public ResponseEntity<List<ItemResponseDto>> filterMobilePhoneItems(@RequestBody MobilePhoneFilterDto filterDto) {
 		return ResponseEntity.ok(itemService.filterItems(filterDto));
 	}
 
 	@PostMapping("/notebook/filter")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Filter notebook items")
+	@Operation(summary = "Filter Notebook Items")
 	public ResponseEntity<List<ItemResponseDto>> filterNotebookItems(@RequestBody NotebookFilterDto filterDto) {
 		return ResponseEntity.ok(itemService.filterItems(filterDto));
 	}
 
 	@PostMapping("/computer/filter")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Filter computer items")
+	@Operation(summary = "Filter Computer Items")
 	public ResponseEntity<List<ItemResponseDto>> filterComputerItems(@RequestBody ComputerFilterDto filterDto) {
 		return ResponseEntity.ok(itemService.filterItems(filterDto));
 	}
 
 	@PostMapping("/smartWatch/filter")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Filter smart watch items")
+	@Operation(summary = "Filter Smart Watch Items")
 	public ResponseEntity<List<ItemResponseDto>> filterSmartWatchItems(@RequestBody SmartWatchFilterDto filterDto) {
 		return ResponseEntity.ok(itemService.filterItems(filterDto));
 	}
@@ -234,73 +234,113 @@ public class ItemController {
 
 	@PostMapping("/tv/filter")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Filter TV items")
+	@Operation(summary = "Filter TV Items")
 	public ResponseEntity<List<ItemResponseDto>> filterTVItems(@RequestBody TVFilterDto filterDto) {
 		return ResponseEntity.ok(itemService.filterItems(filterDto));
 	}
 
 	@PostMapping("/gamingConsole/filter")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Filter gaming console items")
+	@Operation(summary = "Filter Gaming Console Items")
 	public ResponseEntity<List<ItemResponseDto>> filterGamingConsoleItems(@RequestBody GamingConsoleFilterDto filterDto) {
 		return ResponseEntity.ok(itemService.filterItems(filterDto));
 	}
 
 	@PostMapping("/headphone/filter")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Filter headphone items")
+	@Operation(summary = "Filter Headphone Items")
 	public ResponseEntity<List<ItemResponseDto>> filterHeadphoneItems(@RequestBody HeadphoneFilterDto filterDto) {
 		return ResponseEntity.ok(itemService.filterItems(filterDto));
 	}
 
 	@PostMapping("/computerAndNotebookParts/filter")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Filter computer and notebook parts items")
+	@Operation(summary = "Filter Computer and Notebook Parts Items")
 	public ResponseEntity<List<ItemResponseDto>> filterComputerAndNotebookPartsItems(@RequestBody ComputerAndNotebookPartsFilterDto filterDto) {
 		return ResponseEntity.ok(itemService.filterItems(filterDto));
 	}
 
 	@PostMapping("/photoAndVideoCamera/filter")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Filter photo and video camera items")
+	@Operation(summary = "Filter Photo and Video Camera Items")
 	public ResponseEntity<List<ItemResponseDto>> filterPhotoAndVideoCameraItems(@RequestBody PhotoAndVideoCameraFilterDto filterDto) {
 		return ResponseEntity.ok(itemService.filterItems(filterDto));
 	}
 
 	@PostMapping("/computerGames/filter")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Filter computer games items")
+	@Operation(summary = "Filter Computer Games Items")
 	public ResponseEntity<List<ItemResponseDto>> filterComputerGamesItems(@RequestBody ComputerGamesFilterDto filterDto) {
 		return ResponseEntity.ok(itemService.filterItems(filterDto));
 	}
 
 	@PostMapping("/smartHomeAccessories/filter")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Filter smart home accessories items")
+	@Operation(summary = "Filter Smart Home Accessories Items")
 	public ResponseEntity<List<ItemResponseDto>> filterSmartHomeAccessoriesItems(@RequestBody SmartHomeAccessoriesFilterDto filterDto) {
 		return ResponseEntity.ok(itemService.filterItems(filterDto));
 	}
 
 	@PostMapping("/washer/filter")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Filter washer items")
+	@Operation(summary = "Filter Washer Items")
 	public ResponseEntity<List<ItemResponseDto>> filterWasherItems(@RequestBody WasherFilterDto filterDto) {
 		return ResponseEntity.ok(itemService.filterItems(filterDto));
 	}
 
 	@PostMapping("/clothesDryer/filter")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Filter clothes dryer items")
+	@Operation(summary = "Filter Clothes Dryer Items")
 	public ResponseEntity<List<ItemResponseDto>> filterClothesDryerItems(@RequestBody ClothesDryerFilterDto filterDto) {
 		return ResponseEntity.ok(itemService.filterItems(filterDto));
 	}
 
 	@PostMapping("/ironAndAccessories/filter")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Filter iron and accessories items")
+	@Operation(summary = "Filter Iron and Accessories Items")
 	public ResponseEntity<List<ItemResponseDto>> filterIronAndAccessoriesItems(@RequestBody IronAndAccessoriesFilterDto filterDto) {
 		return ResponseEntity.ok(itemService.filterItems(filterDto));
 	}
 
+	@PostMapping("/refrigerator/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Refrigerator Items")
+	public ResponseEntity<List<ItemResponseDto>> filterRefrigeratorItems(@RequestBody RefrigeratorFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
 
+	@PostMapping("/freezer/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Freezer Items")
+	public ResponseEntity<List<ItemResponseDto>> filterFreezerItems(@RequestBody FreezerFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/dishwasher/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Dishwasher Items")
+	public ResponseEntity<List<ItemResponseDto>> filterDishwasherItems(@RequestBody DishwasherFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/microwave/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Microwave Items")
+	public ResponseEntity<List<ItemResponseDto>> filterMicrowaveItems(@RequestBody MicrowaveFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/stove/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Stove Items")
+	public ResponseEntity<List<ItemResponseDto>> filterStoveItems(@RequestBody StoveFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/coffeeMakerAndAccessories/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Coffee Maker and Accessories Items")
+	public ResponseEntity<List<ItemResponseDto>> filterCoffeeMakerAndAccessoriesItems(@RequestBody CoffeeMakerAndAccessoriesFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
 }

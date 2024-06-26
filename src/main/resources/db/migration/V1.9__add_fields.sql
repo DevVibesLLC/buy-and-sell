@@ -343,6 +343,28 @@ VALUES
 
 /*IRON AND ACCESSORIES*/
 (253, 'Type', false, true, null, 58),
-(254, 'Condition', false, true, null, 58)
+(254, 'Condition', false, true, null, 58),
 
+/*REFRIGERATOR*/
+(255, 'Mark', false, true, null, 59),
+(256, 'Type', false, true, null, 59),
+(257, 'Condition', false, true, null, 59),
+
+/*FREEZER*/
+(258, 'Condition', false, true, null, 60),
+
+/*DISHWASHER*/
+(259, 'Condition', false, true, null, 61),
+
+/*MICROWAVE*/
+(260, 'Condition', false, true, null, 62),
+
+/*STOVE*/
+(261, 'Type', false, true, null, 63),
+(262, 'Burner Type', false, true, null, 63),
+(263, 'Condition', false, true, null, 63),
+
+/*COFFEE MAKER AND ACCESSORIES*/
+(264, 'Type', false, true, null, 64),
+(265, 'Condition', false, true, null, 64)
 ON CONFLICT (id) DO NOTHING;
