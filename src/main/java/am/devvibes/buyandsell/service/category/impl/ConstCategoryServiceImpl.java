@@ -60,7 +60,7 @@ public class ConstCategoryServiceImpl implements ConstCategoryService {
 	@Override
 	@Transactional
 	public List<VehicleMarkDto> findAutoMarks() {
-		CategoryEntity categoryEntity = categoryRepository.findByName(CategoryEnum.CAR)
+		CategoryEntity categoryEntity = categoryRepository.findByName(CategoryEnum.CARS)
 				.orElseThrow(() -> new NotFoundException(ExceptionConstants.CATEGORY_NOT_FOUND));
 
 		return autoMarkMapper.mapEntityListToDtoList(categoryEntity.getAutoMarks());
@@ -69,7 +69,7 @@ public class ConstCategoryServiceImpl implements ConstCategoryService {
 	@Override
 	@Transactional
 	public List<VehicleMarkDto> findTruckMarks() {
-		CategoryEntity categoryEntity = categoryRepository.findByName(CategoryEnum.TRUCK)
+		CategoryEntity categoryEntity = categoryRepository.findByName(CategoryEnum.TRUCKS)
 				.orElseThrow(() -> new NotFoundException(ExceptionConstants.CATEGORY_NOT_FOUND));
 
 		return truckMarkMapper.mapEntityListToDtoList(categoryEntity.getTruckMarks());
@@ -78,7 +78,7 @@ public class ConstCategoryServiceImpl implements ConstCategoryService {
 	@Override
 	@Transactional
 	public List<VehicleMarkDto> findBusMarks() {
-		CategoryEntity categoryEntity = categoryRepository.findByName(CategoryEnum.BUS)
+		CategoryEntity categoryEntity = categoryRepository.findByName(CategoryEnum.BUSES)
 				.orElseThrow(() -> new NotFoundException(ExceptionConstants.CATEGORY_NOT_FOUND));
 
 		return busMarkMapper.mapEntityListToDtoList(categoryEntity.getBusMarks());
@@ -86,7 +86,7 @@ public class ConstCategoryServiceImpl implements ConstCategoryService {
 
 	@Override
 	public List<ElectronicMarkDto> findMobileMarks() {
-		CategoryEntity categoryEntity = categoryRepository.findByName(CategoryEnum.MOBILE_PHONE)
+		CategoryEntity categoryEntity = categoryRepository.findByName(CategoryEnum.MOBILE_PHONES)
 				.orElseThrow(() -> new NotFoundException(ExceptionConstants.CATEGORY_NOT_FOUND));
 
 		return mobileMarkMapper.mapEntityListToDtoList(categoryEntity.getMobilePhoneMarks());
@@ -94,7 +94,7 @@ public class ConstCategoryServiceImpl implements ConstCategoryService {
 
 	@Override
 	public List<ElectronicMarkDto> findNotebookMarks() {
-		CategoryEntity categoryEntity = categoryRepository.findByName(CategoryEnum.NOTEBOOK)
+		CategoryEntity categoryEntity = categoryRepository.findByName(CategoryEnum.NOTEBOOKS)
 				.orElseThrow(() -> new NotFoundException(ExceptionConstants.CATEGORY_NOT_FOUND));
 
 		return mobileMarkMapper.mapEntityListToDtoList(categoryEntity.getMobilePhoneMarks());

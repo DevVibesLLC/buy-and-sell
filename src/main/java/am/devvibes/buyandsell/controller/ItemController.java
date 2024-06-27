@@ -343,4 +343,158 @@ public class ItemController {
 	public ResponseEntity<List<ItemResponseDto>> filterCoffeeMakerAndAccessoriesItems(@RequestBody CoffeeMakerAndAccessoriesFilterDto filterDto) {
 		return ResponseEntity.ok(itemService.filterItems(filterDto));
 	}
+
+	@PostMapping("/kettle/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Kettle Items")
+	public ResponseEntity<List<ItemResponseDto>> filterKettleItems(@RequestBody KettleFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/rangeHood/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter range hood Items")
+	public ResponseEntity<List<ItemResponseDto>> filterRangeHoodItems(@RequestBody RangeHoodFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/vacuumCleaner/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Vacuum Cleaner Items")
+	public ResponseEntity<List<ItemResponseDto>> filterVacuumCleanerItems(@RequestBody VacuumCleanerFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/roboticVacuum/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Robotic Vacuum Items")
+	public ResponseEntity<List<ItemResponseDto>> filterRoboticVacuumItems(@RequestBody RoboticVacuumFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/floorWasher/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Floor Washer Items")
+	public ResponseEntity<List<ItemResponseDto>> filterFloorWasherItems(@RequestBody FloorWasherFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/airConditioner/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Air Conditioner Items")
+	public ResponseEntity<List<ItemResponseDto>> filterAirConditionerItems(@RequestBody AirConditionerFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/waterHeater/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Water Heater Items")
+	public ResponseEntity<List<ItemResponseDto>> filterWaterHeaterItems(@RequestBody WaterHeatersFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/airPurifiersAndHumidifiers/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Air Purifiers And Humidifiers Items")
+	public ResponseEntity<List<ItemResponseDto>> filterAirPurifiersAndHumidifiersItems(@RequestBody AirPurifiersAndHumidifiersFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/computerPeripheral/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Computer Peripheral Items")
+	public ResponseEntity<List<ItemResponseDto>> filterComputerPeripheralItems(@RequestBody ComputerPeripheralFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/audioPlayerAndStereo/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Audio Player and Stereo Items")
+	public ResponseEntity<List<ItemResponseDto>> filterAudioPlayerAndStereoItems(@RequestBody AudioPlayerAndStereoFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/quadcopterAndDrone/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Quadcopters and Drones Items")
+	public ResponseEntity<List<ItemResponseDto>> filterQuadcoptersAndDronesItems(@RequestBody QuadcoptersAndDronesFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/sofaAndArmchair/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Sofa and Armchair Items")
+	public ResponseEntity<List<ItemResponseDto>> filterSofaAndArmchairItems(@RequestBody SofaAndArmchairFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/storage/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Storage Items")
+	public ResponseEntity<List<ItemResponseDto>> filterStorageItems(@RequestBody StorageFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/tableAndChair/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Table and Chair Items")
+	public ResponseEntity<List<ItemResponseDto>> filterTableAndChairItems(@RequestBody TableAndChairFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/bedroomFurniture/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Bedroom Furniture Items")
+	public ResponseEntity<List<ItemResponseDto>> filterBedroomFurnitureItems(@RequestBody BedroomFurnitureFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/kitchenFurniture/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Kitchen Furniture Items")
+	public ResponseEntity<List<ItemResponseDto>> filterKitchenFurnitureItems(@RequestBody KitchenFurnitureFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/gardenFurniture/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Garden Furniture Items")
+	public ResponseEntity<List<ItemResponseDto>> filterGardenFurnitureItems(@RequestBody GardenFurnitureFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/barbecueAndAccessories/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Barbecue And Accessories Items")
+	public ResponseEntity<List<ItemResponseDto>> filterBarbecueAndAccessoriesItems(@RequestBody BarbecueAndAccessoriesFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/gardenDecor/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Garden Decor Items")
+	public ResponseEntity<List<ItemResponseDto>> filterGardenDecorItems(@RequestBody GardenDecorFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/gardenAccessories/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Garden Accessories Items")
+	public ResponseEntity<List<ItemResponseDto>> filterGardenAccessoriesItems(@RequestBody GardenAccessoriesFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/lighting/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Lighting Items")
+	public ResponseEntity<List<ItemResponseDto>> filterLightingItems(@RequestBody LightingFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
+
+	@PostMapping("/textile/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Textile Items")
+	public ResponseEntity<List<ItemResponseDto>> filterTextileItems(@RequestBody TextileFilterDto filterDto) {
+		return ResponseEntity.ok(itemService.filterItems(filterDto));
+	}
 }

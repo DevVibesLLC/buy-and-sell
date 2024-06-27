@@ -366,5 +366,87 @@ VALUES
 
 /*COFFEE MAKER AND ACCESSORIES*/
 (264, 'Type', false, true, null, 64),
-(265, 'Condition', false, true, null, 64)
+(265, 'Condition', false, true, null, 64),
+
+/*KETTLES*/
+(266, 'Type', false, true, null, 65),
+(267, 'Condition', false, true, null, 65),
+
+/*RANGE_HOODS*/
+(268, 'Condition', false, true, null, 66),
+
+/*VACUUM_CLEANERS*/
+(269, 'Condition', false, true, null, 67),
+
+/*ROBOTIC_VACUUMS*/
+(270, 'Condition', false, true, null, 68),
+
+/*FLOOR_WASHERS*/
+(271, 'Condition', false, true, null, 69),
+
+/*AIR_CONDITIONERS*/
+(272, 'Condition', false, true, null, 70),
+
+/*WATER_HEATERS*/
+(273, 'Condition', false, true, null, 71),
+
+/*AIR_PURIFIERS_AND_HUMIDIFIERS*/
+(274, 'Type', false, true, null, 72),
+(275, 'Condition', false, true, null, 72),
+
+/*COMPUTERS_PERIPHERALS*/
+(276, 'Type', false, true, null, 73),
+(277, 'Condition', false, true, null, 73),
+
+/*AUDIO_PLAYERS_AND_STEREOS*/
+(278, 'Type', false, true, null, 74),
+
+(279, 'Condition', false, true, null, 75),
+
+/*QUADCOPTERS_AND_DRONES*/
+(280, 'Condition', false, true, null, 76),
+
+/*SOFAS_AND_ARMCHAIRS*/
+(281, 'Type', false, true, null, 77),
+(282, 'Upholstery', false, true, null, 77),
+(283, 'Color', false, true, null, 77),
+(284, 'Condition', false, true, null, 77),
+
+/*STORAGE*/
+(285, 'Type', false, true, null, 78),
+(286, 'Condition', false, true, null, 78),
+
+/*TABLES_AND_CHAIRS*/
+(287, 'Type', false, true, null, 79),
+(288, 'Condition', false, true, null, 79),
+
+/*BEDROOM_FURNITURE*/
+(289, 'Type', false, true, null, 80),
+(290, 'Condition', false, true, null, 80),
+
+/*KITCHEN_FURNITURE*/
+(291, 'Type', false, true, null, 81),
+(292, 'Color', false, true, null, 81),
+(293, 'Condition', false, true, null, 81),
+
+/*GARDEN_FURNITURE*/
+(294, 'Type', false, true, null, 82),
+(295, 'Condition', false, true, null, 82),
+
+/*BARBECUE_AND_ACCESSORIES*/
+(296, 'Condition', false, true, null, 83),
+
+/*GARDEN_DECOR*/
+(297, 'Condition', false, true, null, 84),
+
+/*GARDEN_ACCESSORIES*/
+(298, 'Condition', false, true, null, 85),
+
+/*LIGHTING*/
+(299, 'Type', false, true, null, 86),
+(300, 'Condition', false, true, null, 86),
+
+/*TEXTILES*/
+(301, 'Type', false, true, null, 87),
+(302, 'Condition', false, true, null, 87)
 ON CONFLICT (id) DO NOTHING;

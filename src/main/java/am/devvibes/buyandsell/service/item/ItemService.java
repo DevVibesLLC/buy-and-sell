@@ -100,6 +100,50 @@ public interface ItemService {
 
 	List<ItemResponseDto> filterItems(CoffeeMakerAndAccessoriesFilterDto filterDto);
 
+	List<ItemResponseDto> filterItems(KettleFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(RangeHoodFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(VacuumCleanerFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(RoboticVacuumFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(FloorWasherFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(AirConditionerFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(WaterHeatersFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(AirPurifiersAndHumidifiersFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(ComputerPeripheralFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(AudioPlayerAndStereoFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(QuadcoptersAndDronesFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(SofaAndArmchairFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(StorageFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(TableAndChairFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(BedroomFurnitureFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(KitchenFurnitureFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(GardenFurnitureFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(BarbecueAndAccessoriesFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(GardenDecorFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(GardenAccessoriesFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(LightingFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(TextileFilterDto filterDto);
+
 	List<ItemResponseDto> findItemsByCategory(Long categoryId);
 
 }
