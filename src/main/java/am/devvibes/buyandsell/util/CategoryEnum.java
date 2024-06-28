@@ -113,7 +113,50 @@ public enum CategoryEnum {
 
 	LIGHTING("Lighting"),
 
-	TEXTILES("Textiles");
+	TEXTILES("Textiles"),
+
+	RUGS("Rugs"),
+
+	INTERIOR_DECORATION("Interior Decoration"),
+
+	TABLEWARE("Tableware"),
+
+	COOKING_AND_BAKING("Cooking and Baking"),
+
+	KITCHEN_ACCESSORIES("Kitchen Accessories"),
+
+	BATHROOM_ACCESSORIES("Bathroom Accessories"),
+
+	VIDEO_SURVEILLANCE("Video Surveillance"),
+
+	CAR_PARTS("Car Parts"),
+
+	WHEELS_AND_TIRES("Wheels and Tires"),
+
+	RIMS_AND_HUB_CAPS("Rims and Hub Caps"),
+
+	CAR_BATTERIES("Car Batteries"),
+
+	GAS_EQUIPMENT("Gas Equipment"),
+
+	OILS_AND_CHEMICALS("Oils And Chemicals"),
+
+	CAR_ACCESSORIES("Car Accessories"),
+
+	CAR_ELECTRONICS("Car Electronics"),
+
+	CAR_AUDIO_AND_VIDEO("Car Audio and Video"),
+
+	PERSONAL_TRANSPORTATION("Personal Transportation"),
+
+	ATVS_AND_SNOWMOBILES("ATVs and Snowmobiles"),
+
+	BOATS_AND_WATER_TRANSPORT("Boats and Water Transport"),
+
+	TRAILERS_AND_BOOTHS("Trailers and Booths"),
+
+	EVENT_VENUES_RENTAL("Event Venues Rental");
+
 
 	private final String name;
 

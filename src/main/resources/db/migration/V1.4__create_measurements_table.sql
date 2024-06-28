@@ -50,5 +50,6 @@ VALUES
 (52, 'W', 'Power'),
 (53, 'kW', 'Power'),
 (54, 'hp', 'Power'),
-(55, 'R', 'Wheel')
+(55, 'R', 'Wheel'),
+(56, 'Volt', 'Voltage')
 ON CONFLICT (id) DO NOTHING;

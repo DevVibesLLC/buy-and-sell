@@ -448,5 +448,104 @@ VALUES
 
 /*TEXTILES*/
 (301, 'Type', false, true, null, 87),
-(302, 'Condition', false, true, null, 87)
+(302, 'Condition', false, true, null, 87),
+
+/*RUGS*/
+(303,'Type', false, true, null, 88),
+(304,'Rug Length', false, true, 3, 88),
+(305,'Rug Width', false, true, 3, 88),
+(306,'Condition', false, true, null, 88),
+
+/*INTERIOR_DECORATION*/
+(307,'Type', false, true, null, 89),
+(308,'Condition', false, true, null, 89),
+
+/*TABLEWARE*/
+(309,'Type', false, true, null, 90),
+(310,'Condition', false, true, null, 90),
+
+/*COOKING_AND_BAKING*/
+(311,'Type', false, true, null, 91),
+(312,'Condition', false, true, null, 91),
+
+/*KITCHEN_ACCESSORIES*/
+(313,'Condition', false, true, null, 92),
+
+/*BATHROOM_ACCESSORIES*/
+(314,'Condition', false, true, null, 93),
+
+/*VIDEO_SURVEILLANCE*/
+(315,'Condition', false, true, null, 94),
+
+/*CAR_PARTS*/
+(316,'Type', false, true, null, 95),
+(317,'Mark', false, true, null, 95),
+(318,'Originality', false, true, null, 95),
+(319,'Part Side', false, true, null, 95),
+(320,'Part Position', false, true, null, 95),
+(321,'Condition', false, true, null, 95),
+
+/*WHEELS_AND_TIRES*/
+(322,'Type', false, true, null, 96),
+(323,'Season', false, true, null, 96),
+(324,'Width', false, true, 4, 96),
+(325,'Height', false, true, 4, 96),
+(326,'Diameter', false, true, 55, 96),
+(327,'Condition', false, true, null, 96),
+
+/*RIMS_AND_HUB_CAPS*/
+(328,'Type', false, true, null, 97),
+(329,'Diameter', false, true, 55, 97),
+(330,'Condition', false, true, null, 97),
+
+/*CAR_BATTERIES*/
+(331,'Voltage', false, true, 56, 98),
+(332,'Capacity', false, true, 28, 98),
+(333,'Condition', false, true, null, 98),
+
+/*GAS_EQUIPMENT*/
+(334,'Type', false, true, null, 99),
+(335,'Condition', false, true, null, 99),
+
+/*OILS_AND_CHEMICALS*/
+(336,'Type', false, true, null, 100),
+
+/*CAR_ACCESSORIES*/
+(337,'Type', false, true, null, 101),
+
+/*CAR_ELECTRONICS*/
+(338,'Type', false, true, null, 102),
+(339,'Condition', false, true, null, 102),
+
+/*CAR_AUDIO_AND_VIDEO*/
+(340,'Type', false, true, null, 103),
+(341,'Condition', false, true, null, 103),
+
+/*PERSONAL_TRANSPORTATION*/
+(342,'Type', false, true, null, 104),
+(343,'Condition', false, true, null, 104),
+
+/*ATVS_AND_SNOWMOBILES*/
+(344,'Type', false, true, null, 105),
+(345,'Condition', false, true, null, 105),
+
+/*BOATS_AND_WATER_TRANSPORT*/
+(346,'Condition', false, true, null, 106),
+
+/*TRAILERS_AND_BOOTHS*/
+(347,'Type', false, true, null, 107),
+
+(348,'Floor Area', false, true, 31, 108),
+(349,'Exterior Finish', false, true, null, 108),
+
+/*EVENT_VENUES_RENTAL*/
+(350,'Type', false, true, null, 109),
+(351,'Floor Area', false, true, null, 109),
+(352,'Number of Guests', false, true, null, 109),
+(353,'Event Type', false, true, null, 109),
+(354,'Facilities', false, true, null, 109),
+(355,'Equipment', false, true, null, 109),
+
+(356,'Noise After Hours', false, true, null, 110),
+(357,'With Pets', false, true, null, 110)
 ON CONFLICT (id) DO NOTHING;

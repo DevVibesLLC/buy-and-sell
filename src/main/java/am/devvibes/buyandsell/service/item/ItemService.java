@@ -144,6 +144,48 @@ public interface ItemService {
 
 	List<ItemResponseDto> filterItems(TextileFilterDto filterDto);
 
+	List<ItemResponseDto> filterItems(RugFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(InteriorDecorationFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(TablewareFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(CookingAndBakingFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(KitchenAccessoriesFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(BathroomAccessoriesFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(VideoSurveillanceFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(CarPartFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(WheelAndTireFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(RimAndHubCapFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(CarBatteryFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(GasEquipmentFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(OilAndChemicalFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(CarAccessoriesFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(CarElectronicFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(CarAudioAndVideoFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(PersonalTransportationFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(AtvAndSnowmobileFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(BoatAndWaterTransportFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(TrailerAndBoothFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(EventVenueRentalFilterDto filterDto);
+
 	List<ItemResponseDto> findItemsByCategory(Long categoryId);
 
 }
