@@ -43,7 +43,7 @@ class ItemForSellTest extends BaseRepositoryTest {
 												.build()
 								))
 						.build()))
-				.name(CategoryEnum.CAR).build());
+				.name(CategoryEnum.CARS).build());
 
 		var laavBmw = itemRepository.save(ItemEntity.builder()
 				.status(Status.CREATED)

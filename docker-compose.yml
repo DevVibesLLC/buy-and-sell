@@ -12,34 +12,6 @@ services:
       test: [ "CMD-SHELL", "pg_isready -U buyandsell" ]
     volumes:
       - postgresvolume:/var/lib/postgresql/data
-  elasticsearch:
-    container_name: elasticsearch
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.5.3
-    environment:
-      - discovery.type=single-node
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - bootstrap.memory_lock=true
-      - xpack.security.enabled=false
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-    volumes:
-      - elasticvolume:/usr/share/elasticsearch/data
-  logstash:
-    container_name: logstash
-    build:
-      context: ./logstash/
-      dockerfile: Dockerfile
-    ports:
-      - "5050:5050"
-    environment:
-      - CONFIG_SUPPORT_ESCAPE=true
-      - ELASTICSEARCH_URL=http://elasticsearch:9200
-    depends_on:
-      - elasticsearch
-      - postgres
-    volumes:
-      - logstashvolume:/usr/share/logstash/data
   keycloak:
     image: quay.io/keycloak/keycloak:22.0.4
     command: start-dev
@@ -66,5 +38,3 @@ services:
 
 volumes:
   postgresvolume:
-  elasticvolume:
-  logstashvolume:

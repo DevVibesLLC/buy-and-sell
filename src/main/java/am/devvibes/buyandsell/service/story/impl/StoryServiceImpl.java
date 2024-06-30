@@ -31,10 +31,10 @@ public class StoryServiceImpl implements StoryService {
 	@Override
 	public StoryEntity saveStory(MultipartFile story, String caption) {
 		areAllFilesWithAllowedExtensions(story);
-		String storyUrl = s3Service.uploadStory(story);
+		//String storyUrl = s3Service.uploadStory(story);//todo fix story
 		StoryEntity storyEntity = StoryEntity.builder()
 				.userId(securityService.getCurrentUserId())
-				.storyUrl(storyUrl)
+			  //.storyUrl(storyUrl)
 				.caption(caption)
 				.status(Status.CREATED)
 				.build();

@@ -49,7 +49,6 @@ public class ItemMapperImpl implements ItemMapper {
 				.category(categoryService.FindCategoryEntityOrElseThrow(categoryId))
 				.fields(valueService.saveAllValues(itemRequestDto.getFieldsValue()))
 				.status(Status.CREATED)
-				.imgUrls(s3Service.uploadItemImages(images))
 				.build();
 	}
 

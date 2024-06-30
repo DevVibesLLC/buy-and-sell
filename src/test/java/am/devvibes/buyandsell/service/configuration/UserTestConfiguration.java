@@ -1,7 +1,9 @@
 package am.devvibes.buyandsell.service.configuration;
 
 import am.devvibes.buyandsell.mapper.user.UserMapper;
+import am.devvibes.buyandsell.repository.item.ItemRepository;
 import am.devvibes.buyandsell.repository.user.UserRepository;
+import am.devvibes.buyandsell.service.favoriteItems.FavoriteItemsService;
 import am.devvibes.buyandsell.service.security.SecurityService;
 import am.devvibes.buyandsell.service.user.UserService;
 import am.devvibes.buyandsell.service.user.impl.UserServiceImpl;
@@ -59,9 +61,12 @@ public class UserTestConfiguration {
 	@Bean
 	public UserService userService(UserRepository userRepository,
 			UserMapper userMapper,
-		SecurityService securityService,
-			Keycloak keycloak) {
-		return new UserServiceImpl(userRepository, userMapper, keycloak, securityService);
+		    SecurityService securityService,
+			Keycloak keycloak,
+            ItemRepository itemRepository,
+            FavoriteItemsService favoriteItemsService
+		) {
+		return new UserServiceImpl(userRepository, userMapper, keycloak, securityService, itemRepository, favoriteItemsService);
 	}
 
 }

@@ -37,6 +37,7 @@ public class ValueMapperImpl implements ValueMapper{
 		return FieldValuesDto.builder()
 				.fieldId(valueEntity.getFieldName().getId())
 				.fieldValue(valueEntity.getFieldValue())
+				.fieldName(valueEntity.getFieldName().getFieldName())
 				.build();
 	}
 

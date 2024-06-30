@@ -10,6 +10,7 @@ import lombok.*;
 public class FieldValuesDto {
 
 	private Long fieldId;
+	private String fieldName;
 	private String fieldValue;
 
 }
