@@ -28,7 +28,8 @@ public enum ExceptionConstants {
 	UNSUPPORTED_FILE_EXTENSION("Unsupported file extension"),
 	COUNT_OF_IMAGES_MUST_BE_LESS_THEN_15("Count of images must be less then 15"),
 	ITEM_ALREADY_EXISTS_IN_FAVORITES("Item already exists in Favorites"),
-	STORY_NOT_FOUND("Story not found");
+	STORY_NOT_FOUND("Story not found"),
+	UNSUPPORTED_URL_TYPE("Unsupported url type");
 
 
 	private final String string;

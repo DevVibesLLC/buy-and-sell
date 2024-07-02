@@ -17,7 +17,7 @@ public class StoryEntity extends BaseEntityWithDates {
 
 	private String userId;
 
-	private String storyUrl;
+	private String storyKey;
 
 	private String caption;
 

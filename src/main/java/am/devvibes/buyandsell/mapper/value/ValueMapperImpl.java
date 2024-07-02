@@ -19,10 +19,10 @@ public class ValueMapperImpl implements ValueMapper{
 
 	@Override
 	public FieldEntity mapDtoToEntity(FieldValuesDto fieldValuesDto) {
-		FieldNameEntity fieldEntity = fieldRepository.findById(fieldValuesDto.getFieldId())
+		FieldNameEntity fieldNameEntity = fieldRepository.findById(fieldValuesDto.getFieldId())
 				.orElseThrow(() -> new NotFoundException(ExceptionConstants.FIELD_NOT_FOUND));
 		return FieldEntity.builder()
-				.fieldName(fieldEntity)
+				.fieldName(fieldNameEntity)
 				.fieldValue(fieldValuesDto.getFieldValue())
 				.build();
 	}

@@ -43,7 +43,7 @@ public class ItemEntity extends BaseEntityWithDates {
 	private List<FieldEntity> fields;
 
 	@ElementCollection
-	private List<String> imgUrls;
+	private List<String> imgKeys;
 
 	@Enumerated(EnumType.STRING)
 	private Status status;

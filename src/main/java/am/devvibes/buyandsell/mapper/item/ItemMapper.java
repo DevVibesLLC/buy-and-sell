@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface ItemMapper {
-	ItemEntity mapDtoToEntity(ItemRequestDto itemRequestDto, List<MultipartFile> images, Long categoryId);
+	ItemEntity mapDtoToEntity(ItemRequestDto itemRequestDto, Long categoryId);
 
 	ItemResponseDto mapEntityToDto(ItemEntity itemEntity);
 

@@ -48,6 +48,9 @@ cloud:
 
 
 application:
+  imageForSellFolder: images/sell
+  storiesFolder: stories
+  defaultFileName: image
   imagesBucket:
     name: buyandsellimages
   storiesBucket:

@@ -29,9 +29,8 @@ public class ItemController {
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@Operation(summary = "Create Item")
 	public ResponseEntity<ItemResponseDto> createItem(@PathVariable Long categoryId,
-			@RequestPart(value = "dto") ItemRequestDto itemRequestDto,
-			@RequestParam(value = "images") List<MultipartFile> images) {
-		return ResponseEntity.ok(itemService.save(itemRequestDto, images, categoryId));
+			@RequestBody ItemRequestDto itemRequestDto) {
+		return ResponseEntity.ok(itemService.save(itemRequestDto, categoryId));
 	}
 
 	@GetMapping("/category/{categoryId}")

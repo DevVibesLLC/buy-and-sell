@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface ItemService {
 
-	ItemResponseDto save(ItemRequestDto itemRequestDto, List<MultipartFile> images, Long categoryId);
+	ItemResponseDto save(ItemRequestDto itemRequestDto, Long categoryId);
 
 	ItemResponseDto findById(Long id);
 

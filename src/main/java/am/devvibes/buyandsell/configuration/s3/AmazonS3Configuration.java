@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Configuration;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
 @Configuration
@@ -28,21 +29,12 @@ public class AmazonS3Configuration {
 	private String region;
 
 	@Bean
-	public AmazonS3 amazonS3() {
-		AWSCredentials credentials = new BasicAWSCredentials(accessKey, accessSecret);
-		return AmazonS3ClientBuilder.standard()
-				.withCredentials(new AWSStaticCredentialsProvider(credentials))
-				.withRegion(region)
-				.build();
-	}
-
-@Bean
 	public S3Presigner s3Presigner() throws URISyntaxException {
 		return S3Presigner.builder()
-			.region(Region.of(region))
-			.credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, accessSecret)))
-			.endpointOverride(new URI("https://s3." + region + ".amazonaws.com"))
-			.build();
+				.region(Region.of(region))
+				.credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, accessSecret)))
+				.endpointOverride(new URI("https://s3." + region + ".amazonaws.com"))
+				.build();
 	}
 
 }

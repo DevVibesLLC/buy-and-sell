@@ -31,5 +31,7 @@ public class ItemRequestDto {
 
 	private String address;
 
+	private List<String> imgKeys;
+
 	private Long cityId;
 }

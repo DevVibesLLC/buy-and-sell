@@ -31,7 +31,7 @@ public class ItemMapperImpl implements ItemMapper {
 	private final S3ServiceImpl s3Service;
 
 	@Override
-	public ItemEntity mapDtoToEntity(ItemRequestDto itemRequestDto, List<MultipartFile> images, Long categoryId) {
+	public ItemEntity mapDtoToEntity(ItemRequestDto itemRequestDto, Long categoryId) {
 		return ItemEntity.builder()
 				.title(itemRequestDto.getTitle())
 				.description(itemRequestDto.getDescription())
@@ -46,6 +46,7 @@ public class ItemMapperImpl implements ItemMapper {
 						.city(LocationEnum.getCity(itemRequestDto.getCityId()))
 						.address(itemRequestDto.getAddress())
 						.build())
+				.imgKeys(itemRequestDto.getImgKeys())
 				.category(categoryService.FindCategoryEntityOrElseThrow(categoryId))
 				.fields(valueService.saveAllValues(itemRequestDto.getFieldsValue()))
 				.status(Status.CREATED)
@@ -64,7 +65,7 @@ public class ItemMapperImpl implements ItemMapper {
 				.userId(itemEntity.getUserEntity().getId())
 				.status(itemEntity.getStatus())
 				.location(itemEntity.getLocation())
-				.imgUrls(itemEntity.getImgUrls())
+				.imgUrls(s3Service.getImagesPresignedDownloadUrls(itemEntity.getImgKeys()))
 				.build();
 	}
 

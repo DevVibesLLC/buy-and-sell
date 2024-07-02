@@ -1,13 +1,13 @@
 package am.devvibes.buyandsell.controller;
 
-import am.devvibes.buyandsell.entity.story.StoryEntity;
+import am.devvibes.buyandsell.dto.story.StoryRequestDto;
+import am.devvibes.buyandsell.dto.story.StoryResponseDto;
 import am.devvibes.buyandsell.service.story.StoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -21,18 +21,16 @@ public class StoryController {
 	@PostMapping
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@Operation(summary = "Save Story")
-	public ResponseEntity<StoryEntity> createItem(@RequestParam(value = "story") MultipartFile story,
-			@RequestParam(value = "caption") String caption) {
-
-		StoryEntity storyEntity = storyService.saveStory(story, caption);
-		return ResponseEntity.ok(storyEntity);
+	public ResponseEntity<StoryResponseDto> createItem(@RequestBody StoryRequestDto storyRequestDto) {
+		StoryResponseDto storyResponseDto = storyService.saveStory(storyRequestDto);
+		return ResponseEntity.ok(storyResponseDto);
 	}
 
 	@GetMapping("/{userId}")
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@Operation(summary = "Get Users Stories")
-	public ResponseEntity<List<StoryEntity>> getUserStories(@PathVariable String userId) {
-		List<StoryEntity> storiesByUserId = storyService.getStoriesByUserId(userId);
+	public ResponseEntity<List<StoryResponseDto>> getUserStories(@PathVariable String userId) {
+		List<StoryResponseDto> storiesByUserId = storyService.getStoriesByUserId(userId);
 		return ResponseEntity.ok(storiesByUserId);
 	}
 

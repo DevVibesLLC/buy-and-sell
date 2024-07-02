@@ -50,13 +50,11 @@ public class  ItemServiceImpl implements ItemService {
 	private final SecurityService securityService;
 	private final ValueService valueService;
 	private final EntityManager entityManager;
-	private final FavoriteItemsService favoriteItemsService;
 
 	@Override
 	@Transactional
-	public ItemResponseDto save(ItemRequestDto itemRequestDto, List<MultipartFile> images, Long categoryId) {
-		imagesValidation(images);
-		ItemEntity itemEntity = itemMapper.mapDtoToEntity(itemRequestDto, images, categoryId);
+	public ItemResponseDto save(ItemRequestDto itemRequestDto, Long categoryId) {
+		ItemEntity itemEntity = itemMapper.mapDtoToEntity(itemRequestDto, categoryId);
 		return itemMapper.mapEntityToDto(itemRepository.save(itemEntity));
 	}
 
@@ -7941,37 +7939,6 @@ filterDto.getStartPrice());
 	public List<ItemResponseDto> findItemsByCategory(Long categoryId) {
 		List<ItemEntity> itemsByCategoryId = itemRepository.findByCategoryId(categoryId);
 		return itemMapper.mapEntityListToDtoList(itemsByCategoryId);
-	}
-
-	private void imagesValidation(List<MultipartFile> images) {
-		if(images.size() >= 15)
-			throw new SomethingWentWrongException(ExceptionConstants.COUNT_OF_IMAGES_MUST_BE_LESS_THEN_15);
-		areAllFilesWithAllowedExtensions(images);
-	}
-
-	private void areAllFilesWithAllowedExtensions(List<MultipartFile> images) {
-		List<String> allowedExtensions = Arrays.asList("jpg", "jpeg", "png", "svg");
-
-		for (MultipartFile image : images) {
-			String fileName = image.getOriginalFilename();
-			if (!isNull(fileName)) {
-				String extension = getFileExtension(fileName);
-				if (!allowedExtensions.contains(extension.toLowerCase())) {
-					throw new UnsupportedExtensionException(ExceptionConstants.UNSUPPORTED_FILE_EXTENSION);
-				}
-			} else {
-				throw new FileIsNullException(ExceptionConstants.FILE_NAME_IS_NULL);
-			}
-		}
-	}
-
-	private String getFileExtension(String fileName) {
-		int dotIndex = fileName.lastIndexOf('.');
-		if (dotIndex >= 0 && dotIndex < fileName.length() - 1) {
-			return fileName.substring(dotIndex + 1);
-		} else {
-			return "";
-		}
 	}
 
 	private ItemEntity updateEntity(ItemEntity itemEntity, ItemRequestDto itemRequestDto) {
