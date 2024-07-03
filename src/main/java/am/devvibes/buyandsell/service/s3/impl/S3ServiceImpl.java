@@ -2,7 +2,6 @@ package am.devvibes.buyandsell.service.s3.impl;
 
 import am.devvibes.buyandsell.dto.presignedUrl.PresignedUrlDto;
 import am.devvibes.buyandsell.service.s3.S3Service;
-import com.amazonaws.services.s3.AmazonS3;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,9 +17,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -44,22 +41,22 @@ public class S3ServiceImpl implements S3Service {
 	private String defaultFileName;
 
 	@Override
-	public PresignedUrlDto getPresignedUrlForImages(Map<String, String> metadata, String resolution) {
+	public PresignedUrlDto getPresignedUrlForImages(String resolution) {
 		String fileName = generateFileName(resolution);
 		String keyName = generateKeyName(imageForSellFolder, fileName);
 		return PresignedUrlDto.builder()
-				.uploadUrl(createPresignedUploadUrl(imagesBucketName, keyName, metadata))
+				.uploadUrl(createPresignedUploadUrl(imagesBucketName, keyName))
 				.downloadUrl(createPresignedDownloadUrl(imagesBucketName, keyName))
 				.keyName(keyName)
 				.build();
 	}
 
 	@Override
-	public PresignedUrlDto getPresignedUrlForStories(Map<String, String> metadata, String resolution) {
+	public PresignedUrlDto getPresignedUrlForStories(String resolution) {
 		String fileName = generateFileName(resolution);
 		String keyName = generateKeyName(storiesFolder, fileName);
 		return PresignedUrlDto.builder()
-				.uploadUrl(createPresignedUploadUrl(storiesBucketName, keyName, metadata))
+				.uploadUrl(createPresignedUploadUrl(storiesBucketName, keyName))
 				.downloadUrl(createPresignedDownloadUrl(storiesBucketName, keyName))
 				.keyName(keyName)
 				.build();
@@ -69,13 +66,10 @@ public class S3ServiceImpl implements S3Service {
 		return LocalDateTime.now() + defaultFileName + "." + resolution;
 	}
 
-	public String createPresignedUploadUrl(String bucketName,
-			String keyName,
-			Map<String, String> metadata) {
+	public String createPresignedUploadUrl(String bucketName, String keyName) {
 
 		try (S3Presigner presigner = S3Presigner.create()) {
-			PutObjectRequest objectRequest =
-					PutObjectRequest.builder().bucket(bucketName).key(keyName).metadata(metadata).build();
+			PutObjectRequest objectRequest = PutObjectRequest.builder().bucket(bucketName).key(keyName).build();
 
 			PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
 					.signatureDuration(Duration.ofMinutes(10))
@@ -118,10 +112,7 @@ public class S3ServiceImpl implements S3Service {
 	}
 
 	public String getImagePresignedDownloadUrl(String keyName) {
-		GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-				.bucket(imagesBucketName)
-				.key(keyName)
-				.build();
+		GetObjectRequest getObjectRequest = GetObjectRequest.builder().bucket(imagesBucketName).key(keyName).build();
 
 		GetObjectPresignRequest getObjectPresignRequest = GetObjectPresignRequest.builder()
 				.signatureDuration(Duration.ofMinutes(10))
@@ -134,10 +125,7 @@ public class S3ServiceImpl implements S3Service {
 	}
 
 	public String getStoryPresignedDownloadUrl(String keyName) {
-		GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-				.bucket(storiesBucketName)
-				.key(keyName)
-				.build();
+		GetObjectRequest getObjectRequest = GetObjectRequest.builder().bucket(storiesBucketName).key(keyName).build();
 
 		GetObjectPresignRequest getObjectPresignRequest = GetObjectPresignRequest.builder()
 				.signatureDuration(Duration.ofMinutes(10))

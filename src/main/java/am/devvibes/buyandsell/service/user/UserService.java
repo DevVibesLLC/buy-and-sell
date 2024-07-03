@@ -3,21 +3,22 @@ package am.devvibes.buyandsell.service.user;
 import am.devvibes.buyandsell.dto.user.UserRequestDto;
 import am.devvibes.buyandsell.dto.user.UserResponseDto;
 import am.devvibes.buyandsell.entity.user.UserEntity;
+import org.keycloak.representations.idm.UserRepresentation;
 
 import java.util.List;
 
 public interface UserService {
 
-	UserResponseDto saveUser(UserRequestDto signUpDto);
+	UserRepresentation saveUser(UserRequestDto signUpDto);
 
 	UserEntity findUserById(String id);
 
-	UserResponseDto findUserForUserProfile();
+	UserEntity findUserForUserProfile();
 
-	List<UserResponseDto> findAllUsers();
+	List<UserRepresentation> findAllUsers();
 
 	void deleteUser(String id);
 
-	UserResponseDto changePassword(String email, String newPassword, String repeatNewPassword);
+	UserRepresentation changePassword(String email, String newPassword, String repeatNewPassword);
 
 }

@@ -16,17 +16,15 @@ public class PresignedUrlController {
 
 	private final S3Service s3Service;
 
-	@GetMapping("/image/{resolution}")
-	public ResponseEntity<PresignedUrlDto> getPresignedUrlForImages(@RequestParam Map<String, String> metadata,
-			@PathVariable String resolution) {
-		PresignedUrlDto presignedUrlDto = s3Service.getPresignedUrlForImages(metadata, resolution);
+	@GetMapping("/image")
+	public ResponseEntity<PresignedUrlDto> getPresignedUrlForImages(@RequestParam String resolution) {
+		PresignedUrlDto presignedUrlDto = s3Service.getPresignedUrlForImages(resolution);
 		return ResponseEntity.ok(presignedUrlDto);
 	}
 
-	@GetMapping("/story/{resolution}")
-	public ResponseEntity<PresignedUrlDto> getPresignedUrlForStories(@RequestParam Map<String, String> metadata,
-			@PathVariable String resolution) {
-		PresignedUrlDto presignedUrlDto = s3Service.getPresignedUrlForStories(metadata, resolution);
+	@GetMapping("/story")
+	public ResponseEntity<PresignedUrlDto> getPresignedUrlForStories(@RequestParam String resolution) {
+		PresignedUrlDto presignedUrlDto = s3Service.getPresignedUrlForStories(resolution);
 		return ResponseEntity.ok(presignedUrlDto);
 	}
 

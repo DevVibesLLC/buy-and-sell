@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface StoryService {
 
-	StoryResponseDto saveStory(StoryRequestDto storyRequestDto);
+	StoryEntity saveStory(StoryRequestDto storyRequestDto);
 
-	List<StoryResponseDto> getStoriesByUserId(String userId);
+	List<StoryEntity> getStoriesByUserId(String userId);
 
 	void deleteStory(Long storyId);
 

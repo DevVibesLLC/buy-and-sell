@@ -4,6 +4,7 @@ import am.devvibes.buyandsell.classes.price.Price;
 import am.devvibes.buyandsell.dto.filter.*;
 import am.devvibes.buyandsell.dto.item.ItemRequestDto;
 import am.devvibes.buyandsell.dto.item.ItemResponseDto;
+import am.devvibes.buyandsell.dto.priceStatistic.PriceStatisticsRequestDto;
 import am.devvibes.buyandsell.dto.search.SearchDto;
 import am.devvibes.buyandsell.entity.field.FieldEntity;
 import am.devvibes.buyandsell.entity.field.FieldNameEntity;
@@ -65,6 +66,11 @@ public class  ItemServiceImpl implements ItemService {
 		if (itemEntity.getStatus().equals(Status.CREATED))
 			return itemMapper.mapEntityToDto(itemEntity);
 		throw new NotFoundException(ExceptionConstants.ITEM_NOT_FOUND);
+	}
+
+	@Override
+	public ItemEntity findEntityById(Long id) {
+		return itemRepository.findById(id).orElseThrow(() -> new NotFoundException(ExceptionConstants.ITEM_NOT_FOUND));
 	}
 
 	@Override
@@ -7925,6 +7931,56 @@ filterDto.getStartPrice());
 			Predicate predicate =
 					criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "With Pets"),
 							criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getWithPets()));
+			predicates.add(predicate);
+		}
+
+		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+		criteriaQuery.select(itemRoot).where(combinedPredicate);
+
+		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
+		return itemMapper.mapEntityListToDtoList(resultList);
+	}
+
+	@Override
+	public List<ItemResponseDto> filterItems(PriceStatisticsRequestDto filterDto) {
+		List<Predicate> predicates = new ArrayList<>();
+
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
+		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
+
+		Predicate categoryPredicate = criteriaBuilder.equal(itemRoot.get("category").get("name"), CategoryEnum.CARS);
+		predicates.add(categoryPredicate);
+
+		if (nonNull(filterDto.getMark()) && !filterDto.getMark().isEmpty()) {
+			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
+			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Mark"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getMark()));
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getModel()) && !filterDto.getModel().isEmpty()) {
+			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
+			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Model"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue"), filterDto.getModel()));
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getStartYear()) && !filterDto.getStartYear().isEmpty()) {
+			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
+			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Year"),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getStartYear()));
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getEndYear()) && !filterDto.getEndYear().isEmpty()) {
+			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join("fields", JoinType.INNER);
+			Join<FieldEntity, FieldNameEntity> fieldNameJoin = itemFieldJoin.join("fieldName", JoinType.INNER);
+			Predicate predicate = criteriaBuilder.and(criteriaBuilder.equal(fieldNameJoin.get("fieldName"), "Year"),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue"), filterDto.getEndYear()));
 			predicates.add(predicate);
 		}
 

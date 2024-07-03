@@ -4,6 +4,24 @@ import am.devvibes.buyandsell.dto.electronic.electronicMark.ElectronicMarkDto;
 import am.devvibes.buyandsell.dto.electronic.electronicModel.ElectronicModelDto;
 import am.devvibes.buyandsell.dto.vehicle.vehicleMark.VehicleMarkDto;
 import am.devvibes.buyandsell.dto.vehicle.vehicleModel.VehicleModelDto;
+import am.devvibes.buyandsell.entity.auto.AutoMarkEntity;
+import am.devvibes.buyandsell.entity.auto.AutoModelEntity;
+import am.devvibes.buyandsell.entity.bus.BusMarkEntity;
+import am.devvibes.buyandsell.entity.bus.BusModelEntity;
+import am.devvibes.buyandsell.entity.mobile.MobilePhoneMarkEntity;
+import am.devvibes.buyandsell.entity.mobile.MobilePhoneModelEntity;
+import am.devvibes.buyandsell.entity.notebook.NotebookMarkEntity;
+import am.devvibes.buyandsell.entity.truck.TruckMarkEntity;
+import am.devvibes.buyandsell.entity.truck.TruckModelEntity;
+import am.devvibes.buyandsell.mapper.auto.autoMark.AutoMarkMapper;
+import am.devvibes.buyandsell.mapper.auto.autoModel.AutoModelMapper;
+import am.devvibes.buyandsell.mapper.bus.busMark.BusMarkMapper;
+import am.devvibes.buyandsell.mapper.bus.busModel.BusModelMapper;
+import am.devvibes.buyandsell.mapper.mobile.mobileMark.MobileMarkMapper;
+import am.devvibes.buyandsell.mapper.mobile.mobileModel.MobileModelMapper;
+import am.devvibes.buyandsell.mapper.notebook.notebookMark.NotebookMarkMapper;
+import am.devvibes.buyandsell.mapper.truck.truckMark.TruckMarkMapper;
+import am.devvibes.buyandsell.mapper.truck.truckModel.TruckModelMapper;
 import am.devvibes.buyandsell.service.category.ConstCategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -21,68 +39,77 @@ import java.util.List;
 public class ConstController {
 
 	private final ConstCategoryService constCategoryService;
+	private final AutoMarkMapper autoMarkMapper;
+	private final AutoModelMapper autoModelMapper;
+	private final TruckMarkMapper truckMarkMapper;
+	private final TruckModelMapper truckModelMapper;
+	private final BusMarkMapper busMarkMapper;
+	private final BusModelMapper busModelMapper;
+	private final MobileMarkMapper mobileMarkMapper;
+	private final MobileModelMapper mobileModelMapper;
+	private final NotebookMarkMapper notebookMarkMapper;
 
 	@GetMapping("/category/auto/marks")
 	@Operation(summary = "Get all auto marks by category id")
 	public ResponseEntity<List<VehicleMarkDto>> getAllAutoMarks() {
-		List<VehicleMarkDto> marksByCategory = constCategoryService.findAutoMarks();
-		return ResponseEntity.ok(marksByCategory);
+		List<AutoMarkEntity> autoMarkEntities = constCategoryService.findAutoMarks();
+		return ResponseEntity.ok(autoMarkMapper.mapEntityListToDtoList(autoMarkEntities));
 	}
 
 	@GetMapping("/category/truck/marks")
 	@Operation(summary = "Get all truck marks by category id")
 	public ResponseEntity<List<VehicleMarkDto>> getAllTruckMarks() {
-		List<VehicleMarkDto> marksByCategory = constCategoryService.findTruckMarks();
-		return ResponseEntity.ok(marksByCategory);
+		List<TruckMarkEntity> truckMarkEntities = constCategoryService.findTruckMarks();
+		return ResponseEntity.ok(truckMarkMapper.mapEntityListToDtoList(truckMarkEntities));
 	}
 
 	@GetMapping("/category/bus/marks")
 	@Operation(summary = "Get all bus marks by category id")
 	public ResponseEntity<List<VehicleMarkDto>> getAllBusMarks() {
-		List<VehicleMarkDto> marksByCategory = constCategoryService.findBusMarks();
-		return ResponseEntity.ok(marksByCategory);
+		List<BusMarkEntity> busMarkEntities = constCategoryService.findBusMarks();
+		return ResponseEntity.ok(busMarkMapper.mapEntityListToDtoList(busMarkEntities));
 	}
 
 	@GetMapping("/category/mobile/marks")
 	@Operation(summary = "Get all mobile phone marks by category id")
 	public ResponseEntity<List<ElectronicMarkDto>> getAllMobileMarks() {
-		List<ElectronicMarkDto> mobileMarks = constCategoryService.findMobileMarks();
-		return ResponseEntity.ok(mobileMarks);
+		List<MobilePhoneMarkEntity> mobilePhoneMarkEntities = constCategoryService.findMobileMarks();
+		return ResponseEntity.ok(mobileMarkMapper.mapEntityListToDtoList(mobilePhoneMarkEntities));
 	}
 
 	@GetMapping("/category/notebook/marks")
 	@Operation(summary = "Get all notebook marks by category id")
 	public ResponseEntity<List<ElectronicMarkDto>> getAllNotebookMarks() {
-		List<ElectronicMarkDto> notebookMarks = constCategoryService.findNotebookMarks();
-		return ResponseEntity.ok(notebookMarks);
+		List<NotebookMarkEntity> notebookMarkEntities = constCategoryService.findNotebookMarks();
+		return ResponseEntity.ok(notebookMarkMapper.mapEntityListToDtoList(notebookMarkEntities));
 	}
 
 	@GetMapping("/autoMark/{markId}/models")
 	@Operation(summary = "Get all auto models by mark id")
 	public ResponseEntity<List<VehicleModelDto>> getAllAutoModels(@PathVariable Long markId) {
-		List<VehicleModelDto> modelsByMark = constCategoryService.findAutoModelsByMark(markId);
-		return ResponseEntity.ok(modelsByMark);
+		List<AutoModelEntity> autoModelsByMark = constCategoryService.findAutoModelsByMark(markId);
+		return ResponseEntity.ok(autoModelMapper.mapEntityListToDtoList(autoModelsByMark));
 	}
 
 	@GetMapping("/truckMark/{markId}/models")
 	@Operation(summary = "Get all truck models by mark id")
 	public ResponseEntity<List<VehicleModelDto>> getAllTruckModels(@PathVariable Long markId) {
-		List<VehicleModelDto> modelsByMark = constCategoryService.findTruckModelsByMark(markId);
-		return ResponseEntity.ok(modelsByMark);
+		List<TruckModelEntity> truckModelsByMark = constCategoryService.findTruckModelsByMark(markId);
+		return ResponseEntity.ok(truckModelMapper.mapEntityListToDtoList(truckModelsByMark));
 	}
 
 	@GetMapping("/busMark/{markId}/models")
 	@Operation(summary = "Get all bus models by mark id")
 	public ResponseEntity<List<VehicleModelDto>> getAllBusModels(@PathVariable Long markId) {
-		List<VehicleModelDto> modelsByMark = constCategoryService.findBusModelsByMark(markId);
-		return ResponseEntity.ok(modelsByMark);
+		List<BusModelEntity> busModelsByMark = constCategoryService.findBusModelsByMark(markId);
+		return ResponseEntity.ok(busModelMapper.mapEntityListToDtoList(busModelsByMark));
 	}
 
 	@GetMapping("/mobileMark/{markId}/models")
 	@Operation(summary = "Get all mobile phone models by mark id")
 	public ResponseEntity<List<ElectronicModelDto>> getAllMobileModels(@PathVariable Long markId) {
-		List<ElectronicModelDto> modelsByMark = constCategoryService.findMobileModelsByMark(markId);
-		return ResponseEntity.ok(modelsByMark);
+		List<MobilePhoneModelEntity> mobileModelsByMark = constCategoryService.findMobileModelsByMark(markId);
+		return ResponseEntity.ok(mobileModelMapper.mapEntityListToDtoList(mobileModelsByMark));
 	}
 
 	@GetMapping("field/{fieldId}")

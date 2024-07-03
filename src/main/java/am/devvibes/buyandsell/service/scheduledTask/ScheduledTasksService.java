@@ -1,14 +1,12 @@
-package am.devvibes.buyandsell.service;
+package am.devvibes.buyandsell.service.scheduledTask;
 
 import am.devvibes.buyandsell.entity.story.StoryEntity;
 import am.devvibes.buyandsell.repository.story.StoryRepository;
 import am.devvibes.buyandsell.service.story.StoryService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 

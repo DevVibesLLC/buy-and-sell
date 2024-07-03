@@ -32,7 +32,7 @@ public class FavoriteItemsController {
 
 	@DeleteMapping("/{userId}/{itemId}")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Delete Users Favorite Item")
+	@Operation(summary = "Delete Item from Favorites")
 	public ResponseEntity<List<ItemResponseDto>> deleteFavoriteItem(@PathVariable String userId,
 			@PathVariable Long itemId) {
 

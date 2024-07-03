@@ -8,9 +8,9 @@ import java.util.List;
 
 public interface S3Service {
 
-    PresignedUrlDto getPresignedUrlForImages(Map<String, String> metadata, String resolution);
+    PresignedUrlDto getPresignedUrlForImages(String resolution);
 
-    PresignedUrlDto getPresignedUrlForStories(Map<String, String> metadata, String resolution);
+    PresignedUrlDto getPresignedUrlForStories(String resolution);
 
 
 }

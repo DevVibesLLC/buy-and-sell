@@ -19,6 +19,6 @@ public interface UserMapper {
 
 	UserResponseDto mapRepresentationToDto(UserRepresentation userRepresentation);
 
-	UserResponseDto toDto(UserEntity user);
+	UserResponseDto mapEntityToDto(UserEntity user);
 
 }

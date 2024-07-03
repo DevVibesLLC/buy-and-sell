@@ -50,7 +50,7 @@ cloud:
 application:
   imageForSellFolder: images/sell
   storiesFolder: stories
-  defaultFileName: image
+  defaultFileName: file
   imagesBucket:
     name: buyandsellimages
   storiesBucket:

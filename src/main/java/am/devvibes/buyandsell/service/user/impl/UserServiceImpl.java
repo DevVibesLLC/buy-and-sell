@@ -44,12 +44,12 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
-	public UserResponseDto saveUser(UserRequestDto signUpDto) {
+	public UserRepresentation saveUser(UserRequestDto signUpDto) {
 		validateUser(signUpDto);
 		UserRepresentation userRepresentation = userMapper.mapDtoToRepresentation(signUpDto);
 		UsersResource usersResource = getUsersResource();
 		usersResource.create(userRepresentation);
-		return userMapper.mapRepresentationToDto(userRepresentation);
+		return userRepresentation;
 	}
 
 	@Override
@@ -58,17 +58,14 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserResponseDto findUserForUserProfile() {
-		UserEntity userRepresentation = findUserById(securityService.getCurrentUserId());
-		return userMapper.toDto(userRepresentation);
-
+	public UserEntity findUserForUserProfile() {
+		return findUserById(securityService.getCurrentUserId());
 	}
 
 	@Override
 	@Transactional
-	public List<UserResponseDto> findAllUsers() {
-		List<UserRepresentation> userRepresentations = getUsersResource().list();
-		return userMapper.mapRepresentationListToDtoList(userRepresentations);
+	public List<UserRepresentation> findAllUsers() {
+		return getUsersResource().list();
 	}
 
 	@Override
@@ -81,7 +78,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
-	public UserResponseDto changePassword(String email, String newPassword, String repeatNewPassword) {
+	public UserRepresentation changePassword(String email, String newPassword, String repeatNewPassword) {
 		List<UserRepresentation> userRepresentations = getUsersResource().searchByEmail(email, true);
 		if (userRepresentations.isEmpty()) {
 			throw new NotFoundException(ExceptionConstants.USER_NOT_FOUND);
@@ -95,7 +92,7 @@ public class UserServiceImpl implements UserService {
 		credentialRepresentation.setTemporary(false);
 
 		userRepresentation.setCredentials(List.of(credentialRepresentation));
-		return userMapper.mapRepresentationToDto(userRepresentation);
+		return userRepresentation;
 	}
 
 	private UsersResource getUsersResource() {

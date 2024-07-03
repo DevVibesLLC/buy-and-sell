@@ -3,7 +3,9 @@ package am.devvibes.buyandsell.service.item;
 import am.devvibes.buyandsell.dto.filter.*;
 import am.devvibes.buyandsell.dto.item.ItemRequestDto;
 import am.devvibes.buyandsell.dto.item.ItemResponseDto;
+import am.devvibes.buyandsell.dto.priceStatistic.PriceStatisticsRequestDto;
 import am.devvibes.buyandsell.dto.search.SearchDto;
+import am.devvibes.buyandsell.entity.item.ItemEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +17,8 @@ public interface ItemService {
 	ItemResponseDto save(ItemRequestDto itemRequestDto, Long categoryId);
 
 	ItemResponseDto findById(Long id);
+
+	ItemEntity findEntityById(Long id);
 
 	Page<ItemResponseDto> findAllItems(PageRequest pageRequest);
 
@@ -185,6 +189,8 @@ public interface ItemService {
 	List<ItemResponseDto> filterItems(TrailerAndBoothFilterDto filterDto);
 
 	List<ItemResponseDto> filterItems(EventVenueRentalFilterDto filterDto);
+
+	List<ItemResponseDto> filterItems(PriceStatisticsRequestDto filterDto);
 
 	List<ItemResponseDto> findItemsByCategory(Long categoryId);
 

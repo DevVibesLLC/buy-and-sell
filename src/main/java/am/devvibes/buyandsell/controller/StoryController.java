@@ -2,6 +2,8 @@ package am.devvibes.buyandsell.controller;
 
 import am.devvibes.buyandsell.dto.story.StoryRequestDto;
 import am.devvibes.buyandsell.dto.story.StoryResponseDto;
+import am.devvibes.buyandsell.entity.story.StoryEntity;
+import am.devvibes.buyandsell.mapper.story.StoryMapper;
 import am.devvibes.buyandsell.service.story.StoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -17,21 +19,22 @@ import java.util.List;
 public class StoryController {
 
 	private final StoryService storyService;
+	private final StoryMapper storyMapper;
 
 	@PostMapping
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@Operation(summary = "Save Story")
 	public ResponseEntity<StoryResponseDto> createItem(@RequestBody StoryRequestDto storyRequestDto) {
-		StoryResponseDto storyResponseDto = storyService.saveStory(storyRequestDto);
-		return ResponseEntity.ok(storyResponseDto);
+		StoryEntity storyEntity = storyService.saveStory(storyRequestDto);
+		return ResponseEntity.ok(storyMapper.mapEntityToDto(storyEntity));
 	}
 
 	@GetMapping("/{userId}")
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@Operation(summary = "Get Users Stories")
 	public ResponseEntity<List<StoryResponseDto>> getUserStories(@PathVariable String userId) {
-		List<StoryResponseDto> storiesByUserId = storyService.getStoriesByUserId(userId);
-		return ResponseEntity.ok(storiesByUserId);
+		List<StoryEntity> storyEntities = storyService.getStoriesByUserId(userId);
+		return ResponseEntity.ok(storyMapper.mapEntityListToDtoList(storyEntities));
 	}
 
 	@DeleteMapping("/{storyId}")

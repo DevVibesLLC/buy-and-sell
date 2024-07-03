@@ -28,6 +28,11 @@ public class CategoryMapperImpl implements CategoryMapper {
 				.build();
 	}
 
+	@Override
+	public List<CategoryDto> mapEntityListToDtoList(List<CategoryEntity> category) {
+		return category.stream().map(this::mapToDto).toList();
+	}
+
 	private List<DescriptionRequestDto> mapDescriptionsToDto(List<DescriptionEntity> descriptions) {
 		return descriptions.stream()
 				.map(descriptionEntity -> DescriptionRequestDto.builder()

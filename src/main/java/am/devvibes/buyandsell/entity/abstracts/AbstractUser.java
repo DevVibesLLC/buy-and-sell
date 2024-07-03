@@ -17,10 +17,10 @@ public class AbstractUser {
 	@Column(name = "id", nullable = false, length = 36)
 	private String id;
 
-	@Column(name = "email", length = 255)
+	@Column(name = "email")
 	private String email;
 
-	@Column(name = "email_constraint", length = 255)
+	@Column(name = "email_constraint")
 	private String emailConstraint;
 
 	@Column(name = "email_verified", nullable = false)
@@ -29,25 +29,25 @@ public class AbstractUser {
 	@Column(name = "enabled", nullable = false)
 	private boolean enabled = false;
 
-	@Column(name = "federation_link", length = 255)
+	@Column(name = "federation_link")
 	private String federationLink;
 
-	@Column(name = "first_name", length = 255)
+	@Column(name = "first_name")
 	private String firstName;
 
-	@Column(name = "last_name", length = 255)
+	@Column(name = "last_name")
 	private String lastName;
 
-	@Column(name = "realm_id", length = 255)
+	@Column(name = "realm_id")
 	private String realmId;
 
-	@Column(name = "username", length = 255)
+	@Column(name = "username")
 	private String username;
 
 	@Column(name = "created_timestamp")
 	private Long createdTimestamp;
 
-	@Column(name = "service_account_client_link", length = 255)
+	@Column(name = "service_account_client_link")
 	private String serviceAccountClientLink;
 
 	@Column(name = "not_before", nullable = false)

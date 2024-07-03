@@ -24,8 +24,9 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Override
 	@Transactional
-	public CategoryEntity addCategory(CategoryEntity categoryEntity) {
-		return categoryRepository.save(categoryEntity);
+	public CategoryEntity addCategory(String category) {
+		//todo save method isn't working
+		return categoryRepository.save(CategoryEntity.builder().build());
 	}
 
 	@Override
@@ -43,10 +44,9 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Override
 	@Transactional
-	public CategoryDto findCategoryById(Long id) {
-		CategoryEntity categoryEntity = categoryRepository.findById(id)
+	public CategoryEntity findCategoryById(Long id) {
+		return categoryRepository.findById(id)
 				.orElseThrow(() -> new NotFoundException(ExceptionConstants.CATEGORY_NOT_FOUND));
-		return categoryMapper.mapToDto(categoryEntity);
 	}
 
 	@Override

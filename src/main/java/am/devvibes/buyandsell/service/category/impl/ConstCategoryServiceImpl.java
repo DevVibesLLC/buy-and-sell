@@ -1,17 +1,13 @@
 package am.devvibes.buyandsell.service.category.impl;
 
-import am.devvibes.buyandsell.dto.electronic.electronicMark.ElectronicMarkDto;
-import am.devvibes.buyandsell.dto.electronic.electronicModel.ElectronicModelDto;
-import am.devvibes.buyandsell.dto.vehicle.vehicleMark.VehicleMarkDto;
-import am.devvibes.buyandsell.dto.vehicle.vehicleModel.VehicleModelDto;
-import am.devvibes.buyandsell.entity.category.CategoryEntity;
-import am.devvibes.buyandsell.entity.field.FieldNameEntity;
 import am.devvibes.buyandsell.entity.auto.AutoMarkEntity;
 import am.devvibes.buyandsell.entity.auto.AutoModelEntity;
 import am.devvibes.buyandsell.entity.bus.BusMarkEntity;
 import am.devvibes.buyandsell.entity.bus.BusModelEntity;
+import am.devvibes.buyandsell.entity.field.FieldNameEntity;
 import am.devvibes.buyandsell.entity.mobile.MobilePhoneMarkEntity;
 import am.devvibes.buyandsell.entity.mobile.MobilePhoneModelEntity;
+import am.devvibes.buyandsell.entity.notebook.NotebookMarkEntity;
 import am.devvibes.buyandsell.entity.truck.TruckMarkEntity;
 import am.devvibes.buyandsell.entity.truck.TruckModelEntity;
 import am.devvibes.buyandsell.exception.NotFoundException;
@@ -48,90 +44,71 @@ public class ConstCategoryServiceImpl implements ConstCategoryService {
 	private final BusMarkRepository busMarkRepository;
 	private final MobilePhoneMarkRepository mobilePhoneMarkRepository;
 	private final FieldNameRepository fieldRepository;
-	private final AutoMarkMapper autoMarkMapper;
-	private final AutoModelMapper autoModelMapper;
-	private final TruckMarkMapper truckMarkMapper;
-	private final TruckModelMapper truckModelMapper;
-	private final BusMarkMapper busMarkMapper;
-	private final BusModelMapper busModelMapper;
-	private final MobileMarkMapper mobileMarkMapper;
-	private final MobileModelMapper mobileModelMapper;
 
 	@Override
 	@Transactional
-	public List<VehicleMarkDto> findAutoMarks() {
-		CategoryEntity categoryEntity = categoryRepository.findByName(CategoryEnum.CARS)
-				.orElseThrow(() -> new NotFoundException(ExceptionConstants.CATEGORY_NOT_FOUND));
-
-		return autoMarkMapper.mapEntityListToDtoList(categoryEntity.getAutoMarks());
+	public List<AutoMarkEntity> findAutoMarks() {
+		return categoryRepository.findByName(CategoryEnum.CARS)
+				.orElseThrow(() -> new NotFoundException(ExceptionConstants.CATEGORY_NOT_FOUND))
+				.getAutoMarks();
 	}
 
 	@Override
 	@Transactional
-	public List<VehicleMarkDto> findTruckMarks() {
-		CategoryEntity categoryEntity = categoryRepository.findByName(CategoryEnum.TRUCKS)
-				.orElseThrow(() -> new NotFoundException(ExceptionConstants.CATEGORY_NOT_FOUND));
-
-		return truckMarkMapper.mapEntityListToDtoList(categoryEntity.getTruckMarks());
+	public List<TruckMarkEntity> findTruckMarks() {
+		return categoryRepository.findByName(CategoryEnum.TRUCKS)
+				.orElseThrow(() -> new NotFoundException(ExceptionConstants.CATEGORY_NOT_FOUND))
+				.getTruckMarks();
 	}
 
 	@Override
 	@Transactional
-	public List<VehicleMarkDto> findBusMarks() {
-		CategoryEntity categoryEntity = categoryRepository.findByName(CategoryEnum.BUSES)
-				.orElseThrow(() -> new NotFoundException(ExceptionConstants.CATEGORY_NOT_FOUND));
-
-		return busMarkMapper.mapEntityListToDtoList(categoryEntity.getBusMarks());
+	public List<BusMarkEntity> findBusMarks() {
+		return categoryRepository.findByName(CategoryEnum.BUSES)
+				.orElseThrow(() -> new NotFoundException(ExceptionConstants.CATEGORY_NOT_FOUND))
+				.getBusMarks();
 	}
 
 	@Override
-	public List<ElectronicMarkDto> findMobileMarks() {
-		CategoryEntity categoryEntity = categoryRepository.findByName(CategoryEnum.MOBILE_PHONES)
-				.orElseThrow(() -> new NotFoundException(ExceptionConstants.CATEGORY_NOT_FOUND));
-
-		return mobileMarkMapper.mapEntityListToDtoList(categoryEntity.getMobilePhoneMarks());
+	public List<MobilePhoneMarkEntity> findMobileMarks() {
+		return categoryRepository.findByName(CategoryEnum.MOBILE_PHONES)
+				.orElseThrow(() -> new NotFoundException(ExceptionConstants.CATEGORY_NOT_FOUND))
+				.getMobilePhoneMarks();
 	}
 
 	@Override
-	public List<ElectronicMarkDto> findNotebookMarks() {
-		CategoryEntity categoryEntity = categoryRepository.findByName(CategoryEnum.NOTEBOOKS)
-				.orElseThrow(() -> new NotFoundException(ExceptionConstants.CATEGORY_NOT_FOUND));
-
-		return mobileMarkMapper.mapEntityListToDtoList(categoryEntity.getMobilePhoneMarks());
+	public List<NotebookMarkEntity> findNotebookMarks() {
+		return categoryRepository.findByName(CategoryEnum.NOTEBOOKS)
+				.orElseThrow(() -> new NotFoundException(ExceptionConstants.CATEGORY_NOT_FOUND))
+				.getNotebookMarks();
 	}
 
 	@Override
-	public List<VehicleModelDto> findAutoModelsByMark(Long markId) {
-		List<AutoModelEntity> autoModelEntities = autoMarkRepository.findById(markId)
+	public List<AutoModelEntity> findAutoModelsByMark(Long markId) {
+		return autoMarkRepository.findById(markId)
 				.map(AutoMarkEntity::getModels)
 				.orElseThrow(() -> new NotFoundException(ExceptionConstants.MODEL_NOT_FOUND));
-		return autoModelMapper.mapEntityListToDtoList(autoModelEntities);
 	}
 
-
 	@Override
-	public List<VehicleModelDto> findTruckModelsByMark(Long markId) {
-		List<TruckModelEntity> truckModelEntities = truckMarkRepository.findById(markId)
+	public List<TruckModelEntity> findTruckModelsByMark(Long markId) {
+		return truckMarkRepository.findById(markId)
 				.map(TruckMarkEntity::getModels)
 				.orElseThrow(() -> new NotFoundException(ExceptionConstants.MODEL_NOT_FOUND));
-		return truckModelMapper.mapEntityListToDtoList(truckModelEntities);
 	}
 
 	@Override
-	public List<VehicleModelDto> findBusModelsByMark(Long markId) {
-		List<BusModelEntity> busModelEntities = busMarkRepository.findById(markId)
+	public List<BusModelEntity> findBusModelsByMark(Long markId) {
+		return busMarkRepository.findById(markId)
 				.map(BusMarkEntity::getModels)
 				.orElseThrow(() -> new NotFoundException(ExceptionConstants.MODEL_NOT_FOUND));
-		return busModelMapper.mapEntityListToDtoList(busModelEntities);
 	}
 
 	@Override
-	public List<ElectronicModelDto> findMobileModelsByMark(Long markId) {
-		List<MobilePhoneModelEntity> mobilePhoneModelEntities = mobilePhoneMarkRepository.findById(markId)
+	public List<MobilePhoneModelEntity> findMobileModelsByMark(Long markId) {
+		return mobilePhoneMarkRepository.findById(markId)
 				.map(MobilePhoneMarkEntity::getModels)
 				.orElseThrow(() -> new NotFoundException(ExceptionConstants.MODEL_NOT_FOUND));
-
-		return mobileModelMapper.mapEntityListToDtoList(mobilePhoneModelEntities);
 	}
 
 	@Override

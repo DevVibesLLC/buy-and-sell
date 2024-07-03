@@ -1,6 +1,8 @@
 package am.devvibes.buyandsell.controller;
 
 import am.devvibes.buyandsell.dto.category.CategoryDto;
+import am.devvibes.buyandsell.entity.category.CategoryEntity;
+import am.devvibes.buyandsell.mapper.category.CategoryMapper;
 import am.devvibes.buyandsell.service.category.CategoryService;
 import am.devvibes.buyandsell.service.field.FieldService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,12 +21,13 @@ import java.util.List;
 public class AddItemController {
 
 	private final CategoryService categoryService;
+	private final CategoryMapper categoryMapper;
 
 	@GetMapping("/{category}/form")
 	@Operation(summary = "Get form by category id")
 	public ResponseEntity<CategoryDto> getCategory(@PathVariable Long category) {
-		CategoryDto categoryById = categoryService.findCategoryById(category);
-		return ResponseEntity.ok(categoryById);
+		CategoryEntity categoryEntity = categoryService.findCategoryById(category);
+		return ResponseEntity.ok(categoryMapper.mapToDto(categoryEntity));
 	}
 
 }

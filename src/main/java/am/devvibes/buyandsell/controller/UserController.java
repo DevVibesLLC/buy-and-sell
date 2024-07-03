@@ -3,12 +3,14 @@ package am.devvibes.buyandsell.controller;
 import am.devvibes.buyandsell.dto.item.ItemResponseDto;
 import am.devvibes.buyandsell.dto.user.UserChangePasswordDto;
 import am.devvibes.buyandsell.dto.user.UserResponseDto;
+import am.devvibes.buyandsell.entity.user.UserEntity;
 import am.devvibes.buyandsell.mapper.item.ItemMapper;
 import am.devvibes.buyandsell.mapper.user.UserMapper;
 import am.devvibes.buyandsell.service.favoriteItems.FavoriteItemsService;
 import am.devvibes.buyandsell.service.user.impl.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
+import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -29,21 +31,21 @@ public class UserController {
 	@GetMapping("/{id}")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<UserResponseDto> getUserById(@PathVariable String id) {
-		UserResponseDto userResponseDto = userMapper.toDto(userService.findUserById(id));
+		UserResponseDto userResponseDto = userMapper.mapEntityToDto(userService.findUserById(id));
 		return ResponseEntity.ok(userResponseDto);
 	}
 
 	@GetMapping("/profile")
 	public ResponseEntity<UserResponseDto> getUserByIdForUserProfile() {
-		UserResponseDto userResponseDto = userService.findUserForUserProfile();
-		return ResponseEntity.ok(userResponseDto);
+		UserEntity userEntity = userService.findUserForUserProfile();
+		return ResponseEntity.ok(userMapper.mapEntityToDto(userEntity));
 	}
 
 	@GetMapping
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<List<UserResponseDto>> getAllUsers() {
-		List<UserResponseDto> allUsers = userService.findAllUsers();
-		return ResponseEntity.ok(allUsers);
+		List<UserRepresentation> userRepresentations = userService.findAllUsers();
+		return ResponseEntity.ok(userMapper.mapRepresentationListToDtoList(userRepresentations));
 	}
 
 	@DeleteMapping("{id}")
@@ -64,13 +66,11 @@ public class UserController {
 	@PostMapping("/changePassword")
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public ResponseEntity<UserResponseDto> changePassword(@RequestBody UserChangePasswordDto userChangePasswordDto) {
-		UserResponseDto userResponseDto =
-				userService.changePassword(
-						userChangePasswordDto.getEmail(),
-						userChangePasswordDto.getNewPassword(),
+		UserRepresentation userRepresentation =
+				userService.changePassword(userChangePasswordDto.getEmail(), userChangePasswordDto.getNewPassword(),
 						userChangePasswordDto.getRepeatNewPassword());
 
-		return ResponseEntity.ok(userResponseDto);
+		return ResponseEntity.ok(userMapper.mapRepresentationToDto(userRepresentation));
 	}
 
 }

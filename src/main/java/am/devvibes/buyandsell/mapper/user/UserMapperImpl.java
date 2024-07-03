@@ -69,7 +69,7 @@ public class UserMapperImpl implements UserMapper {
 	}
 
 	@Override
-	public UserResponseDto toDto(UserEntity user) {
+	public UserResponseDto mapEntityToDto(UserEntity user) {
 		return UserResponseDto.builder()
 				.id(user.getId())
 				.username(user.getUsername())

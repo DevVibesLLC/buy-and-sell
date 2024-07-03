@@ -31,17 +31,15 @@ public class StoryServiceImpl implements StoryService {
 	private final StoryMapper storyMapper;
 
 	@Override
-	public StoryResponseDto saveStory(StoryRequestDto storyRequestDto) {
+	public StoryEntity saveStory(StoryRequestDto storyRequestDto) {
 		StoryEntity storyEntity = storyMapper.mapDtoToEntity(storyRequestDto);
-		StoryEntity saved = storyRepository.save(storyEntity);
-		return storyMapper.mapEntityToDto(saved);
+		return storyRepository.save(storyEntity);
 	}
 
 	@Override
-	public List<StoryResponseDto> getStoriesByUserId(String userId) {
+	public List<StoryEntity> getStoriesByUserId(String userId) {
 		List<StoryEntity> usersStories = storyRepository.findByUserId(userId);
-		List<StoryEntity> storyEntities = usersStories.stream().filter(s -> s.getStatus().equals(Status.CREATED)).toList();
-		return storyMapper.mapEntityListToDtoList(storyEntities);
+		return  usersStories.stream().filter(s -> s.getStatus().equals(Status.CREATED)).toList();
 	}
 
 	@Override

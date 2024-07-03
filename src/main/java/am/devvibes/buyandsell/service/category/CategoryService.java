@@ -7,13 +7,13 @@ import java.util.List;
 
 public interface CategoryService {
 
-	CategoryEntity addCategory(CategoryEntity categoryEntity);
+	CategoryEntity addCategory(String category);
 
 	List<CategoryEntity> findAllCategories();
 
 	CategoryEntity FindCategoryEntityOrElseThrow(Long categoryId);
 
-	CategoryDto findCategoryById(Long id);
+	CategoryEntity findCategoryById(Long id);
 
 	void deleteCategoryById(Long id);
 
