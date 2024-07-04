@@ -10,13 +10,10 @@ import am.devvibes.buyandsell.entity.field.FieldEntity;
 import am.devvibes.buyandsell.entity.field.FieldNameEntity;
 import am.devvibes.buyandsell.entity.item.ItemEntity;
 import am.devvibes.buyandsell.entity.location.Location;
-import am.devvibes.buyandsell.exception.FileIsNullException;
 import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.exception.SomethingWentWrongException;
-import am.devvibes.buyandsell.exception.UnsupportedExtensionException;
 import am.devvibes.buyandsell.mapper.item.ItemMapper;
 import am.devvibes.buyandsell.repository.item.ItemRepository;
-import am.devvibes.buyandsell.service.favoriteItems.FavoriteItemsService;
 import am.devvibes.buyandsell.service.item.ItemService;
 import am.devvibes.buyandsell.service.security.SecurityService;
 import am.devvibes.buyandsell.service.value.ValueService;
@@ -32,11 +29,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Objects.isNull;
@@ -54,17 +49,17 @@ public class  ItemServiceImpl implements ItemService {
 
 	@Override
 	@Transactional
-	public ItemResponseDto save(ItemRequestDto itemRequestDto, Long categoryId) {
+	public ItemEntity save(ItemRequestDto itemRequestDto, Long categoryId) {
 		ItemEntity itemEntity = itemMapper.mapDtoToEntity(itemRequestDto, categoryId);
-		return itemMapper.mapEntityToDto(itemRepository.save(itemEntity));
+		return itemRepository.save(itemEntity);
 	}
 
 	@Override
 	@Transactional
-	public ItemResponseDto findById(Long id) {
+	public ItemEntity findById(Long id) {
 		ItemEntity itemEntity = getItemByIdOrElseThrow(id);
 		if (itemEntity.getStatus().equals(Status.CREATED))
-			return itemMapper.mapEntityToDto(itemEntity);
+			return itemEntity;
 		throw new NotFoundException(ExceptionConstants.ITEM_NOT_FOUND);
 	}
 
@@ -95,13 +90,13 @@ public class  ItemServiceImpl implements ItemService {
 
 	@Override
 	@Transactional
-	public ItemResponseDto update(ItemRequestDto itemRequestDto, Long categoryId, Long itemId) {
+	public ItemEntity update(ItemRequestDto itemRequestDto, Long categoryId, Long itemId) {
 		ItemEntity itemEntity = getItemByIdOrElseThrow(itemId);
-		return itemMapper.mapEntityToDto(updateEntity(itemEntity, itemRequestDto));
+		return updateEntity(itemEntity, itemRequestDto);
 	}
 
 	@Override
-	public List<ItemResponseDto> searchItems(SearchDto searchDto) {
+	public List<ItemEntity> searchItems(SearchDto searchDto) {
 		Specification<ItemEntity> specification = Specification.where((root, criteriaQuery, criteriaBuilder) -> {
 			var predicates = new ArrayList<Predicate>();
 
@@ -116,11 +111,11 @@ public class  ItemServiceImpl implements ItemService {
 			}
 			return criteriaBuilder.or(predicates.toArray(new Predicate[0]));
 		});
-		return itemMapper.mapEntityListToDtoList(itemRepository.findAll(specification));
+		return itemRepository.findAll(specification);
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(AutoFilterDto filterDto) {
+	public List<ItemEntity> filterItems(AutoFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -343,13 +338,13 @@ public class  ItemServiceImpl implements ItemService {
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(TruckFilterDto filterDto) {
+	public List<ItemEntity> filterItems(TruckFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -500,12 +495,12 @@ public class  ItemServiceImpl implements ItemService {
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(BusFilterDto filterDto) {
+	public List<ItemEntity> filterItems(BusFilterDto filterDto) {
 
 		List<Predicate> predicates = new ArrayList<>();
 
@@ -647,13 +642,13 @@ public class  ItemServiceImpl implements ItemService {
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(ApartmentBuyFilterDto filterDto) {
+	public List<ItemEntity> filterItems(ApartmentBuyFilterDto filterDto) {
 
 		List<Predicate> predicates = new ArrayList<>();
 
@@ -865,12 +860,12 @@ public class  ItemServiceImpl implements ItemService {
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(ApartmentRentalFilterDto filterDto) {
+	public List<ItemEntity> filterItems(ApartmentRentalFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -1126,12 +1121,12 @@ public class  ItemServiceImpl implements ItemService {
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(HouseBuyFilterDto filterDto) {
+	public List<ItemEntity> filterItems(HouseBuyFilterDto filterDto) {
 
 		List<Predicate> predicates = new ArrayList<>();
 
@@ -1329,12 +1324,12 @@ public class  ItemServiceImpl implements ItemService {
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(HouseRentalFilterDto filterDto) {
+	public List<ItemEntity> filterItems(HouseRentalFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -1567,12 +1562,12 @@ public class  ItemServiceImpl implements ItemService {
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(CommercialBuyFilterDto filterDto) {
+	public List<ItemEntity> filterItems(CommercialBuyFilterDto filterDto) {
 
 		List<Predicate> predicates = new ArrayList<>();
 
@@ -1703,13 +1698,13 @@ public class  ItemServiceImpl implements ItemService {
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(CommercialRentalFilterDto filterDto) {
+	public List<ItemEntity> filterItems(CommercialRentalFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -1867,12 +1862,12 @@ public class  ItemServiceImpl implements ItemService {
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(GarageAndParkingBuyFilterDto filterDto) {
+	public List<ItemEntity> filterItems(GarageAndParkingBuyFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -1967,12 +1962,12 @@ public class  ItemServiceImpl implements ItemService {
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(GarageAndParkingRentalFilterDto filterDto) {
+	public List<ItemEntity> filterItems(GarageAndParkingRentalFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -2076,12 +2071,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(LandBuyFilterDto filterDto) {
+	public List<ItemEntity> filterItems(LandBuyFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -2167,12 +2162,12 @@ filterDto.getCurrency());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(LandRentalFilterDto filterDto) {
+	public List<ItemEntity> filterItems(LandRentalFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -2267,12 +2262,12 @@ filterDto.getCurrency());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(NewConstructionApartmentFilterDto filterDto) {
+	public List<ItemEntity> filterItems(NewConstructionApartmentFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -2456,12 +2451,12 @@ filterDto.getCurrency());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(NewConstructionHouseFilterDto filterDto) {
+	public List<ItemEntity> filterItems(NewConstructionHouseFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -2631,12 +2626,12 @@ filterDto.getCurrency());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(ApartmentDailyRentalFilterDto filterDto) {
+	public List<ItemEntity> filterItems(ApartmentDailyRentalFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -2882,12 +2877,12 @@ filterDto.getCurrency());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(HouseDailyRentalFilterDto filterDto) {
+	public List<ItemEntity> filterItems(HouseDailyRentalFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -3072,12 +3067,12 @@ filterDto.getCurrency());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(MobilePhoneFilterDto filterDto) {
+	public List<ItemEntity> filterItems(MobilePhoneFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -3167,12 +3162,12 @@ filterDto.getCurrency());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(NotebookFilterDto filterDto) {
+	public List<ItemEntity> filterItems(NotebookFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -3282,12 +3277,12 @@ filterDto.getCurrency());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(ComputerFilterDto filterDto) {
+	public List<ItemEntity> filterItems(ComputerFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -3389,12 +3384,12 @@ filterDto.getCurrency());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(SmartWatchFilterDto filterDto) {
+	public List<ItemEntity> filterItems(SmartWatchFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -3468,12 +3463,12 @@ filterDto.getCurrency());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(TabletFilterDto filterDto) {
+	public List<ItemEntity> filterItems(TabletFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -3563,12 +3558,12 @@ filterDto.getCurrency());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(TVFilterDto filterDto) {
+	public List<ItemEntity> filterItems(TVFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -3642,12 +3637,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(GamingConsoleFilterDto filterDto) {
+	public List<ItemEntity> filterItems(GamingConsoleFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -3721,12 +3716,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(HeadphoneFilterDto filterDto) {
+	public List<ItemEntity> filterItems(HeadphoneFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -3809,12 +3804,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(ComputerAndNotebookPartsFilterDto filterDto) {
+	public List<ItemEntity> filterItems(ComputerAndNotebookPartsFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -3880,12 +3875,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(PhotoAndVideoCameraFilterDto filterDto) {
+	public List<ItemEntity> filterItems(PhotoAndVideoCameraFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -3951,12 +3946,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(ComputerGamesFilterDto filterDto) {
+	public List<ItemEntity> filterItems(ComputerGamesFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -4022,12 +4017,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(SmartHomeAccessoriesFilterDto filterDto) {
+	public List<ItemEntity> filterItems(SmartHomeAccessoriesFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -4101,12 +4096,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(WasherFilterDto filterDto) {
+	public List<ItemEntity> filterItems(WasherFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -4197,12 +4192,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(ClothesDryerFilterDto filterDto) {
+	public List<ItemEntity> filterItems(ClothesDryerFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -4260,12 +4255,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(IronAndAccessoriesFilterDto filterDto) {
+	public List<ItemEntity> filterItems(IronAndAccessoriesFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -4331,12 +4326,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(RefrigeratorFilterDto filterDto) {
+	public List<ItemEntity> filterItems(RefrigeratorFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -4410,12 +4405,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(FreezerFilterDto filterDto) {
+	public List<ItemEntity> filterItems(FreezerFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -4473,12 +4468,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(DishwasherFilterDto filterDto) {
+	public List<ItemEntity> filterItems(DishwasherFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -4536,12 +4531,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(MicrowaveFilterDto filterDto) {
+	public List<ItemEntity> filterItems(MicrowaveFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -4599,12 +4594,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(StoveFilterDto filterDto) {
+	public List<ItemEntity> filterItems(StoveFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -4680,12 +4675,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(CoffeeMakerAndAccessoriesFilterDto filterDto) {
+	public List<ItemEntity> filterItems(CoffeeMakerAndAccessoriesFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -4752,12 +4747,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(KettleFilterDto filterDto) {
+	public List<ItemEntity> filterItems(KettleFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -4824,12 +4819,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(RangeHoodFilterDto filterDto) {
+	public List<ItemEntity> filterItems(RangeHoodFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -4887,12 +4882,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(VacuumCleanerFilterDto filterDto) {
+	public List<ItemEntity> filterItems(VacuumCleanerFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -4950,12 +4945,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(RoboticVacuumFilterDto filterDto) {
+	public List<ItemEntity> filterItems(RoboticVacuumFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -5013,12 +5008,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(FloorWasherFilterDto filterDto) {
+	public List<ItemEntity> filterItems(FloorWasherFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -5076,12 +5071,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(AirConditionerFilterDto filterDto) {
+	public List<ItemEntity> filterItems(AirConditionerFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -5139,12 +5134,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(WaterHeatersFilterDto filterDto) {
+	public List<ItemEntity> filterItems(WaterHeatersFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -5202,12 +5197,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(AirPurifiersAndHumidifiersFilterDto filterDto) {
+	public List<ItemEntity> filterItems(AirPurifiersAndHumidifiersFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -5274,12 +5269,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(ComputerPeripheralFilterDto filterDto) {
+	public List<ItemEntity> filterItems(ComputerPeripheralFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -5346,12 +5341,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(AudioPlayerAndStereoFilterDto filterDto) {
+	public List<ItemEntity> filterItems(AudioPlayerAndStereoFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -5418,12 +5413,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(QuadcoptersAndDronesFilterDto filterDto) {
+	public List<ItemEntity> filterItems(QuadcoptersAndDronesFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -5481,12 +5476,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(SofaAndArmchairFilterDto filterDto) {
+	public List<ItemEntity> filterItems(SofaAndArmchairFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -5571,12 +5566,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(StorageFilterDto filterDto) {
+	public List<ItemEntity> filterItems(StorageFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -5643,12 +5638,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(TableAndChairFilterDto filterDto) {
+	public List<ItemEntity> filterItems(TableAndChairFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -5715,12 +5710,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(BedroomFurnitureFilterDto filterDto) {
+	public List<ItemEntity> filterItems(BedroomFurnitureFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -5787,12 +5782,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(KitchenFurnitureFilterDto filterDto) {
+	public List<ItemEntity> filterItems(KitchenFurnitureFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -5868,12 +5863,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(GardenFurnitureFilterDto filterDto) {
+	public List<ItemEntity> filterItems(GardenFurnitureFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -5940,12 +5935,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(BarbecueAndAccessoriesFilterDto filterDto) {
+	public List<ItemEntity> filterItems(BarbecueAndAccessoriesFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -6003,12 +5998,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(GardenDecorFilterDto filterDto) {
+	public List<ItemEntity> filterItems(GardenDecorFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -6066,12 +6061,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(GardenAccessoriesFilterDto filterDto) {
+	public List<ItemEntity> filterItems(GardenAccessoriesFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -6129,12 +6124,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(LightingFilterDto filterDto) {
+	public List<ItemEntity> filterItems(LightingFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -6201,12 +6196,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(TextileFilterDto filterDto) {
+	public List<ItemEntity> filterItems(TextileFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -6273,12 +6268,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(RugFilterDto filterDto) {
+	public List<ItemEntity> filterItems(RugFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -6363,12 +6358,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(InteriorDecorationFilterDto filterDto) {
+	public List<ItemEntity> filterItems(InteriorDecorationFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -6435,12 +6430,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(TablewareFilterDto filterDto) {
+	public List<ItemEntity> filterItems(TablewareFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -6507,12 +6502,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(CookingAndBakingFilterDto filterDto) {
+	public List<ItemEntity> filterItems(CookingAndBakingFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -6579,12 +6574,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(KitchenAccessoriesFilterDto filterDto) {
+	public List<ItemEntity> filterItems(KitchenAccessoriesFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -6642,12 +6637,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(BathroomAccessoriesFilterDto filterDto) {
+	public List<ItemEntity> filterItems(BathroomAccessoriesFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -6705,12 +6700,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(VideoSurveillanceFilterDto filterDto) {
+	public List<ItemEntity> filterItems(VideoSurveillanceFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -6768,12 +6763,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(CarPartFilterDto filterDto) {
+	public List<ItemEntity> filterItems(CarPartFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -6876,12 +6871,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(WheelAndTireFilterDto filterDto) {
+	public List<ItemEntity> filterItems(WheelAndTireFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -6984,12 +6979,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(RimAndHubCapFilterDto filterDto) {
+	public List<ItemEntity> filterItems(RimAndHubCapFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -7065,12 +7060,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(CarBatteryFilterDto filterDto) {
+	public List<ItemEntity> filterItems(CarBatteryFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -7155,12 +7150,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(GasEquipmentFilterDto filterDto) {
+	public List<ItemEntity> filterItems(GasEquipmentFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -7227,12 +7222,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(OilAndChemicalFilterDto filterDto) {
+	public List<ItemEntity> filterItems(OilAndChemicalFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -7290,12 +7285,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(CarAccessoriesFilterDto filterDto) {
+	public List<ItemEntity> filterItems(CarAccessoriesFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -7353,12 +7348,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(CarElectronicFilterDto filterDto) {
+	public List<ItemEntity> filterItems(CarElectronicFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -7426,12 +7421,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(CarAudioAndVideoFilterDto filterDto) {
+	public List<ItemEntity> filterItems(CarAudioAndVideoFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -7499,12 +7494,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(PersonalTransportationFilterDto filterDto) {
+	public List<ItemEntity> filterItems(PersonalTransportationFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -7572,12 +7567,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(AtvAndSnowmobileFilterDto filterDto) {
+	public List<ItemEntity> filterItems(AtvAndSnowmobileFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -7645,12 +7640,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(BoatAndWaterTransportFilterDto filterDto) {
+	public List<ItemEntity> filterItems(BoatAndWaterTransportFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -7708,12 +7703,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(TrailerAndBoothFilterDto filterDto) {
+	public List<ItemEntity> filterItems(TrailerAndBoothFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -7800,12 +7795,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
+
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(EventVenueRentalFilterDto filterDto) {
+	public List<ItemEntity> filterItems(EventVenueRentalFilterDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -7937,12 +7932,11 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
 	}
 
 	@Override
-	public List<ItemResponseDto> filterItems(PriceStatisticsRequestDto filterDto) {
+	public List<ItemEntity> filterItems(PriceStatisticsRequestDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -7987,14 +7981,12 @@ filterDto.getStartPrice());
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		criteriaQuery.select(itemRoot).where(combinedPredicate);
 
-		List<ItemEntity> resultList = entityManager.createQuery(criteriaQuery).getResultList();
-		return itemMapper.mapEntityListToDtoList(resultList);
+		return entityManager.createQuery(criteriaQuery).getResultList();
 	}
 
 	@Override
-	public List<ItemResponseDto> findItemsByCategory(Long categoryId) {
-		List<ItemEntity> itemsByCategoryId = itemRepository.findByCategoryId(categoryId);
-		return itemMapper.mapEntityListToDtoList(itemsByCategoryId);
+	public List<ItemEntity> findItemsByCategory(Long categoryId) {
+		return itemRepository.findByCategoryId(categoryId);
 	}
 
 	private ItemEntity updateEntity(ItemEntity itemEntity, ItemRequestDto itemRequestDto) {

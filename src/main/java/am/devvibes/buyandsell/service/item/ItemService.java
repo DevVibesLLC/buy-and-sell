@@ -14,9 +14,9 @@ import java.util.List;
 
 public interface ItemService {
 
-	ItemResponseDto save(ItemRequestDto itemRequestDto, Long categoryId);
+	ItemEntity save(ItemRequestDto itemRequestDto, Long categoryId);
 
-	ItemResponseDto findById(Long id);
+	ItemEntity findById(Long id);
 
 	ItemEntity findEntityById(Long id);
 
@@ -24,174 +24,174 @@ public interface ItemService {
 
 	void deleteById(Long id);
 
-	ItemResponseDto update(ItemRequestDto itemRequestDto, Long categoryId, Long itemId);
+	ItemEntity update(ItemRequestDto itemRequestDto, Long categoryId, Long itemId);
 
-	List<ItemResponseDto> searchItems(SearchDto searchDto);
+	List<ItemEntity> searchItems(SearchDto searchDto);
 
-	List<ItemResponseDto> filterItems(AutoFilterDto filterDto);
+	List<ItemEntity> filterItems(AutoFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(TruckFilterDto filterDto);
+	List<ItemEntity> filterItems(TruckFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(BusFilterDto filterDto);
+	List<ItemEntity> filterItems(BusFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(ApartmentBuyFilterDto filterDto);
+	List<ItemEntity> filterItems(ApartmentBuyFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(ApartmentRentalFilterDto filterDto);
+	List<ItemEntity> filterItems(ApartmentRentalFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(HouseBuyFilterDto filterDto);
+	List<ItemEntity> filterItems(HouseBuyFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(HouseRentalFilterDto filterDto);
+	List<ItemEntity> filterItems(HouseRentalFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(CommercialBuyFilterDto filterDto);
+	List<ItemEntity> filterItems(CommercialBuyFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(CommercialRentalFilterDto filterDto);
+	List<ItemEntity> filterItems(CommercialRentalFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(GarageAndParkingBuyFilterDto filterDto);
+	List<ItemEntity> filterItems(GarageAndParkingBuyFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(GarageAndParkingRentalFilterDto filterDto);
+	List<ItemEntity> filterItems(GarageAndParkingRentalFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(LandBuyFilterDto filterDto);
+	List<ItemEntity> filterItems(LandBuyFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(LandRentalFilterDto filterDto);
+	List<ItemEntity> filterItems(LandRentalFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(NewConstructionApartmentFilterDto filterDto);
+	List<ItemEntity> filterItems(NewConstructionApartmentFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(NewConstructionHouseFilterDto filterDto);
+	List<ItemEntity> filterItems(NewConstructionHouseFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(ApartmentDailyRentalFilterDto filterDto);
+	List<ItemEntity> filterItems(ApartmentDailyRentalFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(HouseDailyRentalFilterDto filterDto);
+	List<ItemEntity> filterItems(HouseDailyRentalFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(MobilePhoneFilterDto filterDto);
+	List<ItemEntity> filterItems(MobilePhoneFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(NotebookFilterDto filterDto);
+	List<ItemEntity> filterItems(NotebookFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(ComputerFilterDto filterDto);
+	List<ItemEntity> filterItems(ComputerFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(SmartWatchFilterDto filterDto);
+	List<ItemEntity> filterItems(SmartWatchFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(TabletFilterDto filterDto);
+	List<ItemEntity> filterItems(TabletFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(TVFilterDto filterDto);
+	List<ItemEntity> filterItems(TVFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(GamingConsoleFilterDto filterDto);
+	List<ItemEntity> filterItems(GamingConsoleFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(HeadphoneFilterDto filterDto);
+	List<ItemEntity> filterItems(HeadphoneFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(ComputerAndNotebookPartsFilterDto filterDto);
+	List<ItemEntity> filterItems(ComputerAndNotebookPartsFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(PhotoAndVideoCameraFilterDto filterDto);
+	List<ItemEntity> filterItems(PhotoAndVideoCameraFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(ComputerGamesFilterDto filterDto);
+	List<ItemEntity> filterItems(ComputerGamesFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(SmartHomeAccessoriesFilterDto filterDto);
+	List<ItemEntity> filterItems(SmartHomeAccessoriesFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(WasherFilterDto filterDto);
+	List<ItemEntity> filterItems(WasherFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(ClothesDryerFilterDto filterDto);
+	List<ItemEntity> filterItems(ClothesDryerFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(IronAndAccessoriesFilterDto filterDto);
+	List<ItemEntity> filterItems(IronAndAccessoriesFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(RefrigeratorFilterDto filterDto);
+	List<ItemEntity> filterItems(RefrigeratorFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(FreezerFilterDto filterDto);
+	List<ItemEntity> filterItems(FreezerFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(DishwasherFilterDto filterDto);
+	List<ItemEntity> filterItems(DishwasherFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(MicrowaveFilterDto filterDto);
+	List<ItemEntity> filterItems(MicrowaveFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(StoveFilterDto filterDto);
+	List<ItemEntity> filterItems(StoveFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(CoffeeMakerAndAccessoriesFilterDto filterDto);
+	List<ItemEntity> filterItems(CoffeeMakerAndAccessoriesFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(KettleFilterDto filterDto);
+	List<ItemEntity> filterItems(KettleFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(RangeHoodFilterDto filterDto);
+	List<ItemEntity> filterItems(RangeHoodFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(VacuumCleanerFilterDto filterDto);
+	List<ItemEntity> filterItems(VacuumCleanerFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(RoboticVacuumFilterDto filterDto);
+	List<ItemEntity> filterItems(RoboticVacuumFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(FloorWasherFilterDto filterDto);
+	List<ItemEntity> filterItems(FloorWasherFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(AirConditionerFilterDto filterDto);
+	List<ItemEntity> filterItems(AirConditionerFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(WaterHeatersFilterDto filterDto);
+	List<ItemEntity> filterItems(WaterHeatersFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(AirPurifiersAndHumidifiersFilterDto filterDto);
+	List<ItemEntity> filterItems(AirPurifiersAndHumidifiersFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(ComputerPeripheralFilterDto filterDto);
+	List<ItemEntity> filterItems(ComputerPeripheralFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(AudioPlayerAndStereoFilterDto filterDto);
+	List<ItemEntity> filterItems(AudioPlayerAndStereoFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(QuadcoptersAndDronesFilterDto filterDto);
+	List<ItemEntity> filterItems(QuadcoptersAndDronesFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(SofaAndArmchairFilterDto filterDto);
+	List<ItemEntity> filterItems(SofaAndArmchairFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(StorageFilterDto filterDto);
+	List<ItemEntity> filterItems(StorageFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(TableAndChairFilterDto filterDto);
+	List<ItemEntity> filterItems(TableAndChairFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(BedroomFurnitureFilterDto filterDto);
+	List<ItemEntity> filterItems(BedroomFurnitureFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(KitchenFurnitureFilterDto filterDto);
+	List<ItemEntity> filterItems(KitchenFurnitureFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(GardenFurnitureFilterDto filterDto);
+	List<ItemEntity> filterItems(GardenFurnitureFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(BarbecueAndAccessoriesFilterDto filterDto);
+	List<ItemEntity> filterItems(BarbecueAndAccessoriesFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(GardenDecorFilterDto filterDto);
+	List<ItemEntity> filterItems(GardenDecorFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(GardenAccessoriesFilterDto filterDto);
+	List<ItemEntity> filterItems(GardenAccessoriesFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(LightingFilterDto filterDto);
+	List<ItemEntity> filterItems(LightingFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(TextileFilterDto filterDto);
+	List<ItemEntity> filterItems(TextileFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(RugFilterDto filterDto);
+	List<ItemEntity> filterItems(RugFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(InteriorDecorationFilterDto filterDto);
+	List<ItemEntity> filterItems(InteriorDecorationFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(TablewareFilterDto filterDto);
+	List<ItemEntity> filterItems(TablewareFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(CookingAndBakingFilterDto filterDto);
+	List<ItemEntity> filterItems(CookingAndBakingFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(KitchenAccessoriesFilterDto filterDto);
+	List<ItemEntity> filterItems(KitchenAccessoriesFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(BathroomAccessoriesFilterDto filterDto);
+	List<ItemEntity> filterItems(BathroomAccessoriesFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(VideoSurveillanceFilterDto filterDto);
+	List<ItemEntity> filterItems(VideoSurveillanceFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(CarPartFilterDto filterDto);
+	List<ItemEntity> filterItems(CarPartFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(WheelAndTireFilterDto filterDto);
+	List<ItemEntity> filterItems(WheelAndTireFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(RimAndHubCapFilterDto filterDto);
+	List<ItemEntity> filterItems(RimAndHubCapFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(CarBatteryFilterDto filterDto);
+	List<ItemEntity> filterItems(CarBatteryFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(GasEquipmentFilterDto filterDto);
+	List<ItemEntity> filterItems(GasEquipmentFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(OilAndChemicalFilterDto filterDto);
+	List<ItemEntity> filterItems(OilAndChemicalFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(CarAccessoriesFilterDto filterDto);
+	List<ItemEntity> filterItems(CarAccessoriesFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(CarElectronicFilterDto filterDto);
+	List<ItemEntity> filterItems(CarElectronicFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(CarAudioAndVideoFilterDto filterDto);
+	List<ItemEntity> filterItems(CarAudioAndVideoFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(PersonalTransportationFilterDto filterDto);
+	List<ItemEntity> filterItems(PersonalTransportationFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(AtvAndSnowmobileFilterDto filterDto);
+	List<ItemEntity> filterItems(AtvAndSnowmobileFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(BoatAndWaterTransportFilterDto filterDto);
+	List<ItemEntity> filterItems(BoatAndWaterTransportFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(TrailerAndBoothFilterDto filterDto);
+	List<ItemEntity> filterItems(TrailerAndBoothFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(EventVenueRentalFilterDto filterDto);
+	List<ItemEntity> filterItems(EventVenueRentalFilterDto filterDto);
 
-	List<ItemResponseDto> filterItems(PriceStatisticsRequestDto filterDto);
+	List<ItemEntity> filterItems(PriceStatisticsRequestDto filterDto);
 
-	List<ItemResponseDto> findItemsByCategory(Long categoryId);
+	List<ItemEntity> findItemsByCategory(Long categoryId);
 
 }

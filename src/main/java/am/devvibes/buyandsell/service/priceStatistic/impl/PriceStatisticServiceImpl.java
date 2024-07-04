@@ -4,7 +4,9 @@ import am.devvibes.buyandsell.classes.price.Price;
 import am.devvibes.buyandsell.dto.item.ItemResponseDto;
 import am.devvibes.buyandsell.dto.priceStatistic.PriceStatisticsRequestDto;
 import am.devvibes.buyandsell.dto.priceStatistic.PriceStatisticsResponseDto;
+import am.devvibes.buyandsell.entity.item.ItemEntity;
 import am.devvibes.buyandsell.exception.NotFoundException;
+import am.devvibes.buyandsell.mapper.item.ItemMapper;
 import am.devvibes.buyandsell.service.item.ItemService;
 import am.devvibes.buyandsell.service.priceStatistic.PriceStatisticService;
 import am.devvibes.buyandsell.util.ExceptionConstants;
@@ -20,10 +22,12 @@ import java.util.List;
 public class PriceStatisticServiceImpl implements PriceStatisticService {
 
 	private final ItemService itemService;
+	private final ItemMapper itemMapper;
 
 	@Override
 	public PriceStatisticsResponseDto getPriceStatistic(PriceStatisticsRequestDto priceStatisticsRequestDto) {
-		List<ItemResponseDto> itemResponseDtos = itemService.filterItems(priceStatisticsRequestDto);
+		List<ItemEntity> itemEntities = itemService.filterItems(priceStatisticsRequestDto);
+		List<ItemResponseDto> itemResponseDtos = itemMapper.mapEntityListToDtoList(itemEntities);
 		BigDecimal minPrice = itemResponseDtos.stream()
 				.map(ItemResponseDto::getPrice)
 				.min(Comparator.comparingInt(item -> item.getPrice().intValue()))
