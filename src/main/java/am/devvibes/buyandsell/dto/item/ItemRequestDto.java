@@ -34,4 +34,6 @@ public class ItemRequestDto {
 	private List<String> imgKeys;
 
 	private Long cityId;
+
+	private List<String> phoneNumbers;
 }

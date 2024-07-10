@@ -190,6 +190,28 @@ public interface ItemService {
 
 	List<ItemEntity> filterItems(EventVenueRentalFilterDto filterDto);
 
+	List<ItemEntity> filterItems(WomenClothingBuyFilterDto filterDto);
+
+	List<ItemEntity> filterItems(WomenClothingRentalFilterDto filterDto);
+
+	List<ItemEntity> filterItems(WomenShoesFilterDto filterDto);
+
+	List<ItemEntity> filterItems(WomenAccessoriesFilterDto filterDto);
+
+	List<ItemEntity> filterItems(MenClothingBuyFilterDto filterDto);
+
+	List<ItemEntity> filterItems(MenShoesFilterDto filterDto);
+
+	List<ItemEntity> filterItems(MenAccessoriesFilterDto filterDto);
+
+	List<ItemEntity> filterItems(JewelleryFilterDto filterDto);
+
+	List<ItemEntity> filterItems(GlassesAndFramesFilterDto filterDto);
+
+	List<ItemEntity> filterItems(WatchesFilterDto filterDto);
+
+	List<ItemEntity> filterItems(HandbagsAndWalletsFilterDto filterDto);
+
 	List<ItemEntity> filterItems(PriceStatisticsRequestDto filterDto);
 
 	List<ItemEntity> findItemsByCategory(Long categoryId);

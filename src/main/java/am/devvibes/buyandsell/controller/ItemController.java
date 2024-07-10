@@ -684,9 +684,97 @@ public class ItemController {
 
 	@PostMapping("/eventVenueRental/filter")
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@Operation(summary = "Filter EventVenue Rental Items")
+	@Operation(summary = "Filter Event Venue Rental Items")
 	public ResponseEntity<List<ItemResponseDto>> filterEventVenueRentalItems(
 			@RequestBody EventVenueRentalFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/womenClothingBuy/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Women Clothing Buy Items")
+	public ResponseEntity<List<ItemResponseDto>> filterWomenClothingBuyItems(
+			@RequestBody WomenClothingBuyFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/womenClothingRental/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Women Clothing Rental Items")
+	public ResponseEntity<List<ItemResponseDto>> filterWomenClothingRentalItems(
+			@RequestBody WomenClothingRentalFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/womenShoes/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Women Shoes Items")
+	public ResponseEntity<List<ItemResponseDto>> filterWomenShoesItems(
+			@RequestBody WomenShoesFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/womenAccessories/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Women Accessories Items")
+	public ResponseEntity<List<ItemResponseDto>> filterWomenAccessoriesItems(
+			@RequestBody WomenAccessoriesFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/menClothingBuy/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Men Clothing Buy Items")
+	public ResponseEntity<List<ItemResponseDto>> filterMenClothingBuyItems(
+			@RequestBody MenClothingBuyFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/menShoes/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Men Shoes Items")
+	public ResponseEntity<List<ItemResponseDto>> filterMenShoesItems(
+			@RequestBody MenShoesFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/menAccessories/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Men Accessories Items")
+	public ResponseEntity<List<ItemResponseDto>> filterMenAccessoriesItems(
+			@RequestBody MenAccessoriesFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/jewellery/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Jewellery Items")
+	public ResponseEntity<List<ItemResponseDto>> filterJewelleryItems(
+			@RequestBody JewelleryFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/glassesAndFrames/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Glasses and Frames Items")
+	public ResponseEntity<List<ItemResponseDto>> filterGlassesAndFramesItems(
+			@RequestBody GlassesAndFramesFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/watches/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Watches Items")
+	public ResponseEntity<List<ItemResponseDto>> filterWatchesItems(
+			@RequestBody WatchesFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/handbagsAndWallets/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Handbags and Wallets Items")
+	public ResponseEntity<List<ItemResponseDto>> filterHandbagsAndWalletsItems(
+			@RequestBody HandbagsAndWalletsFilterDto filterDto) {
 		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
 	}
 

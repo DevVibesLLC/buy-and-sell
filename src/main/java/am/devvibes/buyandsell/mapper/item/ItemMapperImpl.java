@@ -49,6 +49,7 @@ public class ItemMapperImpl implements ItemMapper {
 				.imgKeys(itemRequestDto.getImgKeys())
 				.category(categoryService.FindCategoryEntityOrElseThrow(categoryId))
 				.fields(valueService.saveAllValues(itemRequestDto.getFieldsValue()))
+				.phoneNumbers(itemRequestDto.getPhoneNumbers())
 				.status(Status.CREATED)
 				.build();
 	}
@@ -66,6 +67,7 @@ public class ItemMapperImpl implements ItemMapper {
 				.status(itemEntity.getStatus())
 				.location(itemEntity.getLocation())
 				.imgUrls(s3Service.getImagesPresignedDownloadUrls(itemEntity.getImgKeys()))
+				.phoneNumbers(itemEntity.getPhoneNumbers())
 				.build();
 	}
 

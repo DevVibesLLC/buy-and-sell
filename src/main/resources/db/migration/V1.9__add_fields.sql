@@ -547,5 +547,70 @@ VALUES
 (355,'Equipment', false, true, null, 109),
 
 (356,'Noise After Hours', false, true, null, 110),
-(357,'With Pets', false, true, null, 110)
+(357,'With Pets', false, true, null, 110),
+
+/*WOMEN_CLOTHING_BUY*/
+(358,'Type', false, true, null, 111),
+(359,'Size', false, true, null, 111),
+(360,'Color', false, true, null, 111),
+(361,'Condition', false, true, null, 111),
+
+/*WOMEN_CLOTHING_RENTAL*/
+(362,'Type', false, true, null, 112),
+(363,'Size', false, true, null, 112),
+(364,'Color', false, true, null, 112),
+(365,'Condition', false, true, null, 112),
+
+/*WOMEN_SHOES*/
+(366,'Type', false, true, null, 113),
+(367,'Season', false, true, null, 113),
+(368,'Shoe Size', false, true, null, 113),
+(369,'Color', false, true, null, 113),
+(370,'Condition', false, true, null, 113),
+
+/*WOMEN_ACCESSORIES*/
+(371,'Type', false, true, null, 114),
+(372,'Condition', false, true, null, 114),
+
+/*MEN_CLOTHING_BUY*/
+(373,'Type', false, true, null, 115),
+(374,'Size', false, true, null, 115),
+(375,'Color', false, true, null, 115),
+(376,'Condition', false, true, null, 115),
+
+/*MEN_SHOES*/
+(377,'Type', false, true, null, 116),
+(378,'Season', false, true, null, 116),
+(379,'Shoe Size', false, true, null, 116),
+(380,'Color', false, true, null, 116),
+(381,'Condition', false, true, null, 116),
+
+/*MEN_ACCESSORIES*/
+(382,'Type', false, true, null, 117),
+(383,'Condition', false, true, null, 117),
+
+/*JEWELLERY*/
+(384,'Type', false, true, null, 118),
+(385,'Gender', false, true, null, 118),
+(386,'Condition', false, true, null, 118),
+
+/*GLASSES_AND_FRAMES*/
+(387,'Type', false, true, null, 119),
+(388,'Gender', false, true, null, 119),
+(389,'Color', false, true, null, 119),
+(390,'Condition', false, true, null, 119),
+
+/*WATCHES*/
+(391,'Type', false, true, null, 120),
+(392,'Gender', false, true, null, 120),
+(393,'Clock Face', false, true, null, 120),
+(394,'Color', false, true, null, 120),
+(395,'Condition', false, true, null, 120),
+
+/*HANDBAGS_AND_WALLETS*/
+(396,'Type', false, true, null, 121),
+(397,'Gender', false, true, null, 121),
+(398,'Material', false, true, null, 121),
+(399,'Color', false, true, null, 121),
+(400,'Condition', false, true, null, 121)
 ON CONFLICT (id) DO NOTHING;

@@ -47,4 +47,8 @@ public class ItemEntity extends BaseEntityWithDates {
 
 	@Enumerated(EnumType.STRING)
 	private Status status;
+
+	@ElementCollection
+	private List<String> phoneNumbers;
+
 }

@@ -33,4 +33,6 @@ public class ItemResponseDto {
 
 	private List<String> imgUrls;
 
+	private List<String> phoneNumbers;
+
 }

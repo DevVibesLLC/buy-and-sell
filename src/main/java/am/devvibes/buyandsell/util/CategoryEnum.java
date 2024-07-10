@@ -155,7 +155,29 @@ public enum CategoryEnum {
 
 	TRAILERS_AND_BOOTHS("Trailers and Booths"),
 
-	EVENT_VENUES_RENTAL("Event Venues Rental");
+	EVENT_VENUES_RENTAL("Event Venues Rental"),
+
+	WOMEN_CLOTHING_BUY("Women Clothing Buy"),
+
+	WOMEN_CLOTHING_RENTAL("Women Clothing Rental"),
+
+	WOMEN_SHOES("Women Shoes"),
+
+	WOMEN_ACCESSORIES("Women Accessories"),
+
+	MEN_CLOTHING_BUY("Men Clothing Buy"),
+
+	MEN_SHOES("Women Shoes"),
+
+	MEN_ACCESSORIES("Women Accessories"),
+
+	JEWELLERY("Jewellery"),
+
+	GLASSES_AND_FRAMES("Glasses and Frames"),
+
+	WATCHES("Watches"),
+
+	HANDBAGS_AND_WALLETS("Handbags and Wallets"),;
 
 
 	private final String name;
