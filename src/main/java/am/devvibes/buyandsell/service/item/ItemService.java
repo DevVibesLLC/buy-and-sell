@@ -212,6 +212,22 @@ public interface ItemService {
 
 	List<ItemEntity> filterItems(HandbagsAndWalletsFilterDto filterDto);
 
+	List<ItemEntity> filterItems(WorkwearAndAccessoriesFilterDto filterDto);
+
+	List<ItemEntity> filterItems(CarnivalCostumesFilterDto filterDto);
+
+	List<ItemEntity> filterItems(WeddingDressesFilterDto filterDto);
+
+	List<ItemEntity> filterItems(WeddingShoesFilterDto filterDto);
+
+	List<ItemEntity> filterItems(WeddingAccessoriesFilterDto filterDto);
+
+	List<ItemEntity> filterItems(CollectibleItemsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(PaintingsAndPicturesFilterDto filterDto);
+
+	List<ItemEntity> filterItems(ArtsObjectsFilterDto filterDto);
+
 	List<ItemEntity> filterItems(PriceStatisticsRequestDto filterDto);
 
 	List<ItemEntity> findItemsByCategory(Long categoryId);

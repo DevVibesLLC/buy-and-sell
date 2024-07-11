@@ -612,5 +612,42 @@ VALUES
 (397,'Gender', false, true, null, 121),
 (398,'Material', false, true, null, 121),
 (399,'Color', false, true, null, 121),
-(400,'Condition', false, true, null, 121)
+(400,'Condition', false, true, null, 121),
+
+/*WORKWEAR_AND_ACCESSORIES*/
+(401,'Type', false, true, null, 122),
+(402,'Gender', false, true, null, 122),
+(403,'Size', false, true, null, 122),
+(404,'Color', false, true, null, 122),
+(405,'Condition', false, true, null, 122),
+
+/*CARNIVAL_COSTUMES*/
+(406,'Type', false, true, null, 123),
+(407,'Gender', false, true, null, 123),
+(408,'Size', false, true, null, 123),
+(409,'Color', false, true, null, 123),
+(410,'Condition', false, true, null, 123),
+
+/*WEDDING_DRESSES*/
+(411,'Type', false, true, null, 124),
+(412,'Size', false, true, null, 124),
+(413,'Condition', false, true, null, 124),
+
+/*WEDDING_SHOES*/
+(414,'Type', false, true, null, 125),
+(415,'Shoe Size', false, true, null, 125),
+(416,'Condition', false, true, null, 125),
+
+/*WEDDING_ACCESSORIES*/
+(417,'Type', false, true, null, 126),
+(418,'Condition', false, true, null, 126),
+
+/*COLLECTIBLE_ITEMS*/
+(419,'Condition', false, true, null, 127),
+
+/*PAINTINGS_AND_PICTURES*/
+(420,'Condition', false, true, null, 128),
+
+/*ARTS_OBJECTS*/
+(421,'Condition', false, true, null, 129)
 ON CONFLICT (id) DO NOTHING;

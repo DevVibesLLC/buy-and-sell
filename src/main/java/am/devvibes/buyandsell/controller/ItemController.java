@@ -778,4 +778,67 @@ public class ItemController {
 		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
 	}
 
+	@PostMapping("/workwearAndAccessories/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Workwear and Accessories Items")
+	public ResponseEntity<List<ItemResponseDto>> filterWorkwearAndAccessoriesItems(
+			@RequestBody WorkwearAndAccessoriesFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/carnivalCostumes/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Carnival Costumes Items")
+	public ResponseEntity<List<ItemResponseDto>> filterCarnivalCostumesItems(
+			@RequestBody CarnivalCostumesFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/weddingDresses/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Wedding Dresses Items")
+	public ResponseEntity<List<ItemResponseDto>> filterWeddingDressesItems(
+			@RequestBody WeddingDressesFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/weddingShoes/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Wedding Shoes Items")
+	public ResponseEntity<List<ItemResponseDto>> filterWeddingShoesItems(
+			@RequestBody WeddingShoesFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/weddingAccessories/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Wedding Accessories Items")
+	public ResponseEntity<List<ItemResponseDto>> filterWeddingAccessoriesItems(
+			@RequestBody WeddingAccessoriesFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/collectibleItems/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Collectible Items Items")
+	public ResponseEntity<List<ItemResponseDto>> filterCollectibleItemsItems(
+			@RequestBody CollectibleItemsFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/paintingsAndPictures/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Painting and Pictures Items")
+	public ResponseEntity<List<ItemResponseDto>> filterPaintingsAndPicturesItems(
+			@RequestBody PaintingsAndPicturesFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/artsObjects/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Arts Objects Items")
+	public ResponseEntity<List<ItemResponseDto>> filterArtsObjectsItems(
+			@RequestBody ArtsObjectsFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
 }

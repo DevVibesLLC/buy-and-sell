@@ -177,7 +177,23 @@ public enum CategoryEnum {
 
 	WATCHES("Watches"),
 
-	HANDBAGS_AND_WALLETS("Handbags and Wallets"),;
+	HANDBAGS_AND_WALLETS("Handbags and Wallets"),
+
+	WORKWEAR_AND_ACCESSORIES("Workwear and Accessories"),
+
+	CARNIVAL_COSTUMES("Carnival Costumes"),
+
+	WEDDING_DRESSES("Wedding Dresses"),
+
+	WEDDING_SHOES("Wedding Shoes"),
+
+	WEDDING_ACCESSORIES("Wedding Accessories"),
+
+	COLLECTIBLE_ITEMS("Collectible Items"),
+
+	PAINTINGS_AND_PICTURES("Paintings and Pictures"),
+
+	ARTS_OBJECTS("Arts Objects");
 
 
 	private final String name;
