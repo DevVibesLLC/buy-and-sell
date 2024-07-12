@@ -10,6 +10,7 @@ import am.devvibes.buyandsell.entity.bus.BusMarkEntity;
 import am.devvibes.buyandsell.entity.bus.BusModelEntity;
 import am.devvibes.buyandsell.entity.mobile.MobilePhoneMarkEntity;
 import am.devvibes.buyandsell.entity.mobile.MobilePhoneModelEntity;
+import am.devvibes.buyandsell.entity.motorcycle.MotorcycleMarkEntity;
 import am.devvibes.buyandsell.entity.notebook.NotebookMarkEntity;
 import am.devvibes.buyandsell.entity.truck.TruckMarkEntity;
 import am.devvibes.buyandsell.entity.truck.TruckModelEntity;
@@ -19,6 +20,7 @@ import am.devvibes.buyandsell.mapper.bus.busMark.BusMarkMapper;
 import am.devvibes.buyandsell.mapper.bus.busModel.BusModelMapper;
 import am.devvibes.buyandsell.mapper.mobile.mobileMark.MobileMarkMapper;
 import am.devvibes.buyandsell.mapper.mobile.mobileModel.MobileModelMapper;
+import am.devvibes.buyandsell.mapper.motorcycle.motorcycleMark.MotorcycleMarkMapper;
 import am.devvibes.buyandsell.mapper.notebook.notebookMark.NotebookMarkMapper;
 import am.devvibes.buyandsell.mapper.truck.truckMark.TruckMarkMapper;
 import am.devvibes.buyandsell.mapper.truck.truckModel.TruckModelMapper;
@@ -43,6 +45,7 @@ public class ConstController {
 	private final AutoModelMapper autoModelMapper;
 	private final TruckMarkMapper truckMarkMapper;
 	private final TruckModelMapper truckModelMapper;
+	private final MotorcycleMarkMapper motorcycleMarkMapper;
 	private final BusMarkMapper busMarkMapper;
 	private final BusModelMapper busModelMapper;
 	private final MobileMarkMapper mobileMarkMapper;
@@ -110,6 +113,13 @@ public class ConstController {
 	public ResponseEntity<List<ElectronicModelDto>> getAllMobileModels(@PathVariable Long markId) {
 		List<MobilePhoneModelEntity> mobileModelsByMark = constCategoryService.findMobileModelsByMark(markId);
 		return ResponseEntity.ok(mobileModelMapper.mapEntityListToDtoList(mobileModelsByMark));
+	}
+
+	@GetMapping("/category/motorcycle/marks")
+	@Operation(summary = "Get all motorcycle marks by category id")
+	public ResponseEntity<List<VehicleMarkDto>> getAllMotorcycleMarks() {
+		List<MotorcycleMarkEntity> motorcycleMarkEntities = constCategoryService.findMotorcycleMarks();
+		return ResponseEntity.ok(motorcycleMarkMapper.mapEntityListToDtoList(motorcycleMarkEntities));
 	}
 
 	@GetMapping("field/{fieldId}")

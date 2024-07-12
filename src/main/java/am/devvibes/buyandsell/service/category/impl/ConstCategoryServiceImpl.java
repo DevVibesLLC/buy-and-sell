@@ -7,6 +7,7 @@ import am.devvibes.buyandsell.entity.bus.BusModelEntity;
 import am.devvibes.buyandsell.entity.field.FieldNameEntity;
 import am.devvibes.buyandsell.entity.mobile.MobilePhoneMarkEntity;
 import am.devvibes.buyandsell.entity.mobile.MobilePhoneModelEntity;
+import am.devvibes.buyandsell.entity.motorcycle.MotorcycleMarkEntity;
 import am.devvibes.buyandsell.entity.notebook.NotebookMarkEntity;
 import am.devvibes.buyandsell.entity.truck.TruckMarkEntity;
 import am.devvibes.buyandsell.entity.truck.TruckModelEntity;
@@ -67,6 +68,13 @@ public class ConstCategoryServiceImpl implements ConstCategoryService {
 		return categoryRepository.findByName(CategoryEnum.BUSES)
 				.orElseThrow(() -> new NotFoundException(ExceptionConstants.CATEGORY_NOT_FOUND))
 				.getBusMarks();
+	}
+
+	@Override
+	public List<MotorcycleMarkEntity> findMotorcycleMarks() {
+		return categoryRepository.findByName(CategoryEnum.MOTORCYCLES)
+				.orElseThrow(() -> new NotFoundException(ExceptionConstants.CATEGORY_NOT_FOUND))
+				.getMotorcycleMarks();
 	}
 
 	@Override

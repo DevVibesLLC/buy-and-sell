@@ -649,5 +649,74 @@ VALUES
 (420,'Condition', false, true, null, 128),
 
 /*ARTS_OBJECTS*/
-(421,'Condition', false, true, null, 129)
+(421,'Condition', false, true, null, 129),
+
+/*ARTS_AND_CRAFTS*/
+(422,'Condition', false, true, null, 130),
+
+/*MOTORCYCLES*/
+(423,'Type', false, true, null, 131),
+(424,'Mark', false, true, null, 131),
+(425,'Year', false, true, null, 131),
+(426,'Engine Type', false, true, null, 131),
+(427,'Engine Size', false, true, null, 131),
+(428,'Transmission', false, true, null, 131),
+
+(429,'Mileage', false, true, 2, 132),
+(430,'Color', false, true, null, 132),
+
+/*MOTORCYCLE_PARTS_AND_ACCESSORIES*/
+(431,'Condition', false, true, null, 133),
+
+/*GUITARS*/
+(432,'Type', false, true, null, 134),
+(433,'Condition', false, true, null, 134),
+
+/*PIANOS_AND_KEYBOARD_INSTRUMENTS*/
+(434,'Type', false, true, null, 135),
+(435,'Condition', false, true, null, 135),
+
+/*BRASS_AND_WOODWIND_INSTRUMENTS*/
+(436,'Type', false, true, null, 136),
+(437,'Condition', false, true, null, 136),
+
+/*STRING_INSTRUMENTS*/
+(438,'Type', false, true, null, 137),
+(439,'Condition', false, true, null, 137),
+
+/*ACCORDIONS*/
+(440,'Type', false, true, null, 138),
+(441,'Condition', false, true, null, 138),
+
+/*DRUMS_AND_PERCUSSION_INSTRUMENTS*/
+(442,'Type', false, true, null, 139),
+(443,'Condition', false, true, null, 139),
+
+/*STUDIO_ACCESSORIES*/
+(444,'Type', false, true, null, 140),
+(445,'Condition', false, true, null, 140),
+
+/*HUNTING_AND_FISHING*/
+(446,'Condition', false, true, null, 141),
+
+/*CAMPING_EQUIPMENT*/
+(447,'Condition', false, true, null, 142),
+
+/*FITNESS_AND_EXERCISE_EQUIPMENT*/
+(448,'Condition', false, true, null, 143),
+
+/*BILLIARD_AND_BOWLING*/
+(449,'Condition', false, true, null, 144),
+
+/*FOOTBALL_AND_BALL_GAMES*/
+(450,'Condition', false, true, null, 145),
+
+/*WATER_SPORTS*/
+(451,'Condition', false, true, null, 146),
+
+/*WINTER_SPORTS_EQUIPMENT*/
+(452,'Condition', false, true, null, 147),
+
+/*BOXING_AND_MARTIAL_ARTS*/
+(453,'Condition', false, true, null, 148)
 ON CONFLICT (id) DO NOTHING;

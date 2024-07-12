@@ -228,6 +228,42 @@ public interface ItemService {
 
 	List<ItemEntity> filterItems(ArtsObjectsFilterDto filterDto);
 
+	List<ItemEntity> filterItems(ArtsAndCraftsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(MotorcycleFilterDto filterDto);
+
+	List<ItemEntity> filterItems(MotorcyclePartsAndAccessoriesFilterDto filterDto);
+
+	List<ItemEntity> filterItems(GuitarsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(PianosAndKeyboardInstrumentsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(BrassAndWoodwindInstrumentsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(StringInstrumentsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(AccordionsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(DrumsAndPercussionInstrumentsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(StudioAccessoriesFilterDto filterDto);
+
+	List<ItemEntity> filterItems(HuntingAndFishingFilterDto filterDto);
+
+	List<ItemEntity> filterItems(CampingEquipmentFilterDto filterDto);
+
+	List<ItemEntity> filterItems(FitnessAndExerciseEquipmentFilterDto filterDto);
+
+	List<ItemEntity> filterItems(BilliardAndBowlingFilterDto filterDto);
+
+	List<ItemEntity> filterItems(FootballAndBallGamesFilterDto filterDto);
+
+	List<ItemEntity> filterItems(WaterSportsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(WinterSportsEquipmentFilterDto filterDto);
+
+	List<ItemEntity> filterItems(BoxingAndMartialArtsFilterDto filterDto);
+
 	List<ItemEntity> filterItems(PriceStatisticsRequestDto filterDto);
 
 	List<ItemEntity> findItemsByCategory(Long categoryId);

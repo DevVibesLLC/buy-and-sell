@@ -193,7 +193,43 @@ public enum CategoryEnum {
 
 	PAINTINGS_AND_PICTURES("Paintings and Pictures"),
 
-	ARTS_OBJECTS("Arts Objects");
+	ARTS_OBJECTS("Arts Objects"),
+
+	ARTS_AND_CRAFTS("Arts and Crafts"),
+
+	MOTORCYCLES("Motorcycles"),
+
+	MOTORCYCLE_PARTS_AND_ACCESSORIES("Motorcycles and Accessories"),
+
+	GUITARS("Guitars"),
+
+	PIANOS_AND_KEYBOARD_INSTRUMENTS("Pianos and Keyboard Instruments"),
+
+	BRASS_AND_WOODWIND_INSTRUMENTS("Brass and Woodwind Instruments"),
+
+	STRING_INSTRUMENTS("String Instruments"),
+
+	ACCORDIONS("Accordions"),
+
+	DRUMS_AND_PERCUSSION_INSTRUMENTS("Drums and Percussion Instruments"),
+
+	STUDIO_ACCESSORIES("Studio Accessories"),
+
+	HUNTING_AND_FISHING("Hunting and Fishing"),
+
+	CAMPING_EQUIPMENT("Camping Equipment"),
+
+	FITNESS_AND_EXERCISE_EQUIPMENT("Fitness and Exercise Equipment"),
+
+	BILLIARD_AND_BOWLING("Billiard and Bowling"),
+
+	FOOTBALL_AND_BALL_GAMES("Football and Ball Games"),
+
+	WATER_SPORTS("Water Sports"),
+
+	WINTER_SPORTS_EQUIPMENT("Winter Sports Equipment"),
+
+	BOXING_AND_MARTIAL_ARTS("Boxing and Martial Arts");
 
 
 	private final String name;
