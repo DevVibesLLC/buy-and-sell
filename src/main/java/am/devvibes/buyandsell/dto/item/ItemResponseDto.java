@@ -27,6 +27,8 @@ public class ItemResponseDto {
 
 	private String userId;
 
+	private Long businessPageId;
+
 	private Status status;
 
 	private List<FieldValuesDto> fields;

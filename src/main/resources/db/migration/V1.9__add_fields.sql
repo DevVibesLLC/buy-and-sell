@@ -718,5 +718,35 @@ VALUES
 (452,'Condition', false, true, null, 147),
 
 /*BOXING_AND_MARTIAL_ARTS*/
-(453,'Condition', false, true, null, 148)
+(453,'Condition', false, true, null, 148),
+
+/*TENNIS_AND_BADMINTON*/
+(454,'Condition', false, true, null, 149),
+
+/*MOUNTAINEERING*/
+(455,'Condition', false, true, null, 150),
+
+/*BOOKS_AND_MAGAZINES*/
+(456,'Condition', false, true, null, 151),
+
+/*FILMS_AND_MUSIC*/
+(457,'Condition', false, true, null, 152),
+
+/*DOGS*/
+(458,'Gender', false, true, null, 153),
+(459, 'Age', false, true, null, 153),
+
+/*CATS*/
+(460,'Gender', false, true, null, 154),
+(461, 'Age', false, true, null, 154),
+
+/*FISH*/
+(462,'Gender', false, true, null, 155),
+(463, 'Nutrition Type', false, true, null, 155),
+
+/*BIRDS*/
+(464, 'Nutrition Type', false, true, null, 156),
+
+/*RODENTS*/
+(465, 'Gender', false, true, null, 157)
 ON CONFLICT (id) DO NOTHING;

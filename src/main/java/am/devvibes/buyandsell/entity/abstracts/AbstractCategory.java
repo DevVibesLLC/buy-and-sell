@@ -1,6 +1,9 @@
 package am.devvibes.buyandsell.entity.abstracts;
 
-import jakarta.persistence.*;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,4 +21,5 @@ public class AbstractCategory {
 	private Long id;
 
 	private String category;
+
 }

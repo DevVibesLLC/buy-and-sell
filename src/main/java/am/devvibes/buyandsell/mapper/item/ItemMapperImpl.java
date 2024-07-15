@@ -3,6 +3,7 @@ package am.devvibes.buyandsell.mapper.item;
 import am.devvibes.buyandsell.classes.price.Price;
 import am.devvibes.buyandsell.dto.item.ItemRequestDto;
 import am.devvibes.buyandsell.dto.item.ItemResponseDto;
+import am.devvibes.buyandsell.entity.businessPage.BusinessPageEntity;
 import am.devvibes.buyandsell.entity.item.ItemEntity;
 import am.devvibes.buyandsell.entity.location.Location;
 import am.devvibes.buyandsell.mapper.value.ValueMapper;
@@ -15,9 +16,9 @@ import am.devvibes.buyandsell.util.LocationEnum;
 import am.devvibes.buyandsell.util.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -47,7 +48,31 @@ public class ItemMapperImpl implements ItemMapper {
 						.address(itemRequestDto.getAddress())
 						.build())
 				.imgKeys(itemRequestDto.getImgKeys())
-				.category(categoryService.FindCategoryEntityOrElseThrow(categoryId))
+				.category(categoryService.findCategoryEntityOrElseThrow(categoryId))
+				.fields(valueService.saveAllValues(itemRequestDto.getFieldsValue()))
+				.phoneNumbers(itemRequestDto.getPhoneNumbers())
+				.status(Status.CREATED)
+				.build();
+	}
+
+	@Override
+	public ItemEntity mapDtoToEntityFromBusiness(ItemRequestDto itemRequestDto, BusinessPageEntity businessPageEntity) {
+		return ItemEntity.builder()
+				.title(itemRequestDto.getTitle())
+				.description(itemRequestDto.getDescription())
+				.price(Price.builder()
+						.price(itemRequestDto.getPrice())
+						.currency(itemRequestDto.getCurrency())
+						.build())
+				.businessPage(businessPageEntity)
+				.location(Location.builder()
+						.country(LocationEnum.getCountry(itemRequestDto.getCityId()))
+						.region(LocationEnum.getRegion(itemRequestDto.getCityId()))
+						.city(LocationEnum.getCity(itemRequestDto.getCityId()))
+						.address(itemRequestDto.getAddress())
+						.build())
+				.imgKeys(itemRequestDto.getImgKeys())
+				.category(businessPageEntity.getCategory())
 				.fields(valueService.saveAllValues(itemRequestDto.getFieldsValue()))
 				.phoneNumbers(itemRequestDto.getPhoneNumbers())
 				.status(Status.CREATED)
@@ -63,7 +88,8 @@ public class ItemMapperImpl implements ItemMapper {
 				.price(itemEntity.getPrice())
 				.fields(valueMapper.mapEntityListToDtoList(itemEntity.getFields()))
 				.description(itemEntity.getDescription())
-				.userId(itemEntity.getUserEntity().getId())
+				.businessPageId(Objects.nonNull(itemEntity.getBusinessPage())? itemEntity.getBusinessPage().getId() : null)
+				.userId(Objects.nonNull(itemEntity.getUserEntity()) ? itemEntity.getUserEntity().getId() : null )
 				.status(itemEntity.getStatus())
 				.location(itemEntity.getLocation())
 				.imgUrls(s3Service.getImagesPresignedDownloadUrls(itemEntity.getImgKeys()))
@@ -73,7 +99,9 @@ public class ItemMapperImpl implements ItemMapper {
 
 	@Override
 	public List<ItemResponseDto> mapEntityListToDtoList(List<ItemEntity> itemEntityList) {
-		return itemEntityList.stream().map(this::mapEntityToDto).toList();
+		if (itemEntityList != null && !itemEntityList.isEmpty())
+			return itemEntityList.stream().map(this::mapEntityToDto).toList();
+		return null;
 	}
 
 }

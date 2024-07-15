@@ -50,11 +50,17 @@ cloud:
 application:
   imageForSellFolder: images/sell
   storiesFolder: stories
+  businessBannerFolder: business/banner
+  businessLogoFolder: business/logo
   defaultFileName: file
   imagesBucket:
     name: buyandsellimages
   storiesBucket:
     name: buyandsellstories
+  businessPageBannerBucket:
+    name: buyandsellbusinessbanner
+  businessPageLogoBucket:
+    name: buyandsellbusinesslogo
 
 app:
   name: SandBox task API

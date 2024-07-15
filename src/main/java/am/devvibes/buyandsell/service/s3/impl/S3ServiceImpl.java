@@ -31,11 +31,23 @@ public class S3ServiceImpl implements S3Service {
 	@Value("${application.storiesBucket.name}")
 	private String storiesBucketName;
 
+	@Value("${application.businessPageBannerBucket.name}")
+	private String businessBannerBucketName;
+
+	@Value("${application.businessPageLogoBucket.name}")
+	private String businessLogoBucketName;
+
 	@Value("${application.imageForSellFolder}")
 	private String imageForSellFolder;
 
 	@Value("${application.storiesFolder}")
 	private String storiesFolder;
+
+	@Value("${application.businessBannerFolder}")
+	private String bannerFolder;
+
+	@Value("${application.businessLogoFolder}")
+	private String logoFolder;
 
 	@Value("${application.defaultFileName}")
 	private String defaultFileName;
@@ -62,8 +74,26 @@ public class S3ServiceImpl implements S3Service {
 				.build();
 	}
 
-	private String generateFileName(String resolution) {
-		return LocalDateTime.now() + defaultFileName + "." + resolution;
+	@Override
+	public PresignedUrlDto getPresignedUrlForBusinessPageBanner(String resolution) {
+		String fileName = generateFileName(resolution);
+		String keyName = generateKeyName(bannerFolder, fileName);
+		return PresignedUrlDto.builder()
+				.uploadUrl(createPresignedUploadUrl(businessBannerBucketName, keyName))
+				.downloadUrl(createPresignedDownloadUrl(businessBannerBucketName, keyName))
+				.keyName(keyName)
+				.build();
+	}
+
+	@Override
+	public PresignedUrlDto getPresignedUrlForBusinessPageLogo(String resolution) {
+		String fileName = generateFileName(resolution);
+		String keyName = generateKeyName(logoFolder, fileName);
+		return PresignedUrlDto.builder()
+				.uploadUrl(createPresignedUploadUrl(businessLogoBucketName, keyName))
+				.downloadUrl(createPresignedDownloadUrl(businessLogoBucketName, keyName))
+				.keyName(keyName)
+				.build();
 	}
 
 	public String createPresignedUploadUrl(String bucketName, String keyName) {
@@ -94,6 +124,10 @@ public class S3ServiceImpl implements S3Service {
 			PresignedGetObjectRequest presignedRequest = presigner.presignGetObject(getObjectPresignRequest);
 			return presignedRequest.url().toExternalForm();
 		}
+	}
+
+	private String generateFileName(String resolution) {
+		return LocalDateTime.now() + defaultFileName + "." + resolution;
 	}
 
 	public String generateKeyName(String baseFolder, String fileName) {

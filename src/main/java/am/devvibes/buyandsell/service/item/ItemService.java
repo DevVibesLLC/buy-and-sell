@@ -5,16 +5,18 @@ import am.devvibes.buyandsell.dto.item.ItemRequestDto;
 import am.devvibes.buyandsell.dto.item.ItemResponseDto;
 import am.devvibes.buyandsell.dto.priceStatistic.PriceStatisticsRequestDto;
 import am.devvibes.buyandsell.dto.search.SearchDto;
+import am.devvibes.buyandsell.entity.businessPage.BusinessPageEntity;
 import am.devvibes.buyandsell.entity.item.ItemEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 public interface ItemService {
 
 	ItemEntity save(ItemRequestDto itemRequestDto, Long categoryId);
+
+	ItemEntity saveFromBusiness(ItemRequestDto itemRequestDto, BusinessPageEntity businessPageEntity);
 
 	ItemEntity findById(Long id);
 
@@ -263,6 +265,26 @@ public interface ItemService {
 	List<ItemEntity> filterItems(WinterSportsEquipmentFilterDto filterDto);
 
 	List<ItemEntity> filterItems(BoxingAndMartialArtsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(TennisAndBadmintonFilterDto filterDto);
+
+	List<ItemEntity> filterItems(MountaineeringFilterDto filterDto);
+
+	List<ItemEntity> filterItems(SportsNutritionFilterDto filterDto);
+
+	List<ItemEntity> filterItems(BooksAndMagazinesFilterDto filterDto);
+
+	List<ItemEntity> filterItems(FilmsAndMusicFilterDto filterDto);
+
+	List<ItemEntity> filterItems(DogsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(CatsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(FishFilterDto filterDto);
+
+	List<ItemEntity> filterItems(BirdsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(RodentsFilterDto filterDto);
 
 	List<ItemEntity> filterItems(PriceStatisticsRequestDto filterDto);
 

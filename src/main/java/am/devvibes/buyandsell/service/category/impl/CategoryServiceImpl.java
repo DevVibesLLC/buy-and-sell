@@ -37,7 +37,7 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Override
 	@Transactional
-	public CategoryEntity FindCategoryEntityOrElseThrow(Long categoryId) {
+	public CategoryEntity findCategoryEntityOrElseThrow(Long categoryId) {
 		return categoryRepository.findById(categoryId)
 				.orElseThrow(() -> new NotFoundException(ExceptionConstants.CATEGORY_NOT_FOUND));
 	}

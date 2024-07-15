@@ -229,8 +229,27 @@ public enum CategoryEnum {
 
 	WINTER_SPORTS_EQUIPMENT("Winter Sports Equipment"),
 
-	BOXING_AND_MARTIAL_ARTS("Boxing and Martial Arts");
+	BOXING_AND_MARTIAL_ARTS("Boxing and Martial Arts"),
 
+	TENNIS_AND_BADMINTON("Tennis and Badminton"),
+
+	MOUNTAINEERING("Mountaineering"),
+
+	SPORTS_NUTRITION("Sports Nutrition"),
+
+	BOOKS_AND_MAGAZINES("Books and Magazines"),
+
+	FILMS_AND_MUSIC("Films and Music"),
+
+	DOGS("Dogs"),
+
+	CATS("Cats"),
+
+	FISH("Fish"),
+
+	BIRDS("Birds"),
+
+	RODENTS("Rodents");
 
 	private final String name;
 

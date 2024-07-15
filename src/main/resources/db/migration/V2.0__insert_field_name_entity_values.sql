@@ -4288,4 +4288,45 @@ VALUES
 (452, 'Used'),
 
 (453, 'New'),
-(453, 'Used')
+(453, 'Used'),
+
+(454, 'New'),
+(454, 'Used'),
+
+(455, 'New'),
+(455, 'Used'),
+
+(456, 'New'),
+(456, 'Used'),
+
+(457, 'New'),
+(457, 'Used'),
+
+(458, 'Male'),
+(458, 'Female'),
+
+(459, '1- year old'),
+(459, '1 to 3 years old'),
+(459, '3 to 8 years old'),
+(459, '8+ years old'),
+
+(460, 'Male'),
+(460, 'Female'),
+
+(461, '1- year old'),
+(461, '1 to 6 years old'),
+(461, '6+ years old'),
+
+(462, 'Male'),
+(462, 'Female'),
+
+(463, 'Omnivorous'),
+(463, 'Predation'),
+(463, 'Herbivorous'),
+
+(464, 'Omnivorous'),
+(464, 'Insectivorous'),
+(464, 'Herbivorous'),
+
+(465, 'Male'),
+(465, 'Female')

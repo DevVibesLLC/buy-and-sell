@@ -28,4 +28,16 @@ public class PresignedUrlController {
 		return ResponseEntity.ok(presignedUrlDto);
 	}
 
+	@GetMapping("/businessPage/banner")
+	public ResponseEntity<PresignedUrlDto> getPresignedUrlForBusinessPageBanner(@RequestParam String resolution) {
+		PresignedUrlDto presignedUrlDto = s3Service.getPresignedUrlForBusinessPageBanner(resolution);
+		return ResponseEntity.ok(presignedUrlDto);
+	}
+
+	@GetMapping("/businessPage/logo")
+	public ResponseEntity<PresignedUrlDto> getPresignedUrlForBusinessPageLogo(@RequestParam String resolution) {
+		PresignedUrlDto presignedUrlDto = s3Service.getPresignedUrlForBusinessPageLogo(resolution);
+		return ResponseEntity.ok(presignedUrlDto);
+	}
+
 }
