@@ -48,6 +48,16 @@ public class BusinessPageServiceImpl implements BusinessPageService {
 	}
 
 	@Override
+	@Transactional
+	public BusinessPageEntity updateItemFromBusinessPage(ItemRequestDto itemRequestDto, Long businessPageId, Long itemId) {
+		BusinessPageEntity businessPageEntity = findBusinessPageById(businessPageId);
+		ItemEntity itemEntity = itemService.updateFromBusiness(itemRequestDto, businessPageEntity, itemId);
+		businessPageEntity.getAdds().add(itemEntity);
+		return businessPageRepository.save(businessPageEntity);
+	}
+
+	@Override
+	@Transactional
 	public void deleteItemFromBusinessPage(Long businessPageId, Long itemId) {
 		BusinessPageEntity businessPageEntity = findBusinessPageById(businessPageId);
 		if (securityService.getCurrentUserId().equals(businessPageEntity.getOwner().getId())) {

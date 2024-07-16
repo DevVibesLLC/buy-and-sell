@@ -5,6 +5,7 @@ import am.devvibes.buyandsell.entity.category.CategoryEntity;
 import am.devvibes.buyandsell.entity.item.ItemEntity;
 import am.devvibes.buyandsell.entity.location.Location;
 import am.devvibes.buyandsell.entity.user.UserEntity;
+import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -36,8 +37,10 @@ public class BusinessPageEntity extends BaseEntityWithDates {
 
 	private String logoKey;
 
+	@Column(nullable = false)
 	private String title;
 
+	@Column(nullable = false)
 	private String description;
 
 	@Embedded
@@ -47,12 +50,15 @@ public class BusinessPageEntity extends BaseEntityWithDates {
 	@JoinColumn(name = "category_id", nullable = false)
 	private CategoryEntity category;
 
+	@Column(nullable = false)
 	private String email;
 
 	@ElementCollection
+	@Column(nullable = false)
 	private List<String> phoneNumbers;
 
 	@ElementCollection
+	@Column(nullable = false)
 	private Map<String, String> workingDaysAndHours;
 
 	@ElementCollection

@@ -26,6 +26,7 @@ public class CartServiceImpl implements CartService {
 	private final SecurityService securityService;
 
 	@Override
+	@Transactional
 	public List<ItemEntity> addItemToCart(Long itemId) {
 		CartEntity cartEntity = CartEntity.builder()
 				.user(userService.findUserById(securityService.getCurrentUserId()))
@@ -45,6 +46,7 @@ public class CartServiceImpl implements CartService {
 	}
 
 	@Override
+	@Transactional
 	public List<ItemEntity> getUsersCart() {
 		return cartRepository.findByUserId(securityService.getCurrentUserId())
 				.stream()

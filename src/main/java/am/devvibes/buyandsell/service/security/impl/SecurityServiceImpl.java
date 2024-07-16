@@ -10,8 +10,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class SecurityServiceImpl implements SecurityService {
 
-
-
+	@Override
 	public String getCurrentUserId() {
 		Jwt principal =
 				(Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

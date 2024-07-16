@@ -24,6 +24,7 @@ import java.util.List;
 public class CategoryEntity extends BaseEntity implements Serializable {
 
 	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
 	private CategoryEnum name;
 
 	@OneToMany(cascade = CascadeType.ALL)

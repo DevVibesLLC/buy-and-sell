@@ -14,9 +14,11 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class FieldEntity extends BaseEntity implements Serializable {
 
+	@Column(nullable = false)
 	private String fieldValue;
 
 	@ManyToOne
+	@JoinColumn(nullable = false)
 	private FieldNameEntity fieldName;
 
 }

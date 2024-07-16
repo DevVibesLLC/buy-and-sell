@@ -16,6 +16,7 @@ import am.devvibes.buyandsell.util.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
@@ -43,6 +44,7 @@ public class StoryServiceImpl implements StoryService {
 	}
 
 	@Override
+	@Transactional
 	public void deleteStory(Long storyId) {
 		StoryEntity storyEntity = storyRepository.findById(storyId)
 				.orElseThrow(() -> new NotFoundException(ExceptionConstants.STORY_NOT_FOUND));

@@ -1,6 +1,7 @@
 package am.devvibes.buyandsell.dto.item;
 
 import am.devvibes.buyandsell.classes.price.Price;
+import am.devvibes.buyandsell.dto.priceHistory.PriceHistoryDto;
 import am.devvibes.buyandsell.dto.value.FieldValuesDto;
 import am.devvibes.buyandsell.entity.location.Location;
 import am.devvibes.buyandsell.util.Status;
@@ -36,5 +37,7 @@ public class ItemResponseDto {
 	private List<String> imgUrls;
 
 	private List<String> phoneNumbers;
+
+	private List<PriceHistoryDto> priceHistory;
 
 }

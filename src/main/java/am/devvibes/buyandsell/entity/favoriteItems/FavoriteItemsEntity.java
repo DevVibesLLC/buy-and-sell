@@ -1,5 +1,6 @@
 package am.devvibes.buyandsell.entity.favoriteItems;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,8 +19,10 @@ public class FavoriteItemsEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(nullable = false)
 	private String userId;
 
+	@Column(nullable = false)
 	private Long itemId;
 
 }

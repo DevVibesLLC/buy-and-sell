@@ -1,8 +1,8 @@
 package am.devvibes.buyandsell.mapper.category;
 
 import am.devvibes.buyandsell.dto.category.CategoryDto;
-import am.devvibes.buyandsell.dto.description.DescriptionRequestDto;
-import am.devvibes.buyandsell.dto.field.FieldRequestDto;
+import am.devvibes.buyandsell.dto.description.DescriptionDto;
+import am.devvibes.buyandsell.dto.field.FieldDto;
 import am.devvibes.buyandsell.entity.category.CategoryEntity;
 import am.devvibes.buyandsell.entity.description.DescriptionEntity;
 import am.devvibes.buyandsell.entity.field.FieldNameEntity;
@@ -33,18 +33,18 @@ public class CategoryMapperImpl implements CategoryMapper {
 		return category.stream().map(this::mapToDto).toList();
 	}
 
-	private List<DescriptionRequestDto> mapDescriptionsToDto(List<DescriptionEntity> descriptions) {
+	private List<DescriptionDto> mapDescriptionsToDto(List<DescriptionEntity> descriptions) {
 		return descriptions.stream()
-				.map(descriptionEntity -> DescriptionRequestDto.builder()
+				.map(descriptionEntity -> DescriptionDto.builder()
 						.header(descriptionEntity.getHeader())
 						.fields(mapFieldsToDto(descriptionEntity.getFields()))
 						.build())
 				.toList();
 	}
 
-	private List<FieldRequestDto> mapFieldsToDto(List<FieldNameEntity> fields) {
+	private List<FieldDto> mapFieldsToDto(List<FieldNameEntity> fields) {
 		return fields.stream()
-				.map(fieldEntity -> FieldRequestDto.builder()
+				.map(fieldEntity -> FieldDto.builder()
 						.fieldName(fieldEntity.getFieldName())
 						.value(fieldEntity.getValue())
 						.measurement(Objects.nonNull(fieldEntity.getMeasurement()) ?

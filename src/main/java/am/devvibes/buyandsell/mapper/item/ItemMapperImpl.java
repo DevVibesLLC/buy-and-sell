@@ -6,6 +6,7 @@ import am.devvibes.buyandsell.dto.item.ItemResponseDto;
 import am.devvibes.buyandsell.entity.businessPage.BusinessPageEntity;
 import am.devvibes.buyandsell.entity.item.ItemEntity;
 import am.devvibes.buyandsell.entity.location.Location;
+import am.devvibes.buyandsell.mapper.priceHistory.PriceHistoryMapper;
 import am.devvibes.buyandsell.mapper.value.ValueMapper;
 import am.devvibes.buyandsell.service.category.CategoryService;
 import am.devvibes.buyandsell.service.s3.impl.S3ServiceImpl;
@@ -30,6 +31,7 @@ public class ItemMapperImpl implements ItemMapper {
 	private final ValueMapper valueMapper;
 	private final ValueService valueService;
 	private final S3ServiceImpl s3Service;
+	private final PriceHistoryMapper priceHistoryMapper;
 
 	@Override
 	public ItemEntity mapDtoToEntity(ItemRequestDto itemRequestDto, Long categoryId) {
@@ -92,6 +94,7 @@ public class ItemMapperImpl implements ItemMapper {
 				.userId(Objects.nonNull(itemEntity.getUserEntity()) ? itemEntity.getUserEntity().getId() : null )
 				.status(itemEntity.getStatus())
 				.location(itemEntity.getLocation())
+				.priceHistory(priceHistoryMapper.mapEntityListToDtoList(itemEntity.getPriceHistories()))
 				.imgUrls(s3Service.getImagesPresignedDownloadUrls(itemEntity.getImgKeys()))
 				.phoneNumbers(itemEntity.getPhoneNumbers())
 				.build();

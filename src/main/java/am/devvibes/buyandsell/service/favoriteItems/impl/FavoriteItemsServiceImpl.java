@@ -11,6 +11,7 @@ import am.devvibes.buyandsell.service.security.SecurityService;
 import am.devvibes.buyandsell.util.ExceptionConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class FavoriteItemsServiceImpl implements FavoriteItemsService {
 	private final SecurityService securityService;
 
 	@Override
+	@Transactional
 	public List<ItemEntity> getUsersAllFavoriteItems(String userId) {
 		List<Long> idsList =
 				favoriteItemsRepository.findByUserId(userId).stream().map(FavoriteItemsEntity::getItemId).toList();
@@ -36,6 +38,7 @@ public class FavoriteItemsServiceImpl implements FavoriteItemsService {
 	}
 
 	@Override
+	@Transactional
 	public List<ItemEntity> addFavoriteItem(String userId, Long itemId) {
 		if (!userId.equals(securityService.getCurrentUserId())) {
 			throw new SomethingWentWrongException(ExceptionConstants.INVALID_ACTION);
@@ -55,6 +58,7 @@ public class FavoriteItemsServiceImpl implements FavoriteItemsService {
 	}
 
 	@Override
+	@Transactional
 	public List<ItemEntity> removeFavoriteItem(String userId, Long itemId) {
 		if (!userId.equals(securityService.getCurrentUserId())) {
 			throw new SomethingWentWrongException(ExceptionConstants.INVALID_ACTION);

@@ -16,6 +16,7 @@ public class AutoMarkEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
     @OneToMany(mappedBy = "autoMark", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

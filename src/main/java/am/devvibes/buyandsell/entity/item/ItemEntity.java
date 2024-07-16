@@ -6,6 +6,7 @@ import am.devvibes.buyandsell.entity.businessPage.BusinessPageEntity;
 import am.devvibes.buyandsell.entity.category.CategoryEntity;
 import am.devvibes.buyandsell.entity.field.FieldEntity;
 import am.devvibes.buyandsell.entity.location.Location;
+import am.devvibes.buyandsell.entity.priceHistory.PriceHistoryEntity;
 import am.devvibes.buyandsell.entity.user.UserEntity;
 import am.devvibes.buyandsell.util.Status;
 import jakarta.persistence.*;
@@ -25,14 +26,18 @@ import java.util.List;
 @Builder
 public class ItemEntity extends BaseEntityWithDates {
 
+	@Column(nullable = false)
 	private String title;
 
+	@Column(nullable = false)
 	private String description;
 
 	@Embedded
+	@Column(nullable = false)
 	private Price price;
 
 	@Embedded
+	@Column(nullable = false)
 	private Location location;
 
 	@ManyToOne
@@ -55,9 +60,14 @@ public class ItemEntity extends BaseEntityWithDates {
 	private List<String> imgKeys;
 
 	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
 	private Status status;
 
 	@ElementCollection
+	@Column(nullable = false)
 	private List<String> phoneNumbers;
+
+	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+	private List<PriceHistoryEntity> priceHistories;
 
 }

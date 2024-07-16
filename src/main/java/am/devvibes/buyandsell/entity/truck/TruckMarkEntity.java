@@ -17,6 +17,7 @@ public class TruckMarkEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(nullable = false)
 	private String name;
 
 	@OneToMany(mappedBy = "truckMark", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

@@ -45,6 +45,15 @@ public class BusinessPageController {
 		return ResponseEntity.ok(businessPageMapper.mapEntityToDto(businessPageService.addItemFromBusinessPage(itemRequestDto, businessPageId)));
 	}
 
+	@PutMapping("/{businessPageId}/{itemId}")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Update Item from Business Page")
+	public ResponseEntity<BusinessPageResponseDto> updateItem(@PathVariable Long businessPageId,
+			@PathVariable Long itemId,
+			@RequestBody ItemRequestDto itemRequestDto) {
+		return ResponseEntity.ok(businessPageMapper.mapEntityToDto(businessPageService.updateItemFromBusinessPage(itemRequestDto, businessPageId, itemId)));
+	}
+
 	@DeleteMapping("/{businessPageId}/{itemId}")
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@Operation(summary = "Delete Item from Business Page")

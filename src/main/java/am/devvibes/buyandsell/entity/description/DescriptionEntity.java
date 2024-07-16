@@ -18,6 +18,7 @@ import java.util.List;
 public class DescriptionEntity extends BaseEntity implements Serializable {
 
 	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
 	private DescriptionNameEnum header;
 
 	@OneToMany(cascade = CascadeType.ALL)

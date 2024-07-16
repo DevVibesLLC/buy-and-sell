@@ -9,7 +9,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FieldRequestDto {
+public class FieldDto {
 
 	private String fieldName;
 	private List<String> value;

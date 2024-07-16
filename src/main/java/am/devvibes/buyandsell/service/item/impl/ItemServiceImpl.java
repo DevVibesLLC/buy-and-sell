@@ -11,10 +11,12 @@ import am.devvibes.buyandsell.entity.field.FieldEntity;
 import am.devvibes.buyandsell.entity.field.FieldNameEntity;
 import am.devvibes.buyandsell.entity.item.ItemEntity;
 import am.devvibes.buyandsell.entity.location.Location;
+import am.devvibes.buyandsell.entity.priceHistory.PriceHistoryEntity;
 import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.exception.SomethingWentWrongException;
 import am.devvibes.buyandsell.mapper.item.ItemMapper;
 import am.devvibes.buyandsell.repository.item.ItemRepository;
+import am.devvibes.buyandsell.repository.priceHistory.PriceHistoryRepository;
 import am.devvibes.buyandsell.service.item.ItemService;
 import am.devvibes.buyandsell.service.security.SecurityService;
 import am.devvibes.buyandsell.service.value.ValueService;
@@ -31,9 +33,13 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -47,18 +53,22 @@ public class ItemServiceImpl implements ItemService {
 	private final SecurityService securityService;
 	private final ValueService valueService;
 	private final EntityManager entityManager;
+	private final PriceHistoryRepository priceHistoryRepository;
 
 	@Override
 	@Transactional
 	public ItemEntity save(ItemRequestDto itemRequestDto, Long categoryId) {
 		ItemEntity itemEntity = itemMapper.mapDtoToEntity(itemRequestDto, categoryId);
-		return itemRepository.save(itemEntity);
+		ItemEntity savedEntity = itemRepository.save(itemEntity);
+		return initialPriceHistoryForNewItem(savedEntity);
 	}
 
 	@Override
+	@Transactional
 	public ItemEntity saveFromBusiness(ItemRequestDto itemRequestDto, BusinessPageEntity businessPageEntity) {
 		ItemEntity itemEntity = itemMapper.mapDtoToEntityFromBusiness(itemRequestDto, businessPageEntity);
-		return itemRepository.save(itemEntity);
+		ItemEntity savedEntity = itemRepository.save(itemEntity);
+		return initialPriceHistoryForNewItem(savedEntity);
 	}
 
 	@Override
@@ -76,7 +86,6 @@ public class ItemServiceImpl implements ItemService {
 	}
 
 	@Override
-	@Transactional
 	public Page<ItemResponseDto> findAllItems(PageRequest pageRequest) {
 		return itemRepository.findAll(pageRequest).map(itemMapper::mapEntityToDto);
 	}
@@ -99,7 +108,29 @@ public class ItemServiceImpl implements ItemService {
 	@Transactional
 	public ItemEntity update(ItemRequestDto itemRequestDto, Long categoryId, Long itemId) {
 		ItemEntity itemEntity = getItemByIdOrElseThrow(itemId);
-		return updateEntity(itemEntity, itemRequestDto);
+		if(itemEntity.getStatus().equals(Status.DELETED))
+			throw new SomethingWentWrongException(ExceptionConstants.INVALID_ACTION);
+
+		BigDecimal oldPrice = itemEntity.getPrice().getPrice();
+
+		ItemEntity updatedEntity = updateEntity(itemEntity, itemRequestDto);
+		if (!oldPrice.equals(updatedEntity.getPrice().getPrice()))
+			return saveOrChangePriceHistory(updatedEntity);
+		return updatedEntity;
+	}
+
+	@Override
+	@Transactional
+	public ItemEntity updateFromBusiness(ItemRequestDto itemRequestDto, BusinessPageEntity businessPageEntity, Long itemId) {
+		ItemEntity itemEntity = getItemByIdOrElseThrow(itemId);
+		if(!itemEntity.getBusinessPage().getId().equals(businessPageEntity.getId()) || itemEntity.getStatus().equals(Status.DELETED))
+			throw new SomethingWentWrongException(ExceptionConstants.INVALID_ACTION);
+		BigDecimal oldPrice = itemEntity.getPrice().getPrice();
+
+		ItemEntity updatedEntity = updateEntity(itemEntity, itemRequestDto);
+		if (!oldPrice.equals(updatedEntity.getPrice().getPrice()))
+			return saveOrChangePriceHistory(updatedEntity);
+		return updatedEntity;
 	}
 
 	@Override
@@ -11515,6 +11546,45 @@ filterDto.getStartPrice());
 				.build());
 		itemEntity.setUpdatedAt(ZonedDateTime.now());
 		return itemRepository.save(itemEntity);
+	}
+
+	private ItemEntity saveOrChangePriceHistory(ItemEntity updatedEntity) {
+		if (isNull(updatedEntity.getPriceHistories())) {
+			updatedEntity.setPriceHistories(new ArrayList<>());
+		}
+
+		if (!updatedEntity.getPriceHistories().isEmpty()) {
+			PriceHistoryEntity lastPriceHistory = updatedEntity.getPriceHistories()
+					.stream()
+					.max(Comparator.comparing(PriceHistoryEntity::getStartDate))
+					.get();
+
+			lastPriceHistory.setEndDate(LocalDateTime.now());
+			priceHistoryRepository.save(lastPriceHistory);
+		}
+
+		PriceHistoryEntity newPriceHistory = PriceHistoryEntity.builder()
+				.item(updatedEntity)
+				.price(updatedEntity.getPrice().getPrice())
+				.startDate(LocalDateTime.now())
+				.build();
+		updatedEntity.getPriceHistories().add(newPriceHistory);
+		priceHistoryRepository.save(newPriceHistory);
+
+		return itemRepository.save(updatedEntity);
+	}
+
+	private ItemEntity initialPriceHistoryForNewItem(ItemEntity savedEntity) {
+		PriceHistoryEntity initialPriceHistory = PriceHistoryEntity.builder()
+				.item(savedEntity)
+				.price(savedEntity.getPrice().getPrice())
+				.startDate(LocalDateTime.now())
+				.build();
+
+		savedEntity.setPriceHistories(new ArrayList<>());
+		savedEntity.getPriceHistories().add(initialPriceHistory);
+		priceHistoryRepository.save(initialPriceHistory);
+		return savedEntity;
 	}
 
 	private ItemEntity getItemByIdOrElseThrow(Long id) {

@@ -1,6 +1,6 @@
 package am.devvibes.buyandsell.controller;
 
-import am.devvibes.buyandsell.dto.field.FieldRequestDto;
+import am.devvibes.buyandsell.dto.field.FieldDto;
 import am.devvibes.buyandsell.entity.field.FieldNameEntity;
 import am.devvibes.buyandsell.service.field.FieldService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,7 +22,7 @@ public class FieldController {
 	@PostMapping
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@Operation(summary = "create field")
-	public ResponseEntity<FieldNameEntity> createField(@RequestBody @Valid FieldRequestDto fieldRequestDto) {
+	public ResponseEntity<FieldNameEntity> createField(@RequestBody @Valid FieldDto fieldRequestDto) {
 		return ResponseEntity.ok(fieldService.addField(fieldRequestDto));
 	}
 

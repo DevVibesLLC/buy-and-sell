@@ -1,6 +1,6 @@
 package am.devvibes.buyandsell.dto.description;
 
-import am.devvibes.buyandsell.dto.field.FieldRequestDto;
+import am.devvibes.buyandsell.dto.field.FieldDto;
 import am.devvibes.buyandsell.util.DescriptionNameEnum;
 import lombok.*;
 
@@ -12,9 +12,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class DescriptionRequestDto {
+public class DescriptionDto {
 
 	private DescriptionNameEnum header;
-	private List<FieldRequestDto> fields;
+	private List<FieldDto> fields;
 
 }

@@ -1,10 +1,16 @@
 package am.devvibes.buyandsell.dto.user;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class UserRequestDto {
 
@@ -20,4 +26,5 @@ public class UserRequestDto {
 	private String password;
 	@NotBlank
 	private String repeatPassword;
+
 }

@@ -1,6 +1,6 @@
 package am.devvibes.buyandsell.service.field.impl;
 
-import am.devvibes.buyandsell.dto.field.FieldRequestDto;
+import am.devvibes.buyandsell.dto.field.FieldDto;
 import am.devvibes.buyandsell.entity.field.FieldNameEntity;
 import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.mapper.field.FieldMapper;
@@ -21,26 +21,22 @@ public class FieldServiceImpl implements FieldService {
 	private final FieldMapper fieldMapper;
 
 	@Override
-	@Transactional
-	public FieldNameEntity addField(FieldRequestDto fieldRequestDto) {
+	public FieldNameEntity addField(FieldDto fieldRequestDto) {
 		return fieldRepository.save(fieldMapper.mapDtoToEntity(fieldRequestDto));
 	}
 
 	@Override
-	@Transactional
 	public FieldNameEntity findFieldById(Long id) {
 		return fieldRepository.findById(id)
 				.orElseThrow(() -> new NotFoundException(ExceptionConstants.FIELD_NOT_FOUND));
 	}
 
 	@Override
-	@Transactional
 	public List<FieldNameEntity> findAllFields() {
 		return fieldRepository.findAll();
 	}
 
 	@Override
-	@Transactional
 	public void deleteFieldById(Long id) {
 		fieldRepository.deleteById(id);
 	}

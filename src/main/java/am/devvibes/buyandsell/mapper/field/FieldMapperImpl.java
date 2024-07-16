@@ -1,6 +1,6 @@
 package am.devvibes.buyandsell.mapper.field;
 
-import am.devvibes.buyandsell.dto.field.FieldRequestDto;
+import am.devvibes.buyandsell.dto.field.FieldDto;
 import am.devvibes.buyandsell.entity.field.FieldNameEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class FieldMapperImpl implements FieldMapper {
 
 	@Override
-	public FieldNameEntity mapDtoToEntity(FieldRequestDto fieldRequestDto) {
+	public FieldNameEntity mapDtoToEntity(FieldDto fieldRequestDto) {
 		return  null;
 	}
 

@@ -14,5 +14,7 @@ public interface BusinessPageService {
 
 	BusinessPageEntity addItemFromBusinessPage(ItemRequestDto itemRequestDto, Long businessPageId);
 
+	BusinessPageEntity updateItemFromBusinessPage(ItemRequestDto itemRequestDto, Long businessPageId, Long itemId);
+
 	void deleteItemFromBusinessPage(Long businessPageId, Long itemId);
 }

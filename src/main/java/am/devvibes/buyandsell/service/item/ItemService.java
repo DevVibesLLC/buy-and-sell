@@ -28,6 +28,8 @@ public interface ItemService {
 
 	ItemEntity update(ItemRequestDto itemRequestDto, Long categoryId, Long itemId);
 
+	ItemEntity updateFromBusiness(ItemRequestDto itemRequestDto, BusinessPageEntity businessPageEntity, Long itemId);
+
 	List<ItemEntity> searchItems(SearchDto searchDto);
 
 	List<ItemEntity> filterItems(AutoFilterDto filterDto);

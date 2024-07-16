@@ -1,5 +1,6 @@
 package am.devvibes.buyandsell.dto.story;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.util.List;
@@ -11,7 +12,10 @@ import java.util.List;
 @Builder
 public class StoryRequestDto {
 
+	@NotBlank
 	private String caption;
+
+	@NotBlank
 	private String storyKey;
 
 }

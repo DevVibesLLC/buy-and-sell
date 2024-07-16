@@ -16,6 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 public class FieldNameEntity extends BaseEntity implements Serializable {
 
+	@Column(nullable = false)
 	private String fieldName;
 
 	private boolean isRequired;
