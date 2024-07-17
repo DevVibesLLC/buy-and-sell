@@ -3,6 +3,7 @@ package am.devvibes.buyandsell.controller;
 import am.devvibes.buyandsell.dto.filter.*;
 import am.devvibes.buyandsell.dto.item.ItemRequestDto;
 import am.devvibes.buyandsell.dto.item.ItemResponseDto;
+import am.devvibes.buyandsell.dto.item.ItemUpdateDto;
 import am.devvibes.buyandsell.dto.search.SearchDto;
 import am.devvibes.buyandsell.mapper.item.ItemMapper;
 import am.devvibes.buyandsell.service.item.ItemService;
@@ -46,8 +47,8 @@ public class ItemController {
 	@Operation(summary = "Update Item")
 	public ResponseEntity<ItemResponseDto> updateItem(@PathVariable Long categoryId,
 			@PathVariable Long itemId,
-			@RequestBody ItemRequestDto itemRequestDto) {
-		return ResponseEntity.ok(itemMapper.mapEntityToDto(itemService.update(itemRequestDto, categoryId, itemId)));
+			@RequestBody ItemUpdateDto itemUpdateDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityToDto(itemService.update(itemUpdateDto, categoryId, itemId)));
 	}
 
 	@GetMapping("/{id}")

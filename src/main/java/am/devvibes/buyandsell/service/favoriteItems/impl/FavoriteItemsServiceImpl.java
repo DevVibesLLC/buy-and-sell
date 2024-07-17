@@ -2,6 +2,7 @@ package am.devvibes.buyandsell.service.favoriteItems.impl;
 
 import am.devvibes.buyandsell.entity.favoriteItems.FavoriteItemsEntity;
 import am.devvibes.buyandsell.entity.item.ItemEntity;
+import am.devvibes.buyandsell.entity.user.UserEntity;
 import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.exception.SomethingWentWrongException;
 import am.devvibes.buyandsell.repository.favoriteItems.FavoriteItemsRepository;
@@ -30,6 +31,11 @@ public class FavoriteItemsServiceImpl implements FavoriteItemsService {
 				favoriteItemsRepository.findByUserId(userId).stream().map(FavoriteItemsEntity::getItemId).toList();
 
 		return itemRepository.findAllById(idsList);
+	}
+
+	@Override
+	public List<String> getUsersIdsByItemId(Long itemId) {
+		return favoriteItemsRepository.findByItemId(itemId).stream().map(FavoriteItemsEntity::getUserId).toList();
 	}
 
 	@Override

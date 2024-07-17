@@ -37,7 +37,7 @@ public class CartController {
 	}
 
 	@GetMapping
-	@Operation(summary = "Get Items from Cart")
+	@Operation(summary = "Get User Cart")
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public ResponseEntity<List<ItemResponseDto>> getUserCart() {
 		List<ItemEntity> itemEntities = cartService.getUsersCart();

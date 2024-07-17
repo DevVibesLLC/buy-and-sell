@@ -1,10 +1,14 @@
 package am.devvibes.buyandsell.service.businessPage.impl;
 
 import am.devvibes.buyandsell.dto.businessPage.BusinessPageRequestDto;
+import am.devvibes.buyandsell.dto.businessPage.BusinessPageUpdateDto;
 import am.devvibes.buyandsell.dto.item.ItemRequestDto;
+import am.devvibes.buyandsell.dto.item.ItemUpdateDto;
 import am.devvibes.buyandsell.entity.businessPage.BusinessPageEntity;
 import am.devvibes.buyandsell.entity.item.ItemEntity;
+import am.devvibes.buyandsell.entity.location.Location;
 import am.devvibes.buyandsell.exception.NotFoundException;
+import am.devvibes.buyandsell.exception.SomethingWentWrongException;
 import am.devvibes.buyandsell.mapper.businessPage.BusinessPageMapper;
 import am.devvibes.buyandsell.repository.businessPage.BusinessPageRepository;
 import am.devvibes.buyandsell.repository.item.ItemRepository;
@@ -12,10 +16,13 @@ import am.devvibes.buyandsell.service.businessPage.BusinessPageService;
 import am.devvibes.buyandsell.service.item.ItemService;
 import am.devvibes.buyandsell.service.security.SecurityService;
 import am.devvibes.buyandsell.util.ExceptionConstants;
+import am.devvibes.buyandsell.util.LocationEnum;
 import am.devvibes.buyandsell.util.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static java.util.Objects.isNull;
 
 @Service
 @RequiredArgsConstructor
@@ -49,11 +56,22 @@ public class BusinessPageServiceImpl implements BusinessPageService {
 
 	@Override
 	@Transactional
-	public BusinessPageEntity updateItemFromBusinessPage(ItemRequestDto itemRequestDto, Long businessPageId, Long itemId) {
+	public BusinessPageEntity updateItemFromBusinessPage(ItemUpdateDto itemUpdateDto,
+			Long businessPageId,
+			Long itemId) {
 		BusinessPageEntity businessPageEntity = findBusinessPageById(businessPageId);
-		ItemEntity itemEntity = itemService.updateFromBusiness(itemRequestDto, businessPageEntity, itemId);
+		ItemEntity itemEntity = itemService.updateFromBusiness(itemUpdateDto, businessPageEntity, itemId);
 		businessPageEntity.getAdds().add(itemEntity);
 		return businessPageRepository.save(businessPageEntity);
+	}
+
+	@Override
+	@Transactional
+	public BusinessPageEntity updateBusinessPage(BusinessPageUpdateDto businessPageUpdateDto, Long businessPageId) {
+		BusinessPageEntity businessPageEntity = findBusinessPageById(businessPageId);
+		if (!businessPageEntity.getOwner().getId().equals(securityService.getCurrentUserId()))
+			throw new SomethingWentWrongException(ExceptionConstants.INVALID_ACTION);
+		return updateBusinessPage(businessPageUpdateDto, businessPageEntity);
 	}
 
 	@Override
@@ -70,6 +88,46 @@ public class BusinessPageServiceImpl implements BusinessPageService {
 			itemEntity.setStatus(Status.DELETED);
 			itemRepository.save(itemEntity);
 		}
+	}
+
+	private BusinessPageEntity updateBusinessPage(BusinessPageUpdateDto businessPageUpdateDto,
+			BusinessPageEntity businessPageEntity) {
+		businessPageEntity.setTitle(isNull(businessPageUpdateDto.getTitle()) ? businessPageEntity.getTitle() :
+				businessPageUpdateDto.getTitle());
+		businessPageEntity.setDescription(
+				isNull(businessPageUpdateDto.getDescription()) ? businessPageEntity.getDescription() :
+						businessPageUpdateDto.getDescription());
+
+		businessPageEntity.setLocation(Location.builder()
+				.country(LocationEnum.getCountry(
+						isNull(businessPageUpdateDto.getCityId()) ?
+								businessPageEntity.getLocation().getCity().getId() :
+								businessPageUpdateDto.getCityId()))
+				.city(LocationEnum.getCity(
+						isNull(businessPageUpdateDto.getCityId()) ?
+								businessPageEntity.getLocation().getCity().getId() :
+								businessPageUpdateDto.getCityId()))
+				.region(LocationEnum.getRegion(
+						isNull(businessPageUpdateDto.getCityId()) ?
+								businessPageEntity.getLocation().getCity().getId() :
+								businessPageUpdateDto.getCityId()))
+				.address(isNull(businessPageUpdateDto.getAddress()) ? businessPageEntity.getLocation().getAddress() :
+						businessPageUpdateDto.getAddress())
+				.build());
+
+		businessPageEntity.setCategory(isNull(businessPageUpdateDto.getCategory()) ? businessPageEntity.getCategory() :
+				businessPageUpdateDto.getCategory());
+		businessPageEntity.setEmail(isNull(businessPageUpdateDto.getEmail()) ? businessPageEntity.getEmail() :
+				businessPageUpdateDto.getEmail());
+		businessPageEntity.setPhoneNumbers(
+				isNull(businessPageUpdateDto.getPhoneNumbers()) ? businessPageEntity.getPhoneNumbers() :
+						businessPageUpdateDto.getPhoneNumbers());
+		businessPageEntity.setWorkingDaysAndHours(
+				isNull(businessPageUpdateDto.getWorkingDaysAndHours()) ? businessPageEntity.getWorkingDaysAndHours() :
+						businessPageUpdateDto.getWorkingDaysAndHours());
+		businessPageEntity.setSocialMediaLinks(isNull(businessPageUpdateDto.getSocialMediaLinks()) ? businessPageEntity.getSocialMediaLinks() :
+				businessPageUpdateDto.getSocialMediaLinks());
+		return businessPageRepository.save(businessPageEntity);
 	}
 
 }

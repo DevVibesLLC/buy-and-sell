@@ -9,6 +9,8 @@ public interface FavoriteItemsRepository extends JpaRepository<FavoriteItemsEnti
 
 	List<FavoriteItemsEntity> findByUserId(String userId);
 
+	List<FavoriteItemsEntity> findByItemId(Long itemId);
+
 	void deleteAllByItemId(Long itemId);
 
 	void deleteAllByUserId(String userId);

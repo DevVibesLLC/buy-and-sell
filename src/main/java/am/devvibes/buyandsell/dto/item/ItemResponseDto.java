@@ -38,6 +38,8 @@ public class ItemResponseDto {
 
 	private List<String> phoneNumbers;
 
+	private Long countOfViews;
+
 	private List<PriceHistoryDto> priceHistory;
 
 }

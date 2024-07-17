@@ -1,10 +1,10 @@
 package am.devvibes.buyandsell.service.businessPage;
 
 import am.devvibes.buyandsell.dto.businessPage.BusinessPageRequestDto;
-import am.devvibes.buyandsell.dto.businessPage.BusinessPageResponseDto;
+import am.devvibes.buyandsell.dto.businessPage.BusinessPageUpdateDto;
 import am.devvibes.buyandsell.dto.item.ItemRequestDto;
+import am.devvibes.buyandsell.dto.item.ItemUpdateDto;
 import am.devvibes.buyandsell.entity.businessPage.BusinessPageEntity;
-import am.devvibes.buyandsell.entity.item.ItemEntity;
 
 public interface BusinessPageService {
 
@@ -14,7 +14,10 @@ public interface BusinessPageService {
 
 	BusinessPageEntity addItemFromBusinessPage(ItemRequestDto itemRequestDto, Long businessPageId);
 
-	BusinessPageEntity updateItemFromBusinessPage(ItemRequestDto itemRequestDto, Long businessPageId, Long itemId);
+	BusinessPageEntity updateItemFromBusinessPage(ItemUpdateDto itemUpdateDto, Long businessPageId, Long itemId);
+
+	BusinessPageEntity updateBusinessPage(BusinessPageUpdateDto businessPageUpdateDto, Long businessPageId);
 
 	void deleteItemFromBusinessPage(Long businessPageId, Long itemId);
+
 }

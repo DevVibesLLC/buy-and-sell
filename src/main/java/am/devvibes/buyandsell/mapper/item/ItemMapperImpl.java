@@ -53,6 +53,7 @@ public class ItemMapperImpl implements ItemMapper {
 				.category(categoryService.findCategoryEntityOrElseThrow(categoryId))
 				.fields(valueService.saveAllValues(itemRequestDto.getFieldsValue()))
 				.phoneNumbers(itemRequestDto.getPhoneNumbers())
+				.countOfViews(0L)
 				.status(Status.CREATED)
 				.build();
 	}
@@ -77,6 +78,7 @@ public class ItemMapperImpl implements ItemMapper {
 				.category(businessPageEntity.getCategory())
 				.fields(valueService.saveAllValues(itemRequestDto.getFieldsValue()))
 				.phoneNumbers(itemRequestDto.getPhoneNumbers())
+				.countOfViews(0L)
 				.status(Status.CREATED)
 				.build();
 	}
@@ -97,6 +99,7 @@ public class ItemMapperImpl implements ItemMapper {
 				.priceHistory(priceHistoryMapper.mapEntityListToDtoList(itemEntity.getPriceHistories()))
 				.imgUrls(s3Service.getImagesPresignedDownloadUrls(itemEntity.getImgKeys()))
 				.phoneNumbers(itemEntity.getPhoneNumbers())
+				.countOfViews(itemEntity.getCountOfViews())
 				.build();
 	}
 

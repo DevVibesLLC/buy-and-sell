@@ -70,4 +70,6 @@ public class ItemEntity extends BaseEntityWithDates {
 	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
 	private List<PriceHistoryEntity> priceHistories;
 
+	private Long countOfViews;
+
 }

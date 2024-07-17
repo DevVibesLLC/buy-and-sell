@@ -7,6 +7,7 @@ import am.devvibes.buyandsell.entity.user.UserEntity;
 import am.devvibes.buyandsell.mapper.item.ItemMapper;
 import am.devvibes.buyandsell.mapper.user.UserMapper;
 import am.devvibes.buyandsell.service.favoriteItems.FavoriteItemsService;
+import am.devvibes.buyandsell.service.item.ItemService;
 import am.devvibes.buyandsell.service.user.impl.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class UserController {
 	private final UserServiceImpl userService;
 	private final UserMapper userMapper;
 	private final FavoriteItemsService favoriteItemsService;
+	private final ItemService itemService;
 	private final ItemMapper itemMapper;
 
 	@GetMapping("/{id}")
@@ -53,6 +55,14 @@ public class UserController {
 	public ResponseEntity<Void> deleteUser(@PathVariable String id) {
 		userService.deleteUser(id);
 		return ResponseEntity.ok().build();
+	}
+
+	@GetMapping("/items")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public ResponseEntity<List<ItemResponseDto>> getUsersItems() {
+		List<ItemResponseDto> itemResponseDtos =
+				itemMapper.mapEntityListToDtoList(itemService.findUsersItems());
+		return ResponseEntity.ok(itemResponseDtos);
 	}
 
 	@GetMapping("/{id}/favorites")

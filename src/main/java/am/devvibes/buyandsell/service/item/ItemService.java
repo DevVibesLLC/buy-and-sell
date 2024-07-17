@@ -3,6 +3,7 @@ package am.devvibes.buyandsell.service.item;
 import am.devvibes.buyandsell.dto.filter.*;
 import am.devvibes.buyandsell.dto.item.ItemRequestDto;
 import am.devvibes.buyandsell.dto.item.ItemResponseDto;
+import am.devvibes.buyandsell.dto.item.ItemUpdateDto;
 import am.devvibes.buyandsell.dto.priceStatistic.PriceStatisticsRequestDto;
 import am.devvibes.buyandsell.dto.search.SearchDto;
 import am.devvibes.buyandsell.entity.businessPage.BusinessPageEntity;
@@ -22,13 +23,15 @@ public interface ItemService {
 
 	ItemEntity findEntityById(Long id);
 
+	List<ItemEntity> findUsersItems();
+
 	Page<ItemResponseDto> findAllItems(PageRequest pageRequest);
 
 	void deleteById(Long id);
 
-	ItemEntity update(ItemRequestDto itemRequestDto, Long categoryId, Long itemId);
+	ItemEntity update(ItemUpdateDto itemUpdateDto, Long categoryId, Long itemId);
 
-	ItemEntity updateFromBusiness(ItemRequestDto itemRequestDto, BusinessPageEntity businessPageEntity, Long itemId);
+	ItemEntity updateFromBusiness(ItemUpdateDto itemUpdateDto, BusinessPageEntity businessPageEntity, Long itemId);
 
 	List<ItemEntity> searchItems(SearchDto searchDto);
 

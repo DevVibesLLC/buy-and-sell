@@ -5,7 +5,7 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class AutoFilterDto {
+public class AutoFilterDto{
 
 	private String mark;
 	private String model;
