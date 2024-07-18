@@ -249,7 +249,43 @@ public enum CategoryEnum {
 
 	BIRDS("Birds"),
 
-	RODENTS("Rodents");
+	RODENTS("Rodents"),
+
+	REPTILES("Reptiles"),
+
+	CATTLE("Cattle"),
+
+	HORSES("Horses"),
+
+	PIGS_AND_PIGLETS("Pigs and Piglets"),
+
+	SHEEP_AND_GOAT("Sheep and Goat"),
+
+	RABBITS("Rabbits"),
+
+	GIRLS_CLOTHING("Girls Clothing"),
+
+	BOYS_CLOTHING("Boys Clothing"),
+
+	BABIES_CLOTHING("Babies Clothing"),
+
+	SHOES_FOR_GIRLS("Shoes for Girls"),
+
+	SHOES_FOR_BOYS("Shoes for Boys"),
+
+	KIDS_TRANSPORTATION("Kids Transportation"),
+
+	BUILDING_SETS("Building Sets"),
+
+	LEARNING_AND_EDUCATIONAL_TOYS("Learning and Educational Toys"),
+
+	TOYS_FOR_GIRLS("Toys for Girls"),
+
+	TOYS_FOR_BOYS("Toys for Boys"),
+
+	TOYS_FOR_NEWBORNS("Toys for Newborns"),
+
+	OUTDOORS_AND_SEASONAL_TOYS("Outdoors and Seasonal Toys");
 
 	private final String name;
 

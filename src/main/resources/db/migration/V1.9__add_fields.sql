@@ -748,5 +748,68 @@ VALUES
 (464, 'Nutrition Type', false, true, null, 156),
 
 /*RODENTS*/
-(465, 'Gender', false, true, null, 157)
+(465, 'Gender', false, true, null, 157),
+
+/*REPTILES*/
+(466, 'Type', false, true, null, 158),
+
+/*CATTLE*/
+(467,'Gender', false, true, null, 159),
+(468, 'Age', false, true, null, 159),
+
+/*HORSES*/
+(469,'Gender', false, true, null, 160),
+(470, 'Age', false, true, null, 160),
+
+/*PIGS_AND_PIGLETS*/
+(471,'Gender', false, true, null, 161),
+(472, 'Age', false, true, null, 161),
+
+/*SHEEP_AND_GOAT*/
+(473,'Gender', false, true, null, 162),
+(474, 'Age', false, true, null, 162),
+
+/*RABBITS*/
+(475,'Gender', false, true, null, 163),
+(476, 'Age', false, true, null, 163),
+
+/*GIRLS_CLOTHING*/
+(477, 'Condition', false, true, null, 164),
+
+/*BOYS_CLOTHING*/
+(478, 'Condition', false, true, null, 165),
+
+/*BABIES_CLOTHING*/
+(479, 'Condition', false, true, null, 166),
+
+/*SHOES_FOR_GIRLS*/
+(480, 'Season', false, true, null, 167),
+(481, 'Shoe Size', false, true, null, 167),
+(482, 'Condition', false, true, null, 167),
+
+/*SHOES_FOR_BOYS*/
+(483, 'Season', false, true, null, 168),
+(484, 'Shoe Size', false, true, null, 168),
+(485, 'Condition', false, true, null, 168),
+
+/*KIDS_TRANSPORTATION*/
+(486, 'Condition', false, true, null, 169),
+
+/*BUILDING_SETS*/
+(487, 'Condition', false, true, null, 170),
+
+/*LEARNING_AND_EDUCATIONAL_TOYS*/
+(488, 'Condition', false, true, null, 171),
+
+/*TOYS_FOR_GIRLS*/
+(489, 'Condition', false, true, null, 172),
+
+/*TOYS_FOR_BOYS*/
+(490, 'Condition', false, true, null, 173),
+
+/*TOYS_FOR_NEWBORNS*/
+(491, 'Condition', false, true, null, 174),
+
+/*OUTDOORS_AND_SEASONAL_TOYS*/
+(492, 'Condition', false, true, null, 175)
 ON CONFLICT (id) DO NOTHING;

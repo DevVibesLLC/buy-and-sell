@@ -1066,4 +1066,148 @@ public class ItemController {
 			@RequestBody RodentsFilterDto filterDto) {
 		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
 	}
+
+	@PostMapping("/reptiles/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Reptiles Items")
+	public ResponseEntity<List<ItemResponseDto>> filterReptilesItems(
+			@RequestBody ReptilesFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/cattle/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Cattle Items")
+	public ResponseEntity<List<ItemResponseDto>> filterCattleItems(
+			@RequestBody CattleFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/horses/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Horses Items")
+	public ResponseEntity<List<ItemResponseDto>> filterHorsesItems(
+			@RequestBody HorsesFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/pigsAndPiglets/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Pigs and Piglets Items")
+	public ResponseEntity<List<ItemResponseDto>> filterPigsAndPigletsItems(
+			@RequestBody PigsAndPigletsFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/sheepAndGoat/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Sheep And Goat Items")
+	public ResponseEntity<List<ItemResponseDto>> filterSheepAndGoatItems(
+			@RequestBody SheepAndGoatFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/rabbits/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Rabbits Items")
+	public ResponseEntity<List<ItemResponseDto>> filterRabbitsItems(
+			@RequestBody RabbitsFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/girlsClothing/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Girls Clothing Items")
+	public ResponseEntity<List<ItemResponseDto>> filterGirlsClothingItems(
+			@RequestBody GirlsClothingFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/boysClothing/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Boys Clothing Items")
+	public ResponseEntity<List<ItemResponseDto>> filterBoysClothingItems(
+			@RequestBody BoysClothingFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/babiesClothing/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Babies Clothing Items")
+	public ResponseEntity<List<ItemResponseDto>> filterBabiesClothingItems(
+			@RequestBody BabiesClothingFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/shoesForGirls/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Shoe for Girls Items")
+	public ResponseEntity<List<ItemResponseDto>> filterShoeForGirlsItems(
+			@RequestBody ShoesForGirlsFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/shoesForBoys/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Shoe for Boys Items")
+	public ResponseEntity<List<ItemResponseDto>> filterShoeForBoysItems(
+			@RequestBody ShoesForBoysFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/kidsTransportation/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Kids Transportation Items")
+	public ResponseEntity<List<ItemResponseDto>> filterKidsTransportationItems(
+			@RequestBody KidsTransportationFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/buildingSets/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Building Sets Items")
+	public ResponseEntity<List<ItemResponseDto>> filterBuildingSetsItems(
+			@RequestBody BuildingSetsFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/learningAndEducationalToys/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Learning and Educational Toys Items")
+	public ResponseEntity<List<ItemResponseDto>> filterLearningAndEducationalToysItems(
+			@RequestBody LearningAndEducationalToysFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/toysForGirls/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Toys for Girls Items")
+	public ResponseEntity<List<ItemResponseDto>> filterToysForGirlsItems(
+			@RequestBody ToysForGirlsFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/toysForBoys/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Toys for Boys Items")
+	public ResponseEntity<List<ItemResponseDto>> filterToysForBoysItems(
+			@RequestBody ToysForBoysFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/toysForNewborns/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Toys for Newborns Items")
+	public ResponseEntity<List<ItemResponseDto>> filterToysForNewbornsItems(
+			@RequestBody ToysForNewbornsFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/outdoorsAndSeasonalToys/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Outdoors and Seasonal Toys Items")
+	public ResponseEntity<List<ItemResponseDto>> filterOutdoorsAndSeasonalToysItems(
+			@RequestBody OutdoorsAndSeasonalToysFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
 }

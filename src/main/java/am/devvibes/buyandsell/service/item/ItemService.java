@@ -291,6 +291,42 @@ public interface ItemService {
 
 	List<ItemEntity> filterItems(RodentsFilterDto filterDto);
 
+	List<ItemEntity> filterItems(ReptilesFilterDto filterDto);
+
+	List<ItemEntity> filterItems(CattleFilterDto filterDto);
+
+	List<ItemEntity> filterItems(HorsesFilterDto filterDto);
+
+	List<ItemEntity> filterItems(PigsAndPigletsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(SheepAndGoatFilterDto filterDto);
+
+	List<ItemEntity> filterItems(RabbitsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(GirlsClothingFilterDto filterDto);
+
+	List<ItemEntity> filterItems(BoysClothingFilterDto filterDto);
+
+	List<ItemEntity> filterItems(BabiesClothingFilterDto filterDto);
+
+	List<ItemEntity> filterItems(ShoesForGirlsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(ShoesForBoysFilterDto filterDto);
+
+	List<ItemEntity> filterItems(KidsTransportationFilterDto filterDto);
+
+	List<ItemEntity> filterItems(BuildingSetsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(LearningAndEducationalToysFilterDto filterDto);
+
+	List<ItemEntity> filterItems(ToysForGirlsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(ToysForBoysFilterDto filterDto);
+
+	List<ItemEntity> filterItems(ToysForNewbornsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(OutdoorsAndSeasonalToysFilterDto filterDto);
+
 	List<ItemEntity> filterItems(PriceStatisticsRequestDto filterDto);
 
 	List<ItemEntity> findItemsByCategory(Long categoryId);

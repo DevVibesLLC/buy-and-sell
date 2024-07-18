@@ -13394,6 +13394,1374 @@ FilterConstants.numberOfGuests),
 	}
 
 	@Override
+	public List<ItemEntity> filterItems(ReptilesFilterDto filterDto) {
+		List<Predicate> predicates = new ArrayList<>();
+
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
+		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
+
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get(FilterConstants.category).get(FilterConstants.name),
+						CategoryEnum.REPTILES);
+		predicates.add(categoryPredicate);
+
+		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getStartPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getEndPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCurrency())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.price).get(FilterConstants.currency),
+							filterDto.getCurrency());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCountry())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.country),
+							filterDto.getCountry());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getRegion())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.region),
+							filterDto.getRegion());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCity())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.city),
+							filterDto.getCity());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getType()) && !filterDto.getType().isEmpty()) {
+			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
+			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
+					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
+			Predicate predicate = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+			predicates.add(predicate);
+		}
+
+		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+		criteriaQuery.select(itemRoot).where(combinedPredicate);
+
+		return entityManager.createQuery(criteriaQuery).getResultList();
+	}
+
+	@Override
+	public List<ItemEntity> filterItems(CattleFilterDto filterDto) {
+		List<Predicate> predicates = new ArrayList<>();
+
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
+		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
+
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get(FilterConstants.category).get(FilterConstants.name),
+						CategoryEnum.CATTLE);
+		predicates.add(categoryPredicate);
+
+		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getStartPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getEndPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCurrency())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.price).get(FilterConstants.currency),
+							filterDto.getCurrency());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCountry())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.country),
+							filterDto.getCountry());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getRegion())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.region),
+							filterDto.getRegion());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCity())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.city),
+							filterDto.getCity());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getGender()) && !filterDto.getGender().isEmpty()) {
+			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
+			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
+					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
+			Predicate predicate = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.gender),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getGender()));
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getAge()) && !filterDto.getAge().isEmpty()) {
+			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
+			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
+					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
+			Predicate predicate = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.age),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getAge()));
+			predicates.add(predicate);
+		}
+
+		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+		criteriaQuery.select(itemRoot).where(combinedPredicate);
+
+		return entityManager.createQuery(criteriaQuery).getResultList();
+	}
+
+	@Override
+	public List<ItemEntity> filterItems(HorsesFilterDto filterDto) {
+		List<Predicate> predicates = new ArrayList<>();
+
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
+		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
+
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get(FilterConstants.category).get(FilterConstants.name),
+						CategoryEnum.HORSES);
+		predicates.add(categoryPredicate);
+
+		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getStartPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getEndPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCurrency())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.price).get(FilterConstants.currency),
+							filterDto.getCurrency());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCountry())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.country),
+							filterDto.getCountry());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getRegion())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.region),
+							filterDto.getRegion());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCity())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.city),
+							filterDto.getCity());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getGender()) && !filterDto.getGender().isEmpty()) {
+			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
+			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
+					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
+			Predicate predicate = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.gender),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getGender()));
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getAge()) && !filterDto.getAge().isEmpty()) {
+			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
+			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
+					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
+			Predicate predicate = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.age),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getAge()));
+			predicates.add(predicate);
+		}
+
+		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+		criteriaQuery.select(itemRoot).where(combinedPredicate);
+
+		return entityManager.createQuery(criteriaQuery).getResultList();
+	}
+
+	@Override
+	public List<ItemEntity> filterItems(PigsAndPigletsFilterDto filterDto) {
+		List<Predicate> predicates = new ArrayList<>();
+
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
+		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
+
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get(FilterConstants.category).get(FilterConstants.name),
+						CategoryEnum.PIGS_AND_PIGLETS);
+		predicates.add(categoryPredicate);
+
+		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getStartPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getEndPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCurrency())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.price).get(FilterConstants.currency),
+							filterDto.getCurrency());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCountry())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.country),
+							filterDto.getCountry());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getRegion())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.region),
+							filterDto.getRegion());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCity())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.city),
+							filterDto.getCity());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getGender()) && !filterDto.getGender().isEmpty()) {
+			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
+			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
+					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
+			Predicate predicate = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.gender),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getGender()));
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getAge()) && !filterDto.getAge().isEmpty()) {
+			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
+			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
+					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
+			Predicate predicate = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.age),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getAge()));
+			predicates.add(predicate);
+		}
+
+		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+		criteriaQuery.select(itemRoot).where(combinedPredicate);
+
+		return entityManager.createQuery(criteriaQuery).getResultList();
+	}
+
+	@Override
+	public List<ItemEntity> filterItems(SheepAndGoatFilterDto filterDto) {
+		List<Predicate> predicates = new ArrayList<>();
+
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
+		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
+
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get(FilterConstants.category).get(FilterConstants.name),
+						CategoryEnum.SHEEP_AND_GOAT);
+		predicates.add(categoryPredicate);
+
+		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getStartPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getEndPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCurrency())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.price).get(FilterConstants.currency),
+							filterDto.getCurrency());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCountry())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.country),
+							filterDto.getCountry());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getRegion())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.region),
+							filterDto.getRegion());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCity())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.city),
+							filterDto.getCity());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getGender()) && !filterDto.getGender().isEmpty()) {
+			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
+			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
+					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
+			Predicate predicate = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.gender),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getGender()));
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getAge()) && !filterDto.getAge().isEmpty()) {
+			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
+			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
+					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
+			Predicate predicate = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.age),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getAge()));
+			predicates.add(predicate);
+		}
+
+		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+		criteriaQuery.select(itemRoot).where(combinedPredicate);
+
+		return entityManager.createQuery(criteriaQuery).getResultList();
+	}
+
+	@Override
+	public List<ItemEntity> filterItems(RabbitsFilterDto filterDto) {
+		List<Predicate> predicates = new ArrayList<>();
+
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
+		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
+
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get(FilterConstants.category).get(FilterConstants.name),
+						CategoryEnum.RABBITS);
+		predicates.add(categoryPredicate);
+
+		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getStartPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getEndPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCurrency())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.price).get(FilterConstants.currency),
+							filterDto.getCurrency());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCountry())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.country),
+							filterDto.getCountry());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getRegion())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.region),
+							filterDto.getRegion());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCity())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.city),
+							filterDto.getCity());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getGender()) && !filterDto.getGender().isEmpty()) {
+			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
+			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
+					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
+			Predicate predicate = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.gender),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getGender()));
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getAge()) && !filterDto.getAge().isEmpty()) {
+			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
+			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
+					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
+			Predicate predicate = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.age),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getAge()));
+			predicates.add(predicate);
+		}
+
+		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+		criteriaQuery.select(itemRoot).where(combinedPredicate);
+
+		return entityManager.createQuery(criteriaQuery).getResultList();
+	}
+
+	@Override
+	public List<ItemEntity> filterItems(GirlsClothingFilterDto filterDto) {
+		List<Predicate> predicates = new ArrayList<>();
+
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
+		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
+
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get(FilterConstants.category).get(FilterConstants.name),
+						CategoryEnum.GIRLS_CLOTHING);
+		predicates.add(categoryPredicate);
+
+		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getStartPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getEndPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCurrency())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.price).get(FilterConstants.currency),
+							filterDto.getCurrency());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCountry())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.country),
+							filterDto.getCountry());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getRegion())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.region),
+							filterDto.getRegion());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCity())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.city),
+							filterDto.getCity());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCondition()) && !filterDto.getCondition().isEmpty()) {
+			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
+			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
+					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
+			Predicate predicate = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+			predicates.add(predicate);
+		}
+
+		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+		criteriaQuery.select(itemRoot).where(combinedPredicate);
+
+		return entityManager.createQuery(criteriaQuery).getResultList();
+	}
+
+	@Override
+	public List<ItemEntity> filterItems(BoysClothingFilterDto filterDto) {
+		List<Predicate> predicates = new ArrayList<>();
+
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
+		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
+
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get(FilterConstants.category).get(FilterConstants.name),
+						CategoryEnum.BOYS_CLOTHING);
+		predicates.add(categoryPredicate);
+
+		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getStartPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getEndPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCurrency())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.price).get(FilterConstants.currency),
+							filterDto.getCurrency());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCountry())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.country),
+							filterDto.getCountry());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getRegion())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.region),
+							filterDto.getRegion());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCity())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.city),
+							filterDto.getCity());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCondition()) && !filterDto.getCondition().isEmpty()) {
+			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
+			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
+					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
+			Predicate predicate = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+			predicates.add(predicate);
+		}
+
+		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+		criteriaQuery.select(itemRoot).where(combinedPredicate);
+
+		return entityManager.createQuery(criteriaQuery).getResultList();
+	}
+
+	@Override
+	public List<ItemEntity> filterItems(BabiesClothingFilterDto filterDto) {
+		List<Predicate> predicates = new ArrayList<>();
+
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
+		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
+
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get(FilterConstants.category).get(FilterConstants.name),
+						CategoryEnum.BABIES_CLOTHING);
+		predicates.add(categoryPredicate);
+
+		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getStartPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getEndPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCurrency())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.price).get(FilterConstants.currency),
+							filterDto.getCurrency());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCountry())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.country),
+							filterDto.getCountry());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getRegion())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.region),
+							filterDto.getRegion());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCity())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.city),
+							filterDto.getCity());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCondition()) && !filterDto.getCondition().isEmpty()) {
+			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
+			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
+					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
+			Predicate predicate = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+			predicates.add(predicate);
+		}
+
+		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+		criteriaQuery.select(itemRoot).where(combinedPredicate);
+
+		return entityManager.createQuery(criteriaQuery).getResultList();
+	}
+
+	@Override
+	public List<ItemEntity> filterItems(ShoesForGirlsFilterDto filterDto) {
+		List<Predicate> predicates = new ArrayList<>();
+
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
+		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
+
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get(FilterConstants.category).get(FilterConstants.name),
+						CategoryEnum.SHOES_FOR_GIRLS);
+		predicates.add(categoryPredicate);
+
+		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getStartPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getEndPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCurrency())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.price).get(FilterConstants.currency),
+							filterDto.getCurrency());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCountry())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.country),
+							filterDto.getCountry());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getRegion())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.region),
+							filterDto.getRegion());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCity())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.city),
+							filterDto.getCity());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getSeason()) && !filterDto.getSeason().isEmpty()) {
+			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
+			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
+					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
+			Predicate predicate = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.season),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getSeason()));
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getShoeSize()) && !filterDto.getShoeSize().isEmpty()) {
+			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
+			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
+					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
+			Predicate predicate = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.shoeSize),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getShoeSize()));
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCondition()) && !filterDto.getCondition().isEmpty()) {
+			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
+			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
+					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
+			Predicate predicate = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+			predicates.add(predicate);
+		}
+
+		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+		criteriaQuery.select(itemRoot).where(combinedPredicate);
+
+		return entityManager.createQuery(criteriaQuery).getResultList();
+	}
+
+	@Override
+	public List<ItemEntity> filterItems(ShoesForBoysFilterDto filterDto) {
+		List<Predicate> predicates = new ArrayList<>();
+
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
+		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
+
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get(FilterConstants.category).get(FilterConstants.name),
+						CategoryEnum.SHOES_FOR_BOYS);
+		predicates.add(categoryPredicate);
+
+		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getStartPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getEndPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCurrency())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.price).get(FilterConstants.currency),
+							filterDto.getCurrency());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCountry())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.country),
+							filterDto.getCountry());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getRegion())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.region),
+							filterDto.getRegion());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCity())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.city),
+							filterDto.getCity());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getSeason()) && !filterDto.getSeason().isEmpty()) {
+			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
+			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
+					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
+			Predicate predicate = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.season),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getSeason()));
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getShoeSize()) && !filterDto.getShoeSize().isEmpty()) {
+			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
+			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
+					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
+			Predicate predicate = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.shoeSize),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getShoeSize()));
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCondition()) && !filterDto.getCondition().isEmpty()) {
+			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
+			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
+					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
+			Predicate predicate = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+			predicates.add(predicate);
+		}
+
+		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+		criteriaQuery.select(itemRoot).where(combinedPredicate);
+
+		return entityManager.createQuery(criteriaQuery).getResultList();
+	}
+
+	@Override
+	public List<ItemEntity> filterItems(KidsTransportationFilterDto filterDto) {
+		List<Predicate> predicates = new ArrayList<>();
+
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
+		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
+
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get(FilterConstants.category).get(FilterConstants.name),
+						CategoryEnum.KIDS_TRANSPORTATION);
+		predicates.add(categoryPredicate);
+
+		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getStartPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getEndPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCurrency())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.price).get(FilterConstants.currency),
+							filterDto.getCurrency());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCountry())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.country),
+							filterDto.getCountry());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getRegion())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.region),
+							filterDto.getRegion());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCity())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.city),
+							filterDto.getCity());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCondition()) && !filterDto.getCondition().isEmpty()) {
+			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
+			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
+					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
+			Predicate predicate = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+			predicates.add(predicate);
+		}
+
+		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+		criteriaQuery.select(itemRoot).where(combinedPredicate);
+
+		return entityManager.createQuery(criteriaQuery).getResultList();
+	}
+
+	@Override
+	public List<ItemEntity> filterItems(BuildingSetsFilterDto filterDto) {
+		List<Predicate> predicates = new ArrayList<>();
+
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
+		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
+
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get(FilterConstants.category).get(FilterConstants.name),
+						CategoryEnum.BUILDING_SETS);
+		predicates.add(categoryPredicate);
+
+		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getStartPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getEndPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCurrency())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.price).get(FilterConstants.currency),
+							filterDto.getCurrency());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCountry())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.country),
+							filterDto.getCountry());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getRegion())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.region),
+							filterDto.getRegion());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCity())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.city),
+							filterDto.getCity());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCondition()) && !filterDto.getCondition().isEmpty()) {
+			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
+			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
+					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
+			Predicate predicate = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+			predicates.add(predicate);
+		}
+
+		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+		criteriaQuery.select(itemRoot).where(combinedPredicate);
+
+		return entityManager.createQuery(criteriaQuery).getResultList();
+	}
+
+	@Override
+	public List<ItemEntity> filterItems(LearningAndEducationalToysFilterDto filterDto) {
+		List<Predicate> predicates = new ArrayList<>();
+
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
+		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
+
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get(FilterConstants.category).get(FilterConstants.name),
+						CategoryEnum.LEARNING_AND_EDUCATIONAL_TOYS);
+		predicates.add(categoryPredicate);
+
+		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getStartPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getEndPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCurrency())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.price).get(FilterConstants.currency),
+							filterDto.getCurrency());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCountry())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.country),
+							filterDto.getCountry());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getRegion())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.region),
+							filterDto.getRegion());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCity())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.city),
+							filterDto.getCity());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCondition()) && !filterDto.getCondition().isEmpty()) {
+			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
+			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
+					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
+			Predicate predicate = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+			predicates.add(predicate);
+		}
+
+		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+		criteriaQuery.select(itemRoot).where(combinedPredicate);
+
+		return entityManager.createQuery(criteriaQuery).getResultList();
+	}
+
+	@Override
+	public List<ItemEntity> filterItems(ToysForGirlsFilterDto filterDto) {
+		List<Predicate> predicates = new ArrayList<>();
+
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
+		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
+
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get(FilterConstants.category).get(FilterConstants.name),
+						CategoryEnum.TOYS_FOR_GIRLS);
+		predicates.add(categoryPredicate);
+
+		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getStartPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getEndPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCurrency())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.price).get(FilterConstants.currency),
+							filterDto.getCurrency());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCountry())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.country),
+							filterDto.getCountry());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getRegion())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.region),
+							filterDto.getRegion());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCity())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.city),
+							filterDto.getCity());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCondition()) && !filterDto.getCondition().isEmpty()) {
+			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
+			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
+					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
+			Predicate predicate = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+			predicates.add(predicate);
+		}
+
+		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+		criteriaQuery.select(itemRoot).where(combinedPredicate);
+
+		return entityManager.createQuery(criteriaQuery).getResultList();
+	}
+
+	@Override
+	public List<ItemEntity> filterItems(ToysForBoysFilterDto filterDto) {
+		List<Predicate> predicates = new ArrayList<>();
+
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
+		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
+
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get(FilterConstants.category).get(FilterConstants.name),
+						CategoryEnum.TOYS_FOR_BOYS);
+		predicates.add(categoryPredicate);
+
+		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getStartPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getEndPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCurrency())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.price).get(FilterConstants.currency),
+							filterDto.getCurrency());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCountry())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.country),
+							filterDto.getCountry());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getRegion())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.region),
+							filterDto.getRegion());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCity())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.city),
+							filterDto.getCity());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCondition()) && !filterDto.getCondition().isEmpty()) {
+			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
+			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
+					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
+			Predicate predicate = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+			predicates.add(predicate);
+		}
+
+		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+		criteriaQuery.select(itemRoot).where(combinedPredicate);
+
+		return entityManager.createQuery(criteriaQuery).getResultList();
+	}
+
+	@Override
+	public List<ItemEntity> filterItems(ToysForNewbornsFilterDto filterDto) {
+		List<Predicate> predicates = new ArrayList<>();
+
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
+		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
+
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get(FilterConstants.category).get(FilterConstants.name),
+						CategoryEnum.TOYS_FOR_NEWBORNS);
+		predicates.add(categoryPredicate);
+
+		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getStartPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getEndPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCurrency())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.price).get(FilterConstants.currency),
+							filterDto.getCurrency());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCountry())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.country),
+							filterDto.getCountry());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getRegion())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.region),
+							filterDto.getRegion());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCity())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.city),
+							filterDto.getCity());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCondition()) && !filterDto.getCondition().isEmpty()) {
+			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
+			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
+					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
+			Predicate predicate = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+			predicates.add(predicate);
+		}
+
+		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+		criteriaQuery.select(itemRoot).where(combinedPredicate);
+
+		return entityManager.createQuery(criteriaQuery).getResultList();
+	}
+
+	@Override
+	public List<ItemEntity> filterItems(OutdoorsAndSeasonalToysFilterDto filterDto) {
+		List<Predicate> predicates = new ArrayList<>();
+
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<ItemEntity> criteriaQuery = criteriaBuilder.createQuery(ItemEntity.class);
+		Root<ItemEntity> itemRoot = criteriaQuery.from(ItemEntity.class);
+
+		Predicate categoryPredicate =
+				criteriaBuilder.equal(itemRoot.get(FilterConstants.category).get(FilterConstants.name),
+						CategoryEnum.OUTDOORS_AND_SEASONAL_TOYS);
+		predicates.add(categoryPredicate);
+
+		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.greaterThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getStartPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getEndPrice()) && !filterDto.getEndPrice().isEmpty()) {
+			Predicate predicate =
+					criteriaBuilder.lessThanOrEqualTo(itemRoot.get(FilterConstants.price).get(FilterConstants.price),
+							filterDto.getEndPrice());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCurrency())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.price).get(FilterConstants.currency),
+							filterDto.getCurrency());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCountry())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.country),
+							filterDto.getCountry());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getRegion())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.region),
+							filterDto.getRegion());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCity())) {
+			Predicate predicate =
+					criteriaBuilder.equal(itemRoot.get(FilterConstants.location).get(FilterConstants.city),
+							filterDto.getCity());
+			predicates.add(predicate);
+		}
+
+		if (nonNull(filterDto.getCondition()) && !filterDto.getCondition().isEmpty()) {
+			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
+			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
+					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
+			Predicate predicate = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+			predicates.add(predicate);
+		}
+
+		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+		criteriaQuery.select(itemRoot).where(combinedPredicate);
+
+		return entityManager.createQuery(criteriaQuery).getResultList();
+	}
+
+	@Override
 	public List<ItemEntity> filterItems(PriceStatisticsRequestDto filterDto) {
 		List<Predicate> predicates = new ArrayList<>();
 
