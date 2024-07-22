@@ -811,5 +811,47 @@ VALUES
 (491, 'Condition', false, true, null, 174),
 
 /*OUTDOORS_AND_SEASONAL_TOYS*/
-(492, 'Condition', false, true, null, 175)
+(492, 'Condition', false, true, null, 175),
+
+/*PRODUCTS_FOR_BABIES*/
+(493, 'Condition', false, true, null, 176),
+
+/*STROLLERS*/
+(494, 'Type', false, true, null, 177),
+(495, 'For Ages', false, true, null, 177),
+(496, 'Number of Seats', false, true, null, 177),
+(497, 'Condition', false, true, null, 177),
+
+/*PRODUCTS_FOR_BABIES*/
+(498, 'Condition', false, true, null, 178),
+
+/*BABY_CARRIERS*/
+(499, 'Condition', false, true, null, 179),
+
+/*WALKERS*/
+(500, 'Condition', false, true, null, 180),
+
+/*SWINGS*/
+(501, 'Condition', false, true, null, 181),
+
+/*PLAYPENS*/
+(502, 'Condition', false, true, null, 182),
+
+/*BED_ACCESSORIES_AND_DECOR*/
+(503, 'Condition', false, true, null, 183),
+
+/*KIDS_FURNITURE*/
+(504, 'Condition', false, true, null, 184),
+
+/*HIGH_CHAIRS*/
+(505, 'Condition', false, true, null, 185),
+
+/*FEEDING*/
+(506, 'Condition', false, true, null, 186),
+
+/*BATH_AND_HYGIENE*/
+(507, 'Condition', false, true, null, 187),
+
+/*BACKPACKS_AND_BAGS*/
+(508, 'Condition', false, true, null, 188)
 ON CONFLICT (id) DO NOTHING;

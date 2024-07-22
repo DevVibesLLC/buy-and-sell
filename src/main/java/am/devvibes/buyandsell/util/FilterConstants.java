@@ -104,4 +104,6 @@ public interface FilterConstants {
 	String gender = "Gender";
 	String age = "Age";
 	String nutritionType = "Nutrition Type";
+	String forAges = "For Ages";
+	String numberOfSeats = "Number of Seats";
 }

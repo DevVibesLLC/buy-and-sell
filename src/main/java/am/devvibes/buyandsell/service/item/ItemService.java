@@ -327,6 +327,32 @@ public interface ItemService {
 
 	List<ItemEntity> filterItems(OutdoorsAndSeasonalToysFilterDto filterDto);
 
+	List<ItemEntity> filterItems(ProductsForBabiesFilterDto filterDto);
+
+	List<ItemEntity> filterItems(StrollersFilterDto filterDto);
+
+	List<ItemEntity> filterItems(CarSeatsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(BabyCarriersFilterDto filterDto);
+
+	List<ItemEntity> filterItems(WalkersFilterDto filterDto);
+
+	List<ItemEntity> filterItems(SwingsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(PlaypensFilterDto filterDto);
+
+	List<ItemEntity> filterItems(BedAccessoriesAndDecorFilterDto filterDto);
+
+	List<ItemEntity> filterItems(KidsFurnitureFilterDto filterDto);
+
+	List<ItemEntity> filterItems(HighChairsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(FeedingFilterDto filterDto);
+
+	List<ItemEntity> filterItems(BathAndHygieneFilterDto filterDto);
+
+	List<ItemEntity> filterItems(BackpacksAndBagsFilterDto filterDto);
+
 	List<ItemEntity> filterItems(PriceStatisticsRequestDto filterDto);
 
 	List<ItemEntity> findItemsByCategory(Long categoryId);

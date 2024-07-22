@@ -285,7 +285,33 @@ public enum CategoryEnum {
 
 	TOYS_FOR_NEWBORNS("Toys for Newborns"),
 
-	OUTDOORS_AND_SEASONAL_TOYS("Outdoors and Seasonal Toys");
+	OUTDOORS_AND_SEASONAL_TOYS("Outdoors and Seasonal Toys"),
+
+	PRODUCTS_FOR_BABIES("Product for Babies"),
+
+	STROLLERS("Strollers"),
+
+	CAR_SEATS("Car Seats"),
+
+	BABY_CARRIERS("Baby Carriers"),
+
+	WALKERS("Walkers"),
+
+	SWINGS("Swings"),
+
+	PLAYPENS("Playpens"),
+
+	BED_ACCESSORIES_AND_DECOR("Bed Accessories and Decor"),
+
+	KIDS_FURNITURE("Kids Furniture"),
+
+	HIGH_CHAIRS("High Chairs"),
+
+	FEEDING("Feeding"),
+
+	BATH_AND_HYGIENE("Bath and Hygiene"),
+
+	BACKPACKS_AND_BAGS("Backpacks and Bags");
 
 	private final String name;
 

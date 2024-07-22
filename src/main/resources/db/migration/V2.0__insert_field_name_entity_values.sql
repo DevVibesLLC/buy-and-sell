@@ -4479,4 +4479,59 @@ VALUES
 (491, 'Used'),
 
 (492, 'New'),
-(492, 'Used')
+(492, 'Used'),
+
+(493, 'New'),
+(493, 'Used'),
+
+(494, 'Baby Stroller'),
+(494, 'All Purpose Stroller'),
+(494, 'Walking Stroller'),
+(494, 'Umbrella Stroller'),
+
+(495, 'Up to 6 Months'),
+(495, 'Up to 1 Year'),
+(495, 'Up to 2 Years'),
+(495, 'Up to 3 Years'),
+(495, 'Up to 4 Years'),
+(495, 'Up to 5 Years'),
+
+(496, 'For One'),
+(496, 'For Twins'),
+(496, 'For Triplets'),
+
+(497, 'New'),
+(497, 'Used'),
+
+(498, 'New'),
+(498, 'Used'),
+
+(499, 'New'),
+(499, 'Used'),
+
+(500, 'New'),
+(500, 'Used'),
+
+(501, 'New'),
+(501, 'Used'),
+
+(502, 'New'),
+(502, 'Used'),
+
+(503, 'New'),
+(503, 'Used'),
+
+(503, 'New'),
+(503, 'Used'),
+
+(504, 'New'),
+(504, 'Used'),
+
+(505, 'New'),
+(505, 'Used'),
+
+(506, 'New'),
+(506, 'Used'),
+
+(507, 'New'),
+(507, 'Used')
