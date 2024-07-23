@@ -853,5 +853,26 @@ VALUES
 (507, 'Condition', false, true, null, 187),
 
 /*BACKPACKS_AND_BAGS*/
-(508, 'Condition', false, true, null, 188)
+(508, 'Condition', false, true, null, 188),
+
+/*SCHOOL_SUPPLIES*/
+(509, 'Condition', false, true, null, 189),
+
+/*PRODUCTS_FOR_DOGS*/
+(510, 'Type', false, true, null, 190),
+
+/*PRODUCTS_FOR_CATS*/
+(511, 'Type', false, true, null, 191),
+
+/*PRODUCTS_FOR_FISH_AND_REPTILES*/
+(512, 'Type', false, true, null, 192),
+
+/*PRODUCTS_FOR_RODENTS*/
+(513, 'Type', false, true, null, 193),
+
+/*PRODUCTS_FOR_FARM_ANIMALS*/
+(514, 'Type', false, true, null, 194),
+
+/*PRODUCTS_FOR_BIRDS*/
+(515, 'Type', false, true, null, 195)
 ON CONFLICT (id) DO NOTHING;

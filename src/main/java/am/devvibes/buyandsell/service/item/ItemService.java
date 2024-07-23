@@ -353,6 +353,20 @@ public interface ItemService {
 
 	List<ItemEntity> filterItems(BackpacksAndBagsFilterDto filterDto);
 
+	List<ItemEntity> filterItems(SchoolSuppliesFilterDto filterDto);
+
+	List<ItemEntity> filterItems(ProductsForDogsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(ProductsForCatsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(ProductsForFishAndReptilesFilterDto filterDto);
+
+	List<ItemEntity> filterItems(ProductsForRodentsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(ProductsForFarmAnimalsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(ProductsForBirdsFilterDto filterDto);
+
 	List<ItemEntity> filterItems(PriceStatisticsRequestDto filterDto);
 
 	List<ItemEntity> findItemsByCategory(Long categoryId);

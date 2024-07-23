@@ -311,7 +311,21 @@ public enum CategoryEnum {
 
 	BATH_AND_HYGIENE("Bath and Hygiene"),
 
-	BACKPACKS_AND_BAGS("Backpacks and Bags");
+	BACKPACKS_AND_BAGS("Backpacks and Bags"),
+
+	SCHOOL_SUPPLIES("School Supplies"),
+
+	PRODUCTS_FOR_DOGS("Products for Dogs"),
+
+	PRODUCTS_FOR_CATS("Products for Cats"),
+
+	PRODUCTS_FOR_FISH_AND_REPTILES("Products for Fish and Reptiles"),
+
+	PRODUCTS_FOR_RODENTS("Products for Rodents"),
+
+	PRODUCTS_FOR_FARM_ANIMALS("Products for Farm Animals"),
+
+	PRODUCTS_FOR_BIRDS("Products for Birds");
 
 	private final String name;
 

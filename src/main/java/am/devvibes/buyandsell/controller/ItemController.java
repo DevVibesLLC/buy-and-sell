@@ -1315,4 +1315,60 @@ public class ItemController {
 		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
 	}
 
+	@PostMapping("/schoolSupplies/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter School Supplies Items")
+	public ResponseEntity<List<ItemResponseDto>> filterSchoolSuppliesItems(
+			@RequestBody SchoolSuppliesFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/productsForDogs/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Products for Dogs Items")
+	public ResponseEntity<List<ItemResponseDto>> filterProductsForDogsItems(
+			@RequestBody ProductsForDogsFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/productsForCats/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Products for Cats Items")
+	public ResponseEntity<List<ItemResponseDto>> filterProductsForCatsItems(
+			@RequestBody ProductsForCatsFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/productsForFishAndReptiles/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Products For Fish and Reptiles Items")
+	public ResponseEntity<List<ItemResponseDto>> filterProductsForFishAndReptilesItems(
+			@RequestBody ProductsForFishAndReptilesFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/productsForRodents/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Products For Rodents Items")
+	public ResponseEntity<List<ItemResponseDto>> filterProductsForRodentsItems(
+			@RequestBody ProductsForRodentsFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/productsForFarmAnimals/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Products For Farm Animals Items")
+	public ResponseEntity<List<ItemResponseDto>> filterProductsForFarmAnimalsItems(
+			@RequestBody ProductsForFarmAnimalsFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/productsForBirds/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Products For Birds Items")
+	public ResponseEntity<List<ItemResponseDto>> filterProductsForBirdsItems(
+			@RequestBody ProductsForBirdsFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
 }
