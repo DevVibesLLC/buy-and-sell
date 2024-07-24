@@ -367,6 +367,38 @@ public interface ItemService {
 
 	List<ItemEntity> filterItems(ProductsForBirdsFilterDto filterDto);
 
+	List<ItemEntity> filterItems(HandToolsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(MachineToolsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(ElectricalDevicesFilterDto filterDto);
+
+	List<ItemEntity> filterItems(MeasuringEquipmentFilterDto filterDto);
+
+	List<ItemEntity> filterItems(SawsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(WeldingEquipmentFilterDto filterDto);
+
+	List<ItemEntity> filterItems(ConcreteMixersFilterDto filterDto);
+
+	List<ItemEntity> filterItems(LaddersAndStepladdersFilterDto filterDto);
+
+	List<ItemEntity> filterItems(ScaffoldingAndTowersFilterDto filterDto);
+
+	List<ItemEntity> filterItems(ProtectiveEquipmentFilterDto filterDto);
+
+	List<ItemEntity> filterItems(GardeningEquipmentFilterDto filterDto);
+
+	List<ItemEntity> filterItems(FaucetsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(ShowersAndBathsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(SinksAndWashbasinsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(PumpsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(WaterMetersFilterDto filterDto);
+
 	List<ItemEntity> filterItems(PriceStatisticsRequestDto filterDto);
 
 	List<ItemEntity> findItemsByCategory(Long categoryId);

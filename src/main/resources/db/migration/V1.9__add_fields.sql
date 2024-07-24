@@ -874,5 +874,65 @@ VALUES
 (514, 'Type', false, true, null, 194),
 
 /*PRODUCTS_FOR_BIRDS*/
-(515, 'Type', false, true, null, 195)
+(515, 'Type', false, true, null, 195),
+
+/*HAND_TOOLS*/
+(516, 'Type', false, true, null, 196),
+(517, 'Condition', false, true, null, 196),
+
+/*MACHINE_TOOLS*/
+(518, 'Type', false, true, null, 197),
+(519, 'Condition', false, true, null, 197),
+
+/*ELECTRICAL_DEVICES*/
+(520, 'Type', false, true, null, 198),
+(521, 'Condition', false, true, null, 198),
+
+/*MEASURING_EQUIPMENT*/
+(522, 'Type', false, true, null, 199),
+(523, 'Condition', false, true, null, 199),
+
+/*SAWS*/
+(524, 'Type', false, true, null, 200),
+(525, 'Condition', false, true, null, 200),
+
+/*WELDING_EQUIPMENT*/
+(526, 'Type', false, true, null, 201),
+(527, 'Condition', false, true, null, 201),
+
+/*CONCRETE_МIXERS*/
+(528, 'Type', false, true, null, 202),
+(529, 'Condition', false, true, null, 202),
+
+/*LADDERS_AND_STEPLADDERS*/
+(530, 'Type', false, true, null, 203),
+(531, 'Condition', false, true, null, 203),
+
+/*SCAFFOLDING_AND_TOWERS*/
+(532, 'Type', false, true, null, 204),
+(533, 'Condition', false, true, null, 204),
+
+/*PROTECTIVE_EQUIPMENT*/
+(534, 'Type', false, true, null, 205),
+(535, 'Condition', false, true, null, 205),
+
+/*GARDENING_EQUIPMENT*/
+(536, 'Type', false, true, null, 206),
+(537, 'Condition', false, true, null, 206),
+
+/*FAUCETS*/
+(538, 'Condition', false, true, null, 207),
+
+/*SHOWERS_AND_BATHS*/
+(539, 'Type', false, true, null, 208),
+(540, 'Condition', false, true, null, 208),
+
+/*SINKS_AND_WASHBASINS*/
+(541, 'Condition', false, true, null, 209),
+
+/*PUMPS*/
+(542, 'Condition', false, true, null, 210),
+
+/*WATER_METERS*/
+(543, 'Condition', false, true, null, 211)
 ON CONFLICT (id) DO NOTHING;

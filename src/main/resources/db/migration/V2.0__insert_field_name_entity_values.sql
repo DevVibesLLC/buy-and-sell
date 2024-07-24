@@ -4594,4 +4594,89 @@ VALUES
 (515, 'Cages and Houses'),
 (515, 'Decorations'),
 (515, 'Toys'),
-(515, 'Other')
+(515, 'Other'),
+
+(516, 'For Sale'),
+(516, 'For Rent'),
+
+(517, 'New'),
+(517, 'Used'),
+
+(518, 'For Sale'),
+(518, 'For Rent'),
+
+(519, 'New'),
+(519, 'Used'),
+
+(520, 'For Sale'),
+(520, 'For Rent'),
+
+(521, 'New'),
+(521, 'Used'),
+
+(522, 'For Sale'),
+(522, 'For Rent'),
+
+(523, 'New'),
+(523, 'Used'),
+
+(524, 'For Sale'),
+(524, 'For Rent'),
+
+(525, 'New'),
+(525, 'Used'),
+
+(526, 'For Sale'),
+(526, 'For Rent'),
+
+(527, 'New'),
+(527, 'Used'),
+
+(528, 'For Sale'),
+(528, 'For Rent'),
+
+(529, 'New'),
+(529, 'Used'),
+
+(530, 'For Sale'),
+(530, 'For Rent'),
+
+(531, 'New'),
+(531, 'Used'),
+
+(532, 'For Sale'),
+(532, 'For Rent'),
+
+(533, 'New'),
+(533, 'Used'),
+
+(534, 'For Sale'),
+(534, 'For Rent'),
+
+(535, 'New'),
+(535, 'Used'),
+
+(536, 'For Sale'),
+(536, 'For Rent'),
+
+(537, 'New'),
+(537, 'Used'),
+
+(538, 'New'),
+(538, 'Used'),
+
+(539, 'Bath Tubs'),
+(539, 'Shower Cabins'),
+(539, 'Showers'),
+
+(540, 'New'),
+(540, 'Used'),
+
+(541, 'New'),
+(541, 'Used'),
+
+(542, 'New'),
+(542, 'Used'),
+
+(543, 'New'),
+(543, 'Used')

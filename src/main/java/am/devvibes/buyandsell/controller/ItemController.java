@@ -1371,4 +1371,132 @@ public class ItemController {
 		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
 	}
 
+	@PostMapping("/handTools/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Hand Tools Items")
+	public ResponseEntity<List<ItemResponseDto>> filterHandToolsItems(
+			@RequestBody HandToolsFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/machineTools/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Machine Tools Items")
+	public ResponseEntity<List<ItemResponseDto>> filterMachineToolsItems(
+			@RequestBody MachineToolsFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/electricalDevices/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Electrical Devices Items")
+	public ResponseEntity<List<ItemResponseDto>> filterElectricalDevicesItems(
+			@RequestBody ElectricalDevicesFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/measuringEquipment/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Measuring Equipment Items")
+	public ResponseEntity<List<ItemResponseDto>> filterMeasuringEquipmentItems(
+			@RequestBody MeasuringEquipmentFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/saws/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Saws Items")
+	public ResponseEntity<List<ItemResponseDto>> filterSawsItems(
+			@RequestBody SawsFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/weldingEquipment/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Welding Equipment Items")
+	public ResponseEntity<List<ItemResponseDto>> filterWeldingEquipmentItems(
+			@RequestBody WeldingEquipmentFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/concreteMixers/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Concrete Mixers Items")
+	public ResponseEntity<List<ItemResponseDto>> filterConcreteMixersItems(
+			@RequestBody ConcreteMixersFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/laddersAndStepladders/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Ladders and Stepladders Items")
+	public ResponseEntity<List<ItemResponseDto>> filterLaddersAndStepladdersItems(
+			@RequestBody LaddersAndStepladdersFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/scaffoldingAndTowers/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Scaffolding and Towers Items")
+	public ResponseEntity<List<ItemResponseDto>> filterScaffoldingAndTowersItems(
+			@RequestBody ScaffoldingAndTowersFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/protectiveEquipment/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Protective Equipment Items")
+	public ResponseEntity<List<ItemResponseDto>> filterProtectiveEquipmentItems(
+			@RequestBody ProtectiveEquipmentFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/gardeningEquipment/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Gardening Equipment Items")
+	public ResponseEntity<List<ItemResponseDto>> filterGardeningEquipmentItems(
+			@RequestBody GardeningEquipmentFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/faucets/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Faucets Items")
+	public ResponseEntity<List<ItemResponseDto>> filterFaucetsItems(
+			@RequestBody FaucetsFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/showersAndBaths/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Showers and Baths Items")
+	public ResponseEntity<List<ItemResponseDto>> filterShowersAndBathsItems(
+			@RequestBody ShowersAndBathsFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/sinksAndWashbasins/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Sinks and Washbasins Items")
+	public ResponseEntity<List<ItemResponseDto>> filterSinksAndWashbasinsItems(
+			@RequestBody SinksAndWashbasinsFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/pumps/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Pumps Items")
+	public ResponseEntity<List<ItemResponseDto>> filterPumpsItems(
+			@RequestBody PumpsFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
+	@PostMapping("/waterMeters/filter")
+	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Filter Water Meters Items")
+	public ResponseEntity<List<ItemResponseDto>> filterWaterMetersItems(
+			@RequestBody WaterMetersFilterDto filterDto) {
+		return ResponseEntity.ok(itemMapper.mapEntityListToDtoList(itemService.filterItems(filterDto)));
+	}
+
 }

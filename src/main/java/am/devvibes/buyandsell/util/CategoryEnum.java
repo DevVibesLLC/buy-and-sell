@@ -325,7 +325,39 @@ public enum CategoryEnum {
 
 	PRODUCTS_FOR_FARM_ANIMALS("Products for Farm Animals"),
 
-	PRODUCTS_FOR_BIRDS("Products for Birds");
+	PRODUCTS_FOR_BIRDS("Products for Birds"),
+
+	HAND_TOOLS("Hand Tools"),
+
+	MACHINE_TOOLS("Machine Tools"),
+
+	ELECTRICAL_DEVICES("Electrical Devices"),
+
+	MEASURING_EQUIPMENT("Measuring Equipment"),
+
+	SAWS("Saws"),
+
+	WELDING_EQUIPMENT("Welding Equipment"),
+
+	CONCRETE_МIXERS("Concrete Мixers"),
+
+	LADDERS_AND_STEPLADDERS("Ladders and Stepladders"),
+
+	SCAFFOLDING_AND_TOWERS("Scaffolding and Towers"),
+
+	PROTECTIVE_EQUIPMENT("Protective Equipment"),
+
+	GARDENING_EQUIPMENT("Gardening Equipment"),
+
+	FAUCETS("Faucets"),
+
+	SHOWERS_AND_BATHS("Showers and Baths"),
+
+	SINKS_AND_WASHBASINS("Sinks and Washbasins"),
+
+	PUMPS("Pumps"),
+
+	WATER_METERS("Water Meters");
 
 	private final String name;
 
