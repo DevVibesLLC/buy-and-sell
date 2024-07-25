@@ -4679,4 +4679,69 @@ VALUES
 (542, 'Used'),
 
 (543, 'New'),
-(543, 'Used')
+(543, 'Used'),
+
+(544, 'New'),
+(544, 'Used'),
+
+(545, 'Plastic Windows'),
+(545, 'Wooden Windows'),
+(545, 'Metal Windows'),
+(545, 'Window Sills'),
+(545, 'Window Hardware'),
+(545, 'Window Bars'),
+(545, 'Window Accessories'),
+
+(546, 'New'),
+(546, 'Used'),
+
+(547, 'Exterior Doors'),
+(547, 'Interior Doors'),
+(547, 'Door Frames'),
+(547, 'Door Hardware'),
+
+(548, 'New'),
+(548, 'Used'),
+
+(549, 'Fences'),
+(549, 'Gates'),
+(549, 'Accessories'),
+
+(550, 'New'),
+(550, 'Used'),
+
+(551, 'New'),
+(551, 'Used'),
+
+(552, 'New'),
+(552, 'Used'),
+
+(553, 'New'),
+(553, 'Used'),
+
+(554, 'New'),
+(554, 'Used'),
+
+(555, 'New'),
+(555, 'Used'),
+
+(556, 'New'),
+(556, 'Used'),
+
+(557, 'New'),
+(557, 'Used'),
+
+(558, 'New'),
+(558, 'Used'),
+
+(559, 'New'),
+(559, 'Used'),
+
+(560, 'New'),
+(560, 'Used'),
+
+(561, 'New'),
+(561, 'Used'),
+
+(562, 'New'),
+(562, 'Used')

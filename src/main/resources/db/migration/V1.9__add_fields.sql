@@ -934,5 +934,56 @@ VALUES
 (542, 'Condition', false, true, null, 210),
 
 /*WATER_METERS*/
-(543, 'Condition', false, true, null, 211)
+(543, 'Condition', false, true, null, 211),
+
+/*TOILETS_AND_BIDETS*/
+(544, 'Condition', false, true, null, 212),
+
+/*WINDOWS*/
+(545, 'Type', false, true, null, 213),
+(546, 'Condition', false, true, null, 213),
+
+/*DOORS*/
+(547, 'Type', false, true, null, 214),
+(548, 'Condition', false, true, null, 214),
+
+/*GATES_AND_FENCES*/
+(549, 'Type', false, true, null, 215),
+(550, 'Condition', false, true, null, 215),
+
+/*FLOORING*/
+(551, 'Condition', false, true, null, 216),
+
+/*WATER_SUPPLY_AND_PIPES*/
+(552, 'Condition', false, true, null, 217),
+
+/*RETAIL_AND_SHOPS_EQUIPMENT*/
+(553, 'Condition', false, true, null, 218),
+
+/*OFFICE_EQUIPMENT*/
+(554, 'Condition', false, true, null, 219),
+
+/*MANUFACTURING_EQUIPMENT*/
+(555, 'Condition', false, true, null, 220),
+
+/*RESTAURANTS_AND_CAFES_EQUIPMENT*/
+(556, 'Condition', false, true, null, 221),
+
+/*BEAUTY_SALONS_EQUIPMENT*/
+(557, 'Condition', false, true, null, 222),
+
+/*CAR_SERVICES_EQUIPMENT*/
+(558, 'Condition', false, true, null, 223),
+
+/*AGRICULTURAL_EQUIPMENT*/
+(559, 'Condition', false, true, null, 224),
+
+/*WAREHOUSE_EQUIPMENT*/
+(560, 'Condition', false, true, null, 225),
+
+/*ATTRACTIONS_AND_VENDING_MACHINES*/
+(561, 'Condition', false, true, null, 226),
+
+/*ADVERTISING_AND_EXHIBITION_EQUIPMENT*/
+(562, 'Condition', false, true, null, 227)
 ON CONFLICT (id) DO NOTHING;

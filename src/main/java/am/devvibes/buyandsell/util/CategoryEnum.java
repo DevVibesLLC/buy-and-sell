@@ -357,7 +357,39 @@ public enum CategoryEnum {
 
 	PUMPS("Pumps"),
 
-	WATER_METERS("Water Meters");
+	WATER_METERS("Water Meters"),
+
+	TOILETS_AND_BIDETS("Toilets and Bidets"),
+
+	WINDOWS("Windows"),
+
+	DOORS("Doors"),
+
+	GATES_AND_FENCES("Gates and Fences"),
+
+	FLOORING("Flooring"),
+
+	WATER_SUPPLY_AND_PIPES("Water Supply and Pipes"),
+
+	RETAIL_AND_SHOPS_EQUIPMENT("Retail and Shops Equipment"),
+
+	MANUFACTURING_EQUIPMENT("Manufacturing Equipment"),
+
+	OFFICE_EQUIPMENT("Office Equipment"),
+
+	RESTAURANTS_AND_CAFES_EQUIPMENT("Restaurants and Cafes Equipment"),
+
+	BEAUTY_SALONS_EQUIPMENT("Beauty Salons Equipment"),
+
+	CAR_SERVICES_EQUIPMENT("Car Services Equipment"),
+
+	WAREHOUSE_EQUIPMENT("Warehouse Equipment"),
+
+	AGRICULTURAL_EQUIPMENT("Agricultural Equipment"),
+
+	ATTRACTIONS_AND_VENDING_MACHINES("Attractions and Vending Machines"),
+
+	ADVERTISING_AND_EXHIBITION_EQUIPMENT("Advertising and Exhibition Equipment");
 
 	private final String name;
 

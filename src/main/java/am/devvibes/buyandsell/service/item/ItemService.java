@@ -399,6 +399,38 @@ public interface ItemService {
 
 	List<ItemEntity> filterItems(WaterMetersFilterDto filterDto);
 
+	List<ItemEntity> filterItems(ToiletsAndBidetsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(WindowsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(DoorsFilterDto filterDto);
+
+	List<ItemEntity> filterItems(GatesAndFencesFilterDto filterDto);
+
+	List<ItemEntity> filterItems(FlooringFilterDto filterDto);
+
+	List<ItemEntity> filterItems(WaterSupplyAndPipesFilterDto filterDto);
+
+	List<ItemEntity> filterItems(RetailAndShopsEquipmentFilterDto filterDto);
+
+	List<ItemEntity> filterItems(OfficeEquipmentFilterDto filterDto);
+
+	List<ItemEntity> filterItems(ManufacturingEquipmentFilterDto filterDto);
+
+	List<ItemEntity> filterItems(RestaurantsAndCafesEquipmentFilterDto filterDto);
+
+	List<ItemEntity> filterItems(BeautySalonsEquipmentFilterDto filterDto);
+
+	List<ItemEntity> filterItems(CarServicesEquipmentFilterDto filterDto);
+
+	List<ItemEntity> filterItems(AgriculturalEquipmentFilterDto filterDto);
+
+	List<ItemEntity> filterItems(WarehouseEquipmentFilterDto filterDto);
+
+	List<ItemEntity> filterItems(AttractionsAndVendingMachinesFilterDto filterDto);
+
+	List<ItemEntity> filterItems(AdvertisingAndExhibitionEquipmentFilterDto filterDto);
+
 	List<ItemEntity> filterItems(PriceStatisticsRequestDto filterDto);
 
 	List<ItemEntity> findItemsByCategory(Long categoryId);
