@@ -30,4 +30,5 @@ public class UserEntity extends AbstractUser {
 		super(id, email, emailConstraint, emailVerified, enabled, federationLink, firstName, lastName, realmId,
 				username, createdTimestamp, serviceAccountClientLink, notBefore);
 	}
+
 }

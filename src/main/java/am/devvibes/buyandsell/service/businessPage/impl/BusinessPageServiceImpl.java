@@ -69,8 +69,9 @@ public class BusinessPageServiceImpl implements BusinessPageService {
 	@Transactional
 	public BusinessPageEntity updateBusinessPage(BusinessPageUpdateDto businessPageUpdateDto, Long businessPageId) {
 		BusinessPageEntity businessPageEntity = findBusinessPageById(businessPageId);
-		if (!businessPageEntity.getOwner().getId().equals(securityService.getCurrentUserId()))
+		if (!businessPageEntity.getOwner().getId().equals(securityService.getCurrentUserId())) {
 			throw new SomethingWentWrongException(ExceptionConstants.INVALID_ACTION);
+		}
 		return updateBusinessPage(businessPageUpdateDto, businessPageEntity);
 	}
 
@@ -125,8 +126,9 @@ public class BusinessPageServiceImpl implements BusinessPageService {
 		businessPageEntity.setWorkingDaysAndHours(
 				isNull(businessPageUpdateDto.getWorkingDaysAndHours()) ? businessPageEntity.getWorkingDaysAndHours() :
 						businessPageUpdateDto.getWorkingDaysAndHours());
-		businessPageEntity.setSocialMediaLinks(isNull(businessPageUpdateDto.getSocialMediaLinks()) ? businessPageEntity.getSocialMediaLinks() :
-				businessPageUpdateDto.getSocialMediaLinks());
+		businessPageEntity.setSocialMediaLinks(
+				isNull(businessPageUpdateDto.getSocialMediaLinks()) ? businessPageEntity.getSocialMediaLinks() :
+						businessPageUpdateDto.getSocialMediaLinks());
 		return businessPageRepository.save(businessPageEntity);
 	}
 

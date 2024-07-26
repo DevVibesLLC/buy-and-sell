@@ -25,4 +25,5 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Collecti
 
 		return authorities;
 	}
+
 }

@@ -14,7 +14,13 @@ import lombok.RequiredArgsConstructor;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -60,8 +66,7 @@ public class UserController {
 	@GetMapping("/items")
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public ResponseEntity<List<ItemResponseDto>> getUsersItems() {
-		List<ItemResponseDto> itemResponseDtos =
-				itemMapper.mapEntityListToDtoList(itemService.findUsersItems());
+		List<ItemResponseDto> itemResponseDtos = itemMapper.mapEntityListToDtoList(itemService.findUsersItems());
 		return ResponseEntity.ok(itemResponseDtos);
 	}
 

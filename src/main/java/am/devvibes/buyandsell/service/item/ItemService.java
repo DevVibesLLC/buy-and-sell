@@ -431,6 +431,10 @@ public interface ItemService {
 
 	List<ItemEntity> filterItems(AdvertisingAndExhibitionEquipmentFilterDto filterDto);
 
+	List<ItemEntity> filterItems(BusinessesSaleFilterDto filterDto);
+
+	List<ItemEntity> filterItems(BusinessesRentalFilterDto filterDto);
+
 	List<ItemEntity> filterItems(PriceStatisticsRequestDto filterDto);
 
 	List<ItemEntity> findItemsByCategory(Long categoryId);

@@ -1,10 +1,8 @@
 package am.devvibes.buyandsell.service.cart.impl;
 
-import am.devvibes.buyandsell.dto.item.ItemResponseDto;
 import am.devvibes.buyandsell.entity.cart.CartEntity;
 import am.devvibes.buyandsell.entity.item.ItemEntity;
 import am.devvibes.buyandsell.entity.user.UserEntity;
-import am.devvibes.buyandsell.mapper.item.ItemMapper;
 import am.devvibes.buyandsell.repository.cart.CartRepository;
 import am.devvibes.buyandsell.service.cart.CartService;
 import am.devvibes.buyandsell.service.item.ItemService;
@@ -52,7 +50,6 @@ public class CartServiceImpl implements CartService {
 				.stream()
 				.map(CartEntity::getItem)
 				.toList();
-
 	}
 
 }

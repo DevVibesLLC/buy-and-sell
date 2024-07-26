@@ -1,7 +1,6 @@
 package am.devvibes.buyandsell.mapper.notebook.notebookMark;
 
 import am.devvibes.buyandsell.dto.electronic.electronicMark.ElectronicMarkDto;
-import am.devvibes.buyandsell.entity.mobile.MobilePhoneMarkEntity;
 import am.devvibes.buyandsell.entity.notebook.NotebookMarkEntity;
 import org.springframework.stereotype.Service;
 
@@ -12,10 +11,7 @@ public class NotebookMarkMapperImpl implements NotebookMarkMapper {
 
 	@Override
 	public ElectronicMarkDto mapEntityToDto(NotebookMarkEntity notebookMarkEntity) {
-		return ElectronicMarkDto.builder()
-				.id(notebookMarkEntity.getId())
-				.mark(notebookMarkEntity.getName())
-				.build();
+		return ElectronicMarkDto.builder().id(notebookMarkEntity.getId()).mark(notebookMarkEntity.getName()).build();
 	}
 
 	@Override

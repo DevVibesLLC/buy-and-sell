@@ -58,11 +58,12 @@ public class ValueServiceImpl implements ValueService {
 	@Override
 	@Transactional
 	public List<FieldEntity> updateValues(List<FieldEntity> values, List<FieldValuesDto> fieldsValues) {
-		if (isNull(fieldsValues) || fieldsValues.isEmpty())
+		if (isNull(fieldsValues) || fieldsValues.isEmpty()) {
 			return values;
+		}
 
-		Map<Long, FieldEntity> existingValuesMap = values.stream()
-				.collect(Collectors.toMap(value -> value.getFieldName().getId(), value -> value));
+		Map<Long, FieldEntity> existingValuesMap =
+				values.stream().collect(Collectors.toMap(value -> value.getFieldName().getId(), value -> value));
 
 		for (FieldValuesDto dto : fieldsValues) {
 			FieldEntity valueEntity = existingValuesMap.get(dto.getFieldId());
@@ -73,6 +74,5 @@ public class ValueServiceImpl implements ValueService {
 
 		return valueRepository.saveAll(values);
 	}
-
 
 }

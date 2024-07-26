@@ -23,15 +23,15 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PriceHistoryEntity extends BaseEntity {
 
-    @ManyToOne
-    @JoinColumn(name = "item_id", nullable = false)
-    private ItemEntity item;
+	@ManyToOne
+	@JoinColumn(name = "item_id", nullable = false)
+	private ItemEntity item;
 
-    @Column(nullable = false)
-    private BigDecimal price;
+	@Column(nullable = false)
+	private BigDecimal price;
 
-    private LocalDateTime startDate;
+	private LocalDateTime startDate;
 
-    private LocalDateTime endDate;
+	private LocalDateTime endDate;
 
 }

@@ -1,28 +1,18 @@
 package am.devvibes.buyandsell.service.story.impl;
 
 import am.devvibes.buyandsell.dto.story.StoryRequestDto;
-import am.devvibes.buyandsell.dto.story.StoryResponseDto;
 import am.devvibes.buyandsell.entity.story.StoryEntity;
-import am.devvibes.buyandsell.exception.FileIsNullException;
 import am.devvibes.buyandsell.exception.NotFoundException;
-import am.devvibes.buyandsell.exception.UnsupportedExtensionException;
 import am.devvibes.buyandsell.mapper.story.StoryMapper;
 import am.devvibes.buyandsell.repository.story.StoryRepository;
-import am.devvibes.buyandsell.service.s3.S3Service;
-import am.devvibes.buyandsell.service.security.SecurityService;
 import am.devvibes.buyandsell.service.story.StoryService;
 import am.devvibes.buyandsell.util.ExceptionConstants;
 import am.devvibes.buyandsell.util.Status;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Arrays;
 import java.util.List;
-
-import static java.util.Objects.isNull;
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +30,7 @@ public class StoryServiceImpl implements StoryService {
 	@Override
 	public List<StoryEntity> getStoriesByUserId(String userId) {
 		List<StoryEntity> usersStories = storyRepository.findByUserId(userId);
-		return  usersStories.stream().filter(s -> s.getStatus().equals(Status.CREATED)).toList();
+		return usersStories.stream().filter(s -> s.getStatus().equals(Status.CREATED)).toList();
 	}
 
 	@Override

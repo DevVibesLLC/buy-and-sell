@@ -9,11 +9,20 @@ import am.devvibes.buyandsell.entity.location.Location;
 import am.devvibes.buyandsell.entity.priceHistory.PriceHistoryEntity;
 import am.devvibes.buyandsell.entity.user.UserEntity;
 import am.devvibes.buyandsell.util.Status;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
@@ -52,7 +61,7 @@ public class ItemEntity extends BaseEntityWithDates {
 	@JoinColumn(name = "business_page_id")
 	private BusinessPageEntity businessPage;
 
-	@OneToMany( cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "item_id")
 	private List<FieldEntity> fields;
 
@@ -71,5 +80,8 @@ public class ItemEntity extends BaseEntityWithDates {
 	private List<PriceHistoryEntity> priceHistories;
 
 	private Long countOfViews;
+
+	@ElementCollection
+	private List<String> viewedUsersId;
 
 }

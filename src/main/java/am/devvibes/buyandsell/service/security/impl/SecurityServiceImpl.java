@@ -12,8 +12,7 @@ public class SecurityServiceImpl implements SecurityService {
 
 	@Override
 	public String getCurrentUserId() {
-		Jwt principal =
-				(Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Jwt principal = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		return principal.getSubject();
 	}
 

@@ -1,39 +1,27 @@
 package am.devvibes.buyandsell.util;
 
-import am.devvibes.buyandsell.entity.mobile.MobilePhoneMarkEntity;
 import lombok.Getter;
 
 @Getter
 public enum CategoryEnum {
 
-	CARS("Cars"),
-	TRUCKS("Trucks"),
-	BUSES("Buses"),
+	CARS("Cars"), TRUCKS("Trucks"), BUSES("Buses"),
 
-	APARTMENTS_BUY("Apartments Buy"),
-	APARTMENTS_RENTAL("Apartments Rental"),
+	APARTMENTS_BUY("Apartments Buy"), APARTMENTS_RENTAL("Apartments Rental"),
 
-	HOUSES_BUY("Houses Buy"),
-	HOUSES_RENTAL("Houses Rental"),
+	HOUSES_BUY("Houses Buy"), HOUSES_RENTAL("Houses Rental"),
 
-	COMMERCIALS_BUY("Commercials Buy"),
-	COMMERCIALS_RENTAL("Commercials Rental"),
+	COMMERCIALS_BUY("Commercials Buy"), COMMERCIALS_RENTAL("Commercials Rental"),
 
-	GARAGES_AND_PARKING_BUY("Garages and Parking Buy"),
-	GARAGES_AND_PARKING_RENTAL("Garages and Parking Rental"),
+	GARAGES_AND_PARKING_BUY("Garages and Parking Buy"), GARAGES_AND_PARKING_RENTAL("Garages and Parking Rental"),
 
-	LANDS_BUY("Lands Buy"),
-	LANDS_RENTAL("Lands Rental"),
+	LANDS_BUY("Lands Buy"), LANDS_RENTAL("Lands Rental"),
 
-	NEW_CONSTRUCTION_APARTMENTS("New Construction Apartments"),
-	NEW_CONSTRUCTION_HOUSES("New Construction Houses"),
+	NEW_CONSTRUCTION_APARTMENTS("New Construction Apartments"), NEW_CONSTRUCTION_HOUSES("New Construction Houses"),
 
-	APARTMENTS_DAILY_RENTAL("Apartments Daily Rental"),
-	HOUSES_DAILY_RENTAL("Houses Daily Rental"),
+	APARTMENTS_DAILY_RENTAL("Apartments Daily Rental"), HOUSES_DAILY_RENTAL("Houses Daily Rental"),
 
-	MOBILE_PHONES("Mobile Phones"),
-	NOTEBOOKS("Notebooks"),
-	COMPUTERS("Computers"),
+	MOBILE_PHONES("Mobile Phones"), NOTEBOOKS("Notebooks"), COMPUTERS("Computers"),
 
 	SMART_WATCHES("Smart Watches"),
 
@@ -389,7 +377,9 @@ public enum CategoryEnum {
 
 	ATTRACTIONS_AND_VENDING_MACHINES("Attractions and Vending Machines"),
 
-	ADVERTISING_AND_EXHIBITION_EQUIPMENT("Advertising and Exhibition Equipment");
+	ADVERTISING_AND_EXHIBITION_EQUIPMENT("Advertising and Exhibition Equipment"),
+
+	BUSINESSES_SALE("Businesses Sale"), BUSINESSES_RENTAL("Businesses Rental");
 
 	private final String name;
 

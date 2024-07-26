@@ -3,7 +3,6 @@ package am.devvibes.buyandsell.mapper.story;
 import am.devvibes.buyandsell.dto.story.StoryRequestDto;
 import am.devvibes.buyandsell.dto.story.StoryResponseDto;
 import am.devvibes.buyandsell.entity.story.StoryEntity;
-import am.devvibes.buyandsell.service.s3.S3Service;
 import am.devvibes.buyandsell.service.s3.impl.S3ServiceImpl;
 import am.devvibes.buyandsell.service.security.SecurityService;
 import am.devvibes.buyandsell.util.Status;
@@ -14,7 +13,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class StoryMapperImpl implements StoryMapper{
+public class StoryMapperImpl implements StoryMapper {
 
 	private final S3ServiceImpl s3Service;
 	private final SecurityService securityService;

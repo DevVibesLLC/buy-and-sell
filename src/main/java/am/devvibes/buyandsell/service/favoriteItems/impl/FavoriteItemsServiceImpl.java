@@ -2,7 +2,6 @@ package am.devvibes.buyandsell.service.favoriteItems.impl;
 
 import am.devvibes.buyandsell.entity.favoriteItems.FavoriteItemsEntity;
 import am.devvibes.buyandsell.entity.item.ItemEntity;
-import am.devvibes.buyandsell.entity.user.UserEntity;
 import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.exception.SomethingWentWrongException;
 import am.devvibes.buyandsell.repository.favoriteItems.FavoriteItemsRepository;
@@ -35,7 +34,10 @@ public class FavoriteItemsServiceImpl implements FavoriteItemsService {
 
 	@Override
 	public List<String> getUsersIdsByItemId(Long itemId) {
-		return favoriteItemsRepository.findByItemId(itemId).stream().map(FavoriteItemsEntity::getUserId).toList();
+		return favoriteItemsRepository.findByItemId(itemId)
+				.stream()
+				.map(FavoriteItemsEntity::getUserId)
+				.toList();
 	}
 
 	@Override
@@ -54,10 +56,15 @@ public class FavoriteItemsServiceImpl implements FavoriteItemsService {
 			throw new NotFoundException(ExceptionConstants.ITEM_NOT_FOUND);
 		}
 
-		if (favoriteItemsRepository.findByUserIdAndItemId(userId, itemId) != null)
+		if (favoriteItemsRepository.findByUserIdAndItemId(userId, itemId) != null) {
 			throw new SomethingWentWrongException(ExceptionConstants.ITEM_ALREADY_EXISTS_IN_FAVORITES);
+		}
 
-		FavoriteItemsEntity favoriteItem = FavoriteItemsEntity.builder().userId(userId).itemId(itemId).build();
+		FavoriteItemsEntity favoriteItem = FavoriteItemsEntity
+				.builder()
+				.userId(userId)
+				.itemId(itemId)
+				.build();
 		favoriteItemsRepository.save(favoriteItem);
 
 		return getUsersAllFavoriteItems(userId);
@@ -73,7 +80,10 @@ public class FavoriteItemsServiceImpl implements FavoriteItemsService {
 		favoriteItemsRepository.delete(favoriteItemsRepository.findByUserIdAndItemId(userId, itemId));
 
 		List<Long> idsList =
-				favoriteItemsRepository.findByUserId(userId).stream().map(FavoriteItemsEntity::getItemId).toList();
+				favoriteItemsRepository.findByUserId(userId)
+						.stream()
+						.map(FavoriteItemsEntity::getItemId)
+						.toList();
 
 		return itemRepository.findAllById(idsList);
 	}

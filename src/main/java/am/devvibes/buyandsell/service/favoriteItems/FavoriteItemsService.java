@@ -1,8 +1,6 @@
 package am.devvibes.buyandsell.service.favoriteItems;
 
-import am.devvibes.buyandsell.entity.favoriteItems.FavoriteItemsEntity;
 import am.devvibes.buyandsell.entity.item.ItemEntity;
-import am.devvibes.buyandsell.entity.user.UserEntity;
 
 import java.util.List;
 

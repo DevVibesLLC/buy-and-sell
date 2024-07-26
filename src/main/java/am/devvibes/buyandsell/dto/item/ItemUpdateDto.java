@@ -2,10 +2,6 @@ package am.devvibes.buyandsell.dto.item;
 
 import am.devvibes.buyandsell.dto.value.FieldValuesDto;
 import am.devvibes.buyandsell.util.CurrencyEnum;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,4 +29,5 @@ public class ItemUpdateDto {
 	private String address;
 
 	private Long cityId;
+
 }

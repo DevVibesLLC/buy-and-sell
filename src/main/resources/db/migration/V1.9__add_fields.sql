@@ -985,5 +985,11 @@ VALUES
 (561, 'Condition', false, true, null, 226),
 
 /*ADVERTISING_AND_EXHIBITION_EQUIPMENT*/
-(562, 'Condition', false, true, null, 227)
+(562, 'Condition', false, true, null, 227),
+
+/*BUSINESSES_SALE*/
+(563, 'Type', false, true, null, 228),
+
+/*BUSINESSES_RENTAL*/
+(564, 'Type', false, true, null, 229)
 ON CONFLICT (id) DO NOTHING;

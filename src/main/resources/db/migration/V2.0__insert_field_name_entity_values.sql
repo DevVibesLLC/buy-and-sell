@@ -4744,4 +4744,28 @@ VALUES
 (561, 'Used'),
 
 (562, 'New'),
-(562, 'Used')
+(562, 'Used'),
+
+(563, 'Service Sector'),
+(563, 'Shops'),
+(563, 'Food and Beverage'),
+(563, 'Transportation and Car Business'),
+(563, 'IT'),
+(563, 'Beauty and Health'),
+(563, 'Hospitality'),
+(563, 'Entertainment'),
+(563, 'Construction and Repair'),
+(563, 'Manufacturing and Production'),
+(563, 'Other'),
+
+(564, 'Service Sector'),
+(564, 'Shops'),
+(564, 'Food and Beverage'),
+(564, 'Transportation and Car Business'),
+(564, 'IT'),
+(564, 'Beauty and Health'),
+(564, 'Hospitality'),
+(564, 'Entertainment'),
+(564, 'Construction and Repair'),
+(564, 'Manufacturing and Production'),
+(564, 'Other')

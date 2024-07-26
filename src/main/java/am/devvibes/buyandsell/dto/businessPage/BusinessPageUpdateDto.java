@@ -1,15 +1,6 @@
 package am.devvibes.buyandsell.dto.businessPage;
 
 import am.devvibes.buyandsell.entity.category.CategoryEntity;
-import am.devvibes.buyandsell.entity.item.ItemEntity;
-import am.devvibes.buyandsell.entity.location.Location;
-import am.devvibes.buyandsell.entity.user.UserEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

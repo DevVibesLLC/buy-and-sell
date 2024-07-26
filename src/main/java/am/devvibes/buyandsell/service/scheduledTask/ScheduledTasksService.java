@@ -17,9 +17,9 @@ public class ScheduledTasksService {
     private final StoryRepository storyRepository;
     private final StoryService storyService;
 
-    @Scheduled(fixedRate = 30000)
+    @Scheduled(fixedRate = 86400000)
     public void deleteOldRecords() {
-        ZonedDateTime threshold = ZonedDateTime.now().minusMinutes(2);
+        ZonedDateTime threshold = ZonedDateTime.now().minusDays(1);
         List<StoryEntity> oldRecords = storyRepository.findByCreatedAtBefore(threshold);
         
         oldRecords.forEach(s -> storyService.deleteStory(s.getId()));

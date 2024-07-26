@@ -1,6 +1,11 @@
 package am.devvibes.buyandsell.entity.base;
 
-import jakarta.persistence.*;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,7 +31,7 @@ public abstract class BaseEntityWithDates {
 
 	@PreUpdate
 	protected void onUpdate() {
-        ZonedDateTime.now();
+		ZonedDateTime.now();
 	}
 
 }

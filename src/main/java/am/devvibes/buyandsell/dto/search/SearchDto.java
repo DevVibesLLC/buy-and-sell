@@ -14,4 +14,5 @@ public class SearchDto {
 
 	@NotBlank
 	private String stroke;
+
 }

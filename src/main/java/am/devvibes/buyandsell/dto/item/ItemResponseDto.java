@@ -5,7 +5,11 @@ import am.devvibes.buyandsell.dto.priceHistory.PriceHistoryDto;
 import am.devvibes.buyandsell.dto.value.FieldValuesDto;
 import am.devvibes.buyandsell.entity.location.Location;
 import am.devvibes.buyandsell.util.Status;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -39,6 +43,8 @@ public class ItemResponseDto {
 	private List<String> phoneNumbers;
 
 	private Long countOfViews;
+
+	private Boolean isViewed;
 
 	private List<PriceHistoryDto> priceHistory;
 

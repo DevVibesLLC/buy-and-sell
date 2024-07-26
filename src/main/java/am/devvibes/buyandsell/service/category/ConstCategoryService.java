@@ -1,9 +1,5 @@
 package am.devvibes.buyandsell.service.category;
 
-import am.devvibes.buyandsell.dto.electronic.electronicMark.ElectronicMarkDto;
-import am.devvibes.buyandsell.dto.electronic.electronicModel.ElectronicModelDto;
-import am.devvibes.buyandsell.dto.vehicle.vehicleMark.VehicleMarkDto;
-import am.devvibes.buyandsell.dto.vehicle.vehicleModel.VehicleModelDto;
 import am.devvibes.buyandsell.entity.auto.AutoMarkEntity;
 import am.devvibes.buyandsell.entity.auto.AutoModelEntity;
 import am.devvibes.buyandsell.entity.bus.BusMarkEntity;

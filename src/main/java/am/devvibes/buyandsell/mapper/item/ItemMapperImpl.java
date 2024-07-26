@@ -18,6 +18,7 @@ import am.devvibes.buyandsell.util.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -54,6 +55,7 @@ public class ItemMapperImpl implements ItemMapper {
 				.fields(valueService.saveAllValues(itemRequestDto.getFieldsValue()))
 				.phoneNumbers(itemRequestDto.getPhoneNumbers())
 				.countOfViews(0L)
+				.viewedUsersId(new ArrayList<>())
 				.status(Status.CREATED)
 				.build();
 	}
@@ -79,6 +81,7 @@ public class ItemMapperImpl implements ItemMapper {
 				.fields(valueService.saveAllValues(itemRequestDto.getFieldsValue()))
 				.phoneNumbers(itemRequestDto.getPhoneNumbers())
 				.countOfViews(0L)
+				.viewedUsersId(new ArrayList<>())
 				.status(Status.CREATED)
 				.build();
 	}
@@ -99,6 +102,7 @@ public class ItemMapperImpl implements ItemMapper {
 				.priceHistory(priceHistoryMapper.mapEntityListToDtoList(itemEntity.getPriceHistories()))
 				.imgUrls(s3Service.getImagesPresignedDownloadUrls(itemEntity.getImgKeys()))
 				.phoneNumbers(itemEntity.getPhoneNumbers())
+				.isViewed(itemEntity.getViewedUsersId().contains(securityService.getCurrentUserId()))
 				.countOfViews(itemEntity.getCountOfViews())
 				.build();
 	}

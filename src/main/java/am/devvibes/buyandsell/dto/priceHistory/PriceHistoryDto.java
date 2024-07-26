@@ -1,6 +1,5 @@
 package am.devvibes.buyandsell.dto.priceHistory;
 
-import am.devvibes.buyandsell.entity.item.ItemEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

@@ -75,10 +75,10 @@ app:
       enable: true
 
 keycloak:
-  realm: buy-and-sell
+  realm: ${KEYCLOAK_REALM}
   domain: localhost:9081
-  adminClientId: buy-and-sell-client-be
-  adminClientSecret: TOeDX10R7b5k8JY7Kf5EsbRhmOrzWaMH
+  adminClientId: ${KEYCLOAK_ADMIN_CLIENT_ID}
+  adminClientSecret: ${KEYCLOAK_ADMIN_CLIENT_SECRET}
   urls:
     auth: http://${keycloak.domain}
 

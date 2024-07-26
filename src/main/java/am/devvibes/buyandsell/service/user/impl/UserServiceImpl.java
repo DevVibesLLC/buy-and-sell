@@ -1,7 +1,6 @@
 package am.devvibes.buyandsell.service.user.impl;
 
 import am.devvibes.buyandsell.dto.user.UserRequestDto;
-import am.devvibes.buyandsell.dto.user.UserResponseDto;
 import am.devvibes.buyandsell.entity.user.UserEntity;
 import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.exception.SomethingWentWrongException;
@@ -9,7 +8,6 @@ import am.devvibes.buyandsell.mapper.user.UserMapper;
 import am.devvibes.buyandsell.repository.item.ItemRepository;
 import am.devvibes.buyandsell.repository.user.UserRepository;
 import am.devvibes.buyandsell.service.favoriteItems.FavoriteItemsService;
-import am.devvibes.buyandsell.service.item.ItemService;
 import am.devvibes.buyandsell.service.security.SecurityService;
 import am.devvibes.buyandsell.service.user.UserService;
 import am.devvibes.buyandsell.util.ExceptionConstants;
