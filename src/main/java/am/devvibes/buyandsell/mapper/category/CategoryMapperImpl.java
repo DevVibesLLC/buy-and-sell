@@ -45,7 +45,9 @@ public class CategoryMapperImpl implements CategoryMapper {
 	private List<FieldDto> mapFieldsToDto(List<FieldNameEntity> fields) {
 		return fields.stream()
 				.map(fieldEntity -> FieldDto.builder()
-						.fieldName(fieldEntity.getFieldName())
+						.fieldName_eng(fieldEntity.getFieldName_eng())
+						.fieldName_ru(fieldEntity.getFieldName_ru())
+						.fieldName_hy(fieldEntity.getFieldName_hy())
 						.value(fieldEntity.getValue())
 						.measurement(Objects.nonNull(fieldEntity.getMeasurement()) ?
 								fieldEntity.getMeasurement().getSymbol() : null)

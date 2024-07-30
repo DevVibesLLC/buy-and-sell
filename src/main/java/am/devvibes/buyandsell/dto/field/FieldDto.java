@@ -15,7 +15,9 @@ import java.util.List;
 @NoArgsConstructor
 public class FieldDto {
 
-	private String fieldName;
+	private String fieldName_eng;
+	private String fieldName_ru;
+	private String fieldName_hy;
 	private List<String> value;
 	private String measurement;
 

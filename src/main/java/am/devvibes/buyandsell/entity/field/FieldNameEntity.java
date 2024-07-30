@@ -27,7 +27,13 @@ import java.util.List;
 public class FieldNameEntity extends BaseEntity implements Serializable {
 
 	@Column(nullable = false)
-	private String fieldName;
+	private String fieldName_eng;
+
+	@Column(nullable = false)
+	private String fieldName_ru;
+
+	@Column(nullable = false)
+	private String fieldName_hy;
 
 	private boolean isRequired;
 

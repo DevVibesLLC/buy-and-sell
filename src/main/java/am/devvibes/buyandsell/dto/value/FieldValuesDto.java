@@ -19,7 +19,13 @@ public class FieldValuesDto {
 	private Long fieldId;
 
 	@NotBlank
-	private String fieldName;
+	private String fieldName_eng;
+
+	@NotBlank
+	private String fieldName_ru;
+
+	@NotBlank
+	private String fieldName_hy;
 
 	@NotBlank
 	private String fieldValue;
