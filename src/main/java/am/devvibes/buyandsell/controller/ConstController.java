@@ -122,10 +122,10 @@ public class ConstController {
 		return ResponseEntity.ok(motorcycleMarkMapper.mapEntityListToDtoList(motorcycleMarkEntities));
 	}
 
-	@GetMapping("field/{fieldId}")
+	/*@GetMapping("field/{fieldId}")
 	@Operation(summary = "Get fields by field name id")
 	public ResponseEntity<List<String>> getFieldValues(@PathVariable Long fieldId) {
 		return ResponseEntity.ok(constCategoryService.findByFieldNameId(fieldId));
-	}
+	}*/
 
 }

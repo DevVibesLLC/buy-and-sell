@@ -1,24 +1,22 @@
 package am.devvibes.buyandsell.dto.field;
 
+import am.devvibes.buyandsell.entity.base.BaseEntity;
+import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
-@Getter
 @Setter
-@Builder
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class FieldDto {
+@Builder
+public class FieldValueDto{
 
-	private String fieldName_eng;
-	private String fieldName_ru;
-	private String fieldName_hy;
-	private List<FieldValueDto> value;
-	private String measurement;
+	private String value_eng;
+	private String value_ru;
+	private String value_hy;
 
 }

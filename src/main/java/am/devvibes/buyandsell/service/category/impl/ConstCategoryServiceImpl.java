@@ -5,6 +5,7 @@ import am.devvibes.buyandsell.entity.auto.AutoModelEntity;
 import am.devvibes.buyandsell.entity.bus.BusMarkEntity;
 import am.devvibes.buyandsell.entity.bus.BusModelEntity;
 import am.devvibes.buyandsell.entity.field.FieldNameEntity;
+import am.devvibes.buyandsell.entity.field.FieldValueEntity;
 import am.devvibes.buyandsell.entity.mobile.MobilePhoneMarkEntity;
 import am.devvibes.buyandsell.entity.mobile.MobilePhoneModelEntity;
 import am.devvibes.buyandsell.entity.motorcycle.MotorcycleMarkEntity;
@@ -112,10 +113,10 @@ public class ConstCategoryServiceImpl implements ConstCategoryService {
 	}
 
 	@Override
-	public List<String> findByFieldNameId(Long id) {
+	public List<FieldValueEntity> findByFieldNameId(Long id) {
 		FieldNameEntity fieldNameEntity = fieldRepository.findById(id)
 				.orElseThrow(() -> new NotFoundException(ExceptionConstants.FIELD_NAME_NOT_FOUND));
-		return fieldNameEntity.getValue();
+		return fieldNameEntity.getValues();
 	}
 
 }

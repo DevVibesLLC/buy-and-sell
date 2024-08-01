@@ -16712,7 +16712,7 @@ public class ItemServiceImpl implements ItemService {
 
 		Predicate categoryPredicate =
 				criteriaBuilder.equal(itemRoot.get(FilterConstants.category).get(FilterConstants.name),
-						CategoryEnum.CONCRETE_МIXERS);
+						CategoryEnum.CONCRETE_MIXERS);
 		predicates.add(categoryPredicate);
 
 		if (nonNull(filterDto.getStartPrice()) && !filterDto.getStartPrice().isEmpty()) {

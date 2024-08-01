@@ -3,9 +3,11 @@ package am.devvibes.buyandsell.mapper.category;
 import am.devvibes.buyandsell.dto.category.CategoryDto;
 import am.devvibes.buyandsell.dto.description.DescriptionDto;
 import am.devvibes.buyandsell.dto.field.FieldDto;
+import am.devvibes.buyandsell.dto.field.FieldValueDto;
 import am.devvibes.buyandsell.entity.category.CategoryEntity;
 import am.devvibes.buyandsell.entity.description.DescriptionEntity;
 import am.devvibes.buyandsell.entity.field.FieldNameEntity;
+import am.devvibes.buyandsell.entity.field.FieldValueEntity;
 import am.devvibes.buyandsell.service.measurement.MeasurementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -48,9 +50,19 @@ public class CategoryMapperImpl implements CategoryMapper {
 						.fieldName_eng(fieldEntity.getFieldName_eng())
 						.fieldName_ru(fieldEntity.getFieldName_ru())
 						.fieldName_hy(fieldEntity.getFieldName_hy())
-						.value(fieldEntity.getValue())
+						.value(mapFieldValueToDto(fieldEntity.getValues()))
 						.measurement(Objects.nonNull(fieldEntity.getMeasurement()) ?
 								fieldEntity.getMeasurement().getSymbol() : null)
+						.build())
+				.toList();
+	}
+
+	private List<FieldValueDto> mapFieldValueToDto(List<FieldValueEntity> fieldValues) {
+		return fieldValues.stream()
+				.map(fieldValue -> FieldValueDto.builder()
+						.value_eng(fieldValue.getValue_eng())
+						.value_ru(fieldValue.getValue_ru())
+						.value_hy(fieldValue.getValue_hy())
 						.build())
 				.toList();
 	}
