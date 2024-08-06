@@ -27,6 +27,12 @@ public class BusinessPageRequestDto {
 	private String description;
 
 	@NotNull
+	private Double lat;
+
+	@NotNull
+	private Double lon;
+
+	@NotNull
 	private Long cityId;
 
 	@NotBlank

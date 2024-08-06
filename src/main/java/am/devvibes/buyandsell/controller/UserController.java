@@ -10,6 +10,7 @@ import am.devvibes.buyandsell.service.favoriteItems.FavoriteItemsService;
 import am.devvibes.buyandsell.service.item.ItemService;
 import am.devvibes.buyandsell.service.user.impl.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.http.ResponseEntity;
@@ -38,12 +39,14 @@ public class UserController {
 
 	@GetMapping("/{id}")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@Operation(summary = "Get User by Id")
 	public ResponseEntity<UserResponseDto> getUserById(@PathVariable String id) {
 		UserResponseDto userResponseDto = userMapper.mapEntityToDto(userService.findUserById(id));
 		return ResponseEntity.ok(userResponseDto);
 	}
 
 	@GetMapping("/profile")
+	@Operation(summary = "Get User by Id for User Profile")
 	public ResponseEntity<UserResponseDto> getUserByIdForUserProfile() {
 		UserEntity userEntity = userService.findUserForUserProfile();
 		return ResponseEntity.ok(userMapper.mapEntityToDto(userEntity));
@@ -51,6 +54,7 @@ public class UserController {
 
 	@GetMapping
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@Operation(summary = "Get All Users")
 	public ResponseEntity<List<UserResponseDto>> getAllUsers() {
 		List<UserRepresentation> userRepresentations = userService.findAllUsers();
 		return ResponseEntity.ok(userMapper.mapRepresentationListToDtoList(userRepresentations));
@@ -58,6 +62,7 @@ public class UserController {
 
 	@DeleteMapping("{id}")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@Operation(summary = "Delete User by Id")
 	public ResponseEntity<Void> deleteUser(@PathVariable String id) {
 		userService.deleteUser(id);
 		return ResponseEntity.ok().build();
@@ -65,6 +70,7 @@ public class UserController {
 
 	@GetMapping("/items")
 	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Get User Items")
 	public ResponseEntity<List<ItemResponseDto>> getUsersItems() {
 		List<ItemResponseDto> itemResponseDtos = itemMapper.mapEntityListToDtoList(itemService.findUsersItems());
 		return ResponseEntity.ok(itemResponseDtos);
@@ -72,6 +78,7 @@ public class UserController {
 
 	@GetMapping("/{id}/favorites")
 	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Get Users Favorite Items")
 	public ResponseEntity<List<ItemResponseDto>> getUsersFavoriteItems(@PathVariable String id) {
 		List<ItemResponseDto> itemResponseDtos =
 				itemMapper.mapEntityListToDtoList(favoriteItemsService.getUsersAllFavoriteItems(id));
@@ -80,6 +87,7 @@ public class UserController {
 
 	@PostMapping("/changePassword")
 	@PreAuthorize("hasRole('ROLE_USER')")
+	@Operation(summary = "Change Password")
 	public ResponseEntity<UserResponseDto> changePassword(@RequestBody UserChangePasswordDto userChangePasswordDto) {
 		UserRepresentation userRepresentation =
 				userService.changePassword(userChangePasswordDto.getEmail(), userChangePasswordDto.getNewPassword(),

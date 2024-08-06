@@ -2,6 +2,7 @@ package am.devvibes.buyandsell.controller;
 
 import am.devvibes.buyandsell.entity.measurement.MeasurementEntity;
 import am.devvibes.buyandsell.service.measurement.MeasurementService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,7 @@ public class MeasurementController {
 
 	@PostMapping
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@Operation(summary = "Create Measurement")
 	public ResponseEntity<MeasurementEntity> createMeasurement(@PathVariable @NotBlank String symbol,
 			@NotBlank String category) {
 		return ResponseEntity.ok(measurementService.addMeasurement(symbol, category));
@@ -31,18 +33,21 @@ public class MeasurementController {
 
 	@GetMapping("/{id}")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@Operation(summary = "Get Measurement by Id")
 	public ResponseEntity<MeasurementEntity> getMeasurementById(@PathVariable Long id) {
 		return ResponseEntity.ok(measurementService.findMeasurementById(id));
 	}
 
 	@GetMapping
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@Operation(summary = "Get All Measurements")
 	public ResponseEntity<List<MeasurementEntity>> getAllMeasurement() {
 		return ResponseEntity.ok(measurementService.findAllMeasurements());
 	}
 
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@Operation(summary = "Delete Measurement by Id")
 	public ResponseEntity<List<MeasurementEntity>> deleteMeasurementById(@PathVariable Long id) {
 		measurementService.deleteMeasurementById(id);
 		return ResponseEntity.ok().build();

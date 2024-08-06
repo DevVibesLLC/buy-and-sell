@@ -48,6 +48,8 @@ public class ItemMapperImpl implements ItemMapper {
 						.country(LocationEnum.getCountry(itemRequestDto.getCityId()))
 						.region(LocationEnum.getRegion(itemRequestDto.getCityId()))
 						.city(LocationEnum.getCity(itemRequestDto.getCityId()))
+						.lat(itemRequestDto.getLat())
+						.lon(itemRequestDto.getLon())
 						.address(itemRequestDto.getAddress())
 						.build())
 				.imgKeys(itemRequestDto.getImgKeys())
@@ -61,7 +63,8 @@ public class ItemMapperImpl implements ItemMapper {
 	}
 
 	@Override
-	public ItemEntity mapDtoToEntityFromBusiness(ItemRequestDto itemRequestDto, BusinessPageEntity businessPageEntity) {
+	public ItemEntity mapDtoToEntityFromBusiness(ItemRequestDto itemRequestDto,
+			BusinessPageEntity businessPageEntity) {
 		return ItemEntity.builder()
 				.title(itemRequestDto.getTitle())
 				.description(itemRequestDto.getDescription())
@@ -74,6 +77,8 @@ public class ItemMapperImpl implements ItemMapper {
 						.country(LocationEnum.getCountry(itemRequestDto.getCityId()))
 						.region(LocationEnum.getRegion(itemRequestDto.getCityId()))
 						.city(LocationEnum.getCity(itemRequestDto.getCityId()))
+						.lat(itemRequestDto.getLat())
+						.lon(itemRequestDto.getLon())
 						.address(itemRequestDto.getAddress())
 						.build())
 				.imgKeys(itemRequestDto.getImgKeys())
@@ -109,8 +114,9 @@ public class ItemMapperImpl implements ItemMapper {
 
 	@Override
 	public List<ItemResponseDto> mapEntityListToDtoList(List<ItemEntity> itemEntityList) {
-		if (itemEntityList != null && !itemEntityList.isEmpty())
+		if (itemEntityList != null && !itemEntityList.isEmpty()) {
 			return itemEntityList.stream().map(this::mapEntityToDto).toList();
+		}
 		return null;
 	}
 

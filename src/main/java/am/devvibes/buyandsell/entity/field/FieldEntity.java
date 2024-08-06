@@ -22,7 +22,13 @@ import java.io.Serializable;
 public class FieldEntity extends BaseEntity implements Serializable {
 
 	@Column(nullable = false)
-	private String fieldValue;
+	private String fieldValue_eng;
+
+	@Column(nullable = false)
+	private String fieldValue_ru;
+
+	@Column(nullable = false)
+	private String fieldValue_hy;
 
 	@ManyToOne
 	@JoinColumn(nullable = false)

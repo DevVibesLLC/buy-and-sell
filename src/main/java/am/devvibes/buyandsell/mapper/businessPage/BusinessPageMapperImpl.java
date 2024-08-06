@@ -57,6 +57,8 @@ public class BusinessPageMapperImpl implements BusinessPageMapper{
 						.country(LocationEnum.getCountry(businessPageRequestDto.getCityId()))
 						.region(LocationEnum.getRegion(businessPageRequestDto.getCityId()))
 						.city(LocationEnum.getCity(businessPageRequestDto.getCityId()))
+						.lat(businessPageRequestDto.getLat())
+						.lon(businessPageRequestDto.getLon())
 						.address(businessPageRequestDto.getAddress())
 						.build())
 				.category(categoryService.findCategoryEntityOrElseThrow(categoryId))

@@ -68,7 +68,9 @@ public class ValueServiceImpl implements ValueService {
 		for (FieldValuesDto dto : fieldsValues) {
 			FieldEntity valueEntity = existingValuesMap.get(dto.getFieldId());
 			if (valueEntity != null) {
-				valueEntity.setFieldValue(dto.getFieldValue());
+				valueEntity.setFieldValue_eng(dto.getFieldValue_eng());
+				valueEntity.setFieldValue_ru(dto.getFieldValue_ru());
+				valueEntity.setFieldValue_hy(dto.getFieldValue_hy());
 			}
 		}
 

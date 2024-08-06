@@ -43,6 +43,12 @@ public class ItemRequestDto {
 	private Long cityId;
 
 	@NotNull
+	private Double lat;
+
+	@NotNull
+	private Double lon;
+
+	@NotNull
 	private List<String> phoneNumbers;
 
 }

@@ -29,4 +29,10 @@ public class Location {
 	@Column(nullable = false)
 	private String address;
 
+	@Column(nullable = false)
+	private Double lat;
+
+	@Column(nullable = false)
+	private Double lon;
+
 }

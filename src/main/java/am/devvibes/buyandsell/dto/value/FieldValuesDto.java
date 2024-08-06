@@ -28,6 +28,12 @@ public class FieldValuesDto {
 	private String fieldName_hy;
 
 	@NotBlank
-	private String fieldValue;
+	private String fieldValue_eng;
+
+	@NotBlank
+	private String fieldValue_ru;
+
+	@NotBlank
+	private String fieldValue_hy;
 
 }
