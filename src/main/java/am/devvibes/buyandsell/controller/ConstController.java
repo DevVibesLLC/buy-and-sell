@@ -1,7 +1,10 @@
 package am.devvibes.buyandsell.controller;
 
+import am.devvibes.buyandsell.dto.city.CityDto;
+import am.devvibes.buyandsell.dto.country.CountryDto;
 import am.devvibes.buyandsell.dto.electronic.electronicMark.ElectronicMarkDto;
 import am.devvibes.buyandsell.dto.electronic.electronicModel.ElectronicModelDto;
+import am.devvibes.buyandsell.dto.region.RegionDto;
 import am.devvibes.buyandsell.dto.vehicle.vehicleMark.VehicleMarkDto;
 import am.devvibes.buyandsell.dto.vehicle.vehicleModel.VehicleModelDto;
 import am.devvibes.buyandsell.entity.auto.AutoMarkEntity;
@@ -18,6 +21,7 @@ import am.devvibes.buyandsell.mapper.auto.autoMark.AutoMarkMapper;
 import am.devvibes.buyandsell.mapper.auto.autoModel.AutoModelMapper;
 import am.devvibes.buyandsell.mapper.bus.busMark.BusMarkMapper;
 import am.devvibes.buyandsell.mapper.bus.busModel.BusModelMapper;
+import am.devvibes.buyandsell.mapper.location.LocationMapper;
 import am.devvibes.buyandsell.mapper.mobile.mobileMark.MobileMarkMapper;
 import am.devvibes.buyandsell.mapper.mobile.mobileModel.MobileModelMapper;
 import am.devvibes.buyandsell.mapper.motorcycle.motorcycleMark.MotorcycleMarkMapper;
@@ -25,7 +29,7 @@ import am.devvibes.buyandsell.mapper.notebook.notebookMark.NotebookMarkMapper;
 import am.devvibes.buyandsell.mapper.truck.truckMark.TruckMarkMapper;
 import am.devvibes.buyandsell.mapper.truck.truckModel.TruckModelMapper;
 import am.devvibes.buyandsell.service.category.ConstCategoryService;
-import am.devvibes.buyandsell.util.LocationEnum;
+import am.devvibes.buyandsell.service.location.LocationService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +38,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -43,6 +46,7 @@ import java.util.List;
 public class ConstController {
 
 	private final ConstCategoryService constCategoryService;
+	private final LocationService locationService;
 	private final AutoMarkMapper autoMarkMapper;
 	private final AutoModelMapper autoModelMapper;
 	private final TruckMarkMapper truckMarkMapper;
@@ -53,6 +57,7 @@ public class ConstController {
 	private final MobileMarkMapper mobileMarkMapper;
 	private final MobileModelMapper mobileModelMapper;
 	private final NotebookMarkMapper notebookMarkMapper;
+	private final LocationMapper locationMapper;
 
 	@GetMapping("/category/auto/marks")
 	@Operation(summary = "Get all auto marks by category id")
@@ -124,16 +129,22 @@ public class ConstController {
 		return ResponseEntity.ok(motorcycleMarkMapper.mapEntityListToDtoList(motorcycleMarkEntities));
 	}
 
-	@GetMapping("/locations")
-	@Operation(summary = "Get all locations")
-	public ResponseEntity<List<LocationEnum>> getAllLocations() {
-		return ResponseEntity.ok(Arrays.stream(LocationEnum.values()).toList());
+	@GetMapping("/countries")
+	@Operation(summary = "Get all Countries")
+	public ResponseEntity<List<CountryDto>> getAllCountries() {
+		return ResponseEntity.ok(locationMapper.mapCountryEntityListToDtoList(locationService.getAllCountries()));
 	}
 
-	/*@GetMapping("field/{fieldId}")
-	@Operation(summary = "Get fields by field name id")
-	public ResponseEntity<List<String>> getFieldValues(@PathVariable Long fieldId) {
-		return ResponseEntity.ok(constCategoryService.findByFieldNameId(fieldId));
-	}*/
+	@GetMapping("/{countryId}/regions")
+	@Operation(summary = "Get all Countries")
+	public ResponseEntity<List<RegionDto>> getRegionByCountryId(@PathVariable Long countryId) {
+		return ResponseEntity.ok(locationMapper.mapRegionEntityListToDtoList(locationService.getRegionsByCountry(countryId)));
+	}
+
+	@GetMapping("/{regionId}/cities")
+	@Operation(summary = "Get all Countries")
+	public ResponseEntity<List<CityDto>> getCityByRegionId(@PathVariable Long regionId) {
+		return ResponseEntity.ok(locationMapper.mapCityEntityListToDtoList(locationService.getCitiesByRegion(regionId)));
+	}
 
 }

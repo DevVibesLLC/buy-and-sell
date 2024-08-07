@@ -23,6 +23,10 @@ public class BusinessPageUpdateDto {
 
 	private String address;
 
+	private Double lat;
+
+	private Double lon;
+
 	private CategoryEntity category;
 
 	private String email;

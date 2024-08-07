@@ -9,11 +9,11 @@ import am.devvibes.buyandsell.entity.location.Location;
 import am.devvibes.buyandsell.mapper.priceHistory.PriceHistoryMapper;
 import am.devvibes.buyandsell.mapper.value.ValueMapper;
 import am.devvibes.buyandsell.service.category.CategoryService;
+import am.devvibes.buyandsell.service.location.LocationService;
 import am.devvibes.buyandsell.service.s3.impl.S3ServiceImpl;
 import am.devvibes.buyandsell.service.security.SecurityService;
 import am.devvibes.buyandsell.service.user.impl.UserServiceImpl;
 import am.devvibes.buyandsell.service.value.ValueService;
-import am.devvibes.buyandsell.util.LocationEnum;
 import am.devvibes.buyandsell.util.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,6 +33,7 @@ public class ItemMapperImpl implements ItemMapper {
 	private final ValueService valueService;
 	private final S3ServiceImpl s3Service;
 	private final PriceHistoryMapper priceHistoryMapper;
+	private final LocationService locationService;
 
 	@Override
 	public ItemEntity mapDtoToEntity(ItemRequestDto itemRequestDto, Long categoryId) {
@@ -44,14 +45,10 @@ public class ItemMapperImpl implements ItemMapper {
 						.currency(itemRequestDto.getCurrency())
 						.build())
 				.userEntity(userService.findUserById(securityService.getCurrentUserId()))
-				.location(Location.builder()
-						.country(LocationEnum.getCountry(itemRequestDto.getCityId()))
-						.region(LocationEnum.getRegion(itemRequestDto.getCityId()))
-						.city(LocationEnum.getCity(itemRequestDto.getCityId()))
-						.lat(itemRequestDto.getLat())
-						.lon(itemRequestDto.getLon())
-						.address(itemRequestDto.getAddress())
-						.build())
+				.city(locationService.getCityById(itemRequestDto.getCityId()))
+				.address(itemRequestDto.getAddress())
+				.lat(itemRequestDto.getLat())
+				.lon(itemRequestDto.getLon())
 				.imgKeys(itemRequestDto.getImgKeys())
 				.category(categoryService.findCategoryEntityOrElseThrow(categoryId))
 				.fields(valueService.saveAllValues(itemRequestDto.getFieldsValue()))
@@ -73,14 +70,10 @@ public class ItemMapperImpl implements ItemMapper {
 						.currency(itemRequestDto.getCurrency())
 						.build())
 				.businessPage(businessPageEntity)
-				.location(Location.builder()
-						.country(LocationEnum.getCountry(itemRequestDto.getCityId()))
-						.region(LocationEnum.getRegion(itemRequestDto.getCityId()))
-						.city(LocationEnum.getCity(itemRequestDto.getCityId()))
-						.lat(itemRequestDto.getLat())
-						.lon(itemRequestDto.getLon())
-						.address(itemRequestDto.getAddress())
-						.build())
+				.city(locationService.getCityById(itemRequestDto.getCityId()))
+				.address(itemRequestDto.getAddress())
+				.lat(itemRequestDto.getLat())
+				.lon(itemRequestDto.getLon())
 				.imgKeys(itemRequestDto.getImgKeys())
 				.category(businessPageEntity.getCategory())
 				.fields(valueService.saveAllValues(itemRequestDto.getFieldsValue()))
@@ -103,7 +96,14 @@ public class ItemMapperImpl implements ItemMapper {
 				.businessPageId(Objects.nonNull(itemEntity.getBusinessPage())? itemEntity.getBusinessPage().getId() : null)
 				.userId(Objects.nonNull(itemEntity.getUserEntity()) ? itemEntity.getUserEntity().getId() : null )
 				.status(itemEntity.getStatus())
-				.location(itemEntity.getLocation())
+				.location(Location.builder()
+						.country(itemEntity.getCity().getRegion().getCountry().getName())
+						.region(itemEntity.getCity().getRegion().getName())
+						.city(itemEntity.getCity().getName())
+						.address(itemEntity.getAddress())
+						.lat(itemEntity.getLat())
+						.lon(itemEntity.getLon())
+						.build())
 				.priceHistory(priceHistoryMapper.mapEntityListToDtoList(itemEntity.getPriceHistories()))
 				.imgUrls(s3Service.getImagesPresignedDownloadUrls(itemEntity.getImgKeys()))
 				.phoneNumbers(itemEntity.getPhoneNumbers())

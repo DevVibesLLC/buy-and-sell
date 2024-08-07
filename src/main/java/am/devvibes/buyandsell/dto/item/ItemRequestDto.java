@@ -34,13 +34,14 @@ public class ItemRequestDto {
 
 	private List<FieldValuesDto> fieldsValue;
 
-	@NotBlank
-	private String address;
 
 	private List<String> imgKeys;
 
 	@NotNull
 	private Long cityId;
+
+	@NotBlank
+	private String address;
 
 	@NotNull
 	private Double lat;

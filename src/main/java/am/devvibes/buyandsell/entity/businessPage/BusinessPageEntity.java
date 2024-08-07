@@ -2,6 +2,7 @@ package am.devvibes.buyandsell.entity.businessPage;
 
 import am.devvibes.buyandsell.entity.base.BaseEntityWithDates;
 import am.devvibes.buyandsell.entity.category.CategoryEntity;
+import am.devvibes.buyandsell.entity.city.CityEntity;
 import am.devvibes.buyandsell.entity.item.ItemEntity;
 import am.devvibes.buyandsell.entity.location.Location;
 import am.devvibes.buyandsell.entity.user.UserEntity;
@@ -43,8 +44,18 @@ public class BusinessPageEntity extends BaseEntityWithDates {
 	@Column(nullable = false)
 	private String description;
 
-	@Embedded
-	private Location location;
+	@ManyToOne
+	@JoinColumn(name = "city_id", nullable = false)
+	private CityEntity city;
+
+	@Column(nullable = false)
+	private String address;
+
+	@Column(nullable = false)
+	private Double lat;
+
+	@Column(nullable = false)
+	private Double lon;
 
 	@ManyToOne
 	@JoinColumn(name = "category_id", nullable = false)

@@ -6,7 +6,6 @@ import am.devvibes.buyandsell.dto.item.ItemRequestDto;
 import am.devvibes.buyandsell.dto.item.ItemUpdateDto;
 import am.devvibes.buyandsell.entity.businessPage.BusinessPageEntity;
 import am.devvibes.buyandsell.entity.item.ItemEntity;
-import am.devvibes.buyandsell.entity.location.Location;
 import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.exception.SomethingWentWrongException;
 import am.devvibes.buyandsell.mapper.businessPage.BusinessPageMapper;
@@ -14,9 +13,9 @@ import am.devvibes.buyandsell.repository.businessPage.BusinessPageRepository;
 import am.devvibes.buyandsell.repository.item.ItemRepository;
 import am.devvibes.buyandsell.service.businessPage.BusinessPageService;
 import am.devvibes.buyandsell.service.item.ItemService;
+import am.devvibes.buyandsell.service.location.LocationService;
 import am.devvibes.buyandsell.service.security.SecurityService;
 import am.devvibes.buyandsell.util.ExceptionConstants;
-import am.devvibes.buyandsell.util.LocationEnum;
 import am.devvibes.buyandsell.util.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,6 +31,7 @@ public class BusinessPageServiceImpl implements BusinessPageService {
 	private final BusinessPageMapper businessPageMapper;
 	private final ItemService itemService;
 	private final SecurityService securityService;
+	private final LocationService locationService;
 	private final ItemRepository itemRepository;
 
 	@Override
@@ -99,23 +99,14 @@ public class BusinessPageServiceImpl implements BusinessPageService {
 				isNull(businessPageUpdateDto.getDescription()) ? businessPageEntity.getDescription() :
 						businessPageUpdateDto.getDescription());
 
-		businessPageEntity.setLocation(Location.builder()
-				.country(LocationEnum.getCountry(
-						isNull(businessPageUpdateDto.getCityId()) ?
-								businessPageEntity.getLocation().getCity().getId() :
-								businessPageUpdateDto.getCityId()))
-				.city(LocationEnum.getCity(
-						isNull(businessPageUpdateDto.getCityId()) ?
-								businessPageEntity.getLocation().getCity().getId() :
-								businessPageUpdateDto.getCityId()))
-				.region(LocationEnum.getRegion(
-						isNull(businessPageUpdateDto.getCityId()) ?
-								businessPageEntity.getLocation().getCity().getId() :
-								businessPageUpdateDto.getCityId()))
-				.address(isNull(businessPageUpdateDto.getAddress()) ? businessPageEntity.getLocation().getAddress() :
-						businessPageUpdateDto.getAddress())
-				.build());
-
+		businessPageEntity.setCity(isNull(businessPageUpdateDto.getCityId()) ? businessPageEntity.getCity() :
+				locationService.getCityById(businessPageUpdateDto.getCityId()));
+		businessPageEntity.setAddress(isNull(businessPageUpdateDto.getAddress()) ? businessPageEntity.getAddress() :
+				businessPageUpdateDto.getAddress());
+		businessPageEntity.setLat(isNull(businessPageUpdateDto.getLat()) ? businessPageEntity.getLat() :
+				businessPageUpdateDto.getLat());
+		businessPageEntity.setLon(isNull(businessPageUpdateDto.getLon()) ? businessPageEntity.getLon() :
+				businessPageUpdateDto.getLon());
 		businessPageEntity.setCategory(isNull(businessPageUpdateDto.getCategory()) ? businessPageEntity.getCategory() :
 				businessPageUpdateDto.getCategory());
 		businessPageEntity.setEmail(isNull(businessPageUpdateDto.getEmail()) ? businessPageEntity.getEmail() :

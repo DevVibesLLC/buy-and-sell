@@ -22,6 +22,7 @@ import am.devvibes.buyandsell.repository.priceHistory.PriceHistoryRepository;
 import am.devvibes.buyandsell.repository.user.UserRepository;
 import am.devvibes.buyandsell.service.favoriteItems.FavoriteItemsService;
 import am.devvibes.buyandsell.service.item.ItemService;
+import am.devvibes.buyandsell.service.location.LocationService;
 import am.devvibes.buyandsell.service.security.SecurityService;
 import am.devvibes.buyandsell.service.value.ValueService;
 import am.devvibes.buyandsell.util.CategoryEnum;
@@ -65,6 +66,7 @@ public class ItemServiceImpl implements ItemService {
 	private final PriceHistoryRepository priceHistoryRepository;
 	private final UserRepository userRepository;
 	private final FavoriteItemsService favoriteItemsService;
+	private final LocationService locationService;
 
 	@Override
 	@Transactional
@@ -18849,19 +18851,14 @@ public class ItemServiceImpl implements ItemService {
 
 		itemEntity.setFields(valueService.updateValues(itemEntity.getFields(), itemUpdateDto.getFieldsValue()));
 
-		itemEntity.setLocation(Location.builder()
-				.country(LocationEnum.getCountry(
-						isNull(itemUpdateDto.getCityId()) ? itemEntity.getLocation().getCity().getId() :
-								itemUpdateDto.getCityId()))
-				.city(LocationEnum.getCity(
-						isNull(itemUpdateDto.getCityId()) ? itemEntity.getLocation().getCity().getId() :
-								itemUpdateDto.getCityId()))
-				.region(LocationEnum.getRegion(
-						isNull(itemUpdateDto.getCityId()) ? itemEntity.getLocation().getCity().getId() :
-								itemUpdateDto.getCityId()))
-				.address(isNull(itemUpdateDto.getAddress()) ? itemEntity.getLocation().getAddress() :
-						itemUpdateDto.getAddress())
-				.build());
+		itemEntity.setCity(isNull(itemUpdateDto.getCityId()) ? itemEntity.getCity() :
+				locationService.getCityById(itemUpdateDto.getCityId()));
+		itemEntity.setAddress(isNull(itemUpdateDto.getAddress()) ? itemEntity.getAddress() :
+				itemUpdateDto.getAddress());
+		itemEntity.setLat(isNull(itemUpdateDto.getLat()) ? itemEntity.getLat() :
+				itemUpdateDto.getLat());
+		itemEntity.setLon(isNull(itemUpdateDto.getLon()) ? itemEntity.getLon() :
+				itemUpdateDto.getLon());
 		itemEntity.setUpdatedAt(ZonedDateTime.now());
 		return itemRepository.save(itemEntity);
 	}

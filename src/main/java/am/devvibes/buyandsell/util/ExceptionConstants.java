@@ -30,7 +30,10 @@ public enum ExceptionConstants {
 	ITEM_ALREADY_EXISTS_IN_FAVORITES("Item already exists in Favorites"),
 	STORY_NOT_FOUND("Story not found"),
 	BUSINESS_PAGE_NOT_FOUND("Business page not found"),
-	UNSUPPORTED_URL_TYPE("Unsupported url type");
+	UNSUPPORTED_URL_TYPE("Unsupported url type"),
+	COUNTRY_NOT_FOUND("Country Not Found"),
+	REGION_NOT_FOUND("Region Not Found"),
+	CITY_NOT_FOUND("City Not Found");
 
 
 	private final String string;

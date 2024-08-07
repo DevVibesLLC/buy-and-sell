@@ -30,4 +30,8 @@ public class ItemUpdateDto {
 
 	private Long cityId;
 
+	private Double lat;
+
+	private Double lon;
+
 }

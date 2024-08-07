@@ -18,13 +18,13 @@ import lombok.Setter;
 public class Location {
 
 	@Column(nullable = false)
-	private LocationEnum country;
+	private String country;
 
 	@Column(nullable = false)
-	private LocationEnum region;
+	private String region;
 
 	@Column(nullable = false)
-	private LocationEnum city;
+	private String city;
 
 	@Column(nullable = false)
 	private String address;

@@ -4,8 +4,8 @@ import am.devvibes.buyandsell.classes.price.Price;
 import am.devvibes.buyandsell.entity.base.BaseEntityWithDates;
 import am.devvibes.buyandsell.entity.businessPage.BusinessPageEntity;
 import am.devvibes.buyandsell.entity.category.CategoryEntity;
+import am.devvibes.buyandsell.entity.city.CityEntity;
 import am.devvibes.buyandsell.entity.field.FieldEntity;
-import am.devvibes.buyandsell.entity.location.Location;
 import am.devvibes.buyandsell.entity.priceHistory.PriceHistoryEntity;
 import am.devvibes.buyandsell.entity.user.UserEntity;
 import am.devvibes.buyandsell.util.Status;
@@ -45,9 +45,18 @@ public class ItemEntity extends BaseEntityWithDates {
 	@Column(nullable = false)
 	private Price price;
 
-	@Embedded
+	@ManyToOne
+	@JoinColumn(name = "city_id", nullable = false)
+	private CityEntity city;
+
 	@Column(nullable = false)
-	private Location location;
+	private String address;
+
+	@Column(nullable = false)
+	private Double lat;
+
+	@Column(nullable = false)
+	private Double lon;
 
 	@ManyToOne
 	@JoinColumn(name = "user_id")
