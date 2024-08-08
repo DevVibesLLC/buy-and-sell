@@ -3,7 +3,7 @@ package am.devvibes.buyandsell.mapper.businessPage;
 import am.devvibes.buyandsell.dto.businessPage.BusinessPageRequestDto;
 import am.devvibes.buyandsell.dto.businessPage.BusinessPageResponseDto;
 import am.devvibes.buyandsell.entity.businessPage.BusinessPageEntity;
-import am.devvibes.buyandsell.entity.location.Location;
+import am.devvibes.buyandsell.dto.location.LocationDto;
 import am.devvibes.buyandsell.mapper.item.ItemMapper;
 import am.devvibes.buyandsell.service.category.CategoryService;
 import am.devvibes.buyandsell.service.location.LocationService;
@@ -36,7 +36,7 @@ public class BusinessPageMapperImpl implements BusinessPageMapper{
 				.bannerKey(businessPageEntity.getBannerKey())
 				.workingDaysAndHours(businessPageEntity.getWorkingDaysAndHours())
 				.socialMediaLinks(businessPageEntity.getSocialMediaLinks())
-				.location(Location.builder()
+				.locationDto(LocationDto.builder()
 						.country(businessPageEntity.getCity().getRegion().getCountry().getName())
 						.region(businessPageEntity.getCity().getRegion().getName())
 						.city(businessPageEntity.getCity().getName())

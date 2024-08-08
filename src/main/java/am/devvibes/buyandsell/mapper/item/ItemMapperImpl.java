@@ -5,7 +5,7 @@ import am.devvibes.buyandsell.dto.item.ItemRequestDto;
 import am.devvibes.buyandsell.dto.item.ItemResponseDto;
 import am.devvibes.buyandsell.entity.businessPage.BusinessPageEntity;
 import am.devvibes.buyandsell.entity.item.ItemEntity;
-import am.devvibes.buyandsell.entity.location.Location;
+import am.devvibes.buyandsell.dto.location.LocationDto;
 import am.devvibes.buyandsell.mapper.priceHistory.PriceHistoryMapper;
 import am.devvibes.buyandsell.mapper.value.ValueMapper;
 import am.devvibes.buyandsell.service.category.CategoryService;
@@ -96,7 +96,7 @@ public class ItemMapperImpl implements ItemMapper {
 				.businessPageId(Objects.nonNull(itemEntity.getBusinessPage())? itemEntity.getBusinessPage().getId() : null)
 				.userId(Objects.nonNull(itemEntity.getUserEntity()) ? itemEntity.getUserEntity().getId() : null )
 				.status(itemEntity.getStatus())
-				.location(Location.builder()
+				.locationDto(LocationDto.builder()
 						.country(itemEntity.getCity().getRegion().getCountry().getName())
 						.region(itemEntity.getCity().getRegion().getName())
 						.city(itemEntity.getCity().getName())

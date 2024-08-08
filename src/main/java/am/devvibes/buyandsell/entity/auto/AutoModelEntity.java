@@ -1,5 +1,6 @@
 package am.devvibes.buyandsell.entity.auto;
 
+import am.devvibes.buyandsell.entity.base.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -20,11 +21,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AutoModelEntity {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+public class AutoModelEntity extends BaseEntity {
 
 	@Column(nullable = false)
 	private String name;

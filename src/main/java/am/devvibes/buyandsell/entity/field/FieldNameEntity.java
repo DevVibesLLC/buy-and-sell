@@ -25,7 +25,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FieldNameEntity extends BaseEntity implements Serializable {
+public class FieldNameEntity extends BaseEntity{
 
 	@Column(nullable = false)
 	private String fieldName_eng;

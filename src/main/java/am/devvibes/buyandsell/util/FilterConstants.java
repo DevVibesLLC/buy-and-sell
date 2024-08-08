@@ -7,14 +7,15 @@ public interface FilterConstants {
 	String title = "title";
 	String description = "description";
 	String fields = "fields";
-	String location = "location";
+	String location = "locationDto";
 	String country = "country";
 	String region = "region";
 	String city = "city";
 	String price = "price";
 	String currency = "currency";
 	String fieldName = "fieldName";
-	String fieldValue = "fieldValue";
+	String fieldName_eng = "fieldName_eng";
+	String fieldValue_eng = "fieldValue_eng";
 	String mark = "Mark";
 	String model = "Model";
 	String year = "Year";
@@ -37,7 +38,7 @@ public interface FilterConstants {
 	String condition = "Condition";
 	String type = "Type";
 	String floorArea = "Floor Area";
-	String locationFromTheStreet = "Location from the Street";
+	String locationFromTheStreet = "LocationDto from the Street";
 	String amenities = "Amenities";
 	String elevator = "Elevator";
 	String maximumRentalPeriod = "Minimum Rental Period";

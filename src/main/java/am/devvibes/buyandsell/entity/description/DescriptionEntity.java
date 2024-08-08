@@ -25,7 +25,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DescriptionEntity extends BaseEntity implements Serializable {
+public class DescriptionEntity extends BaseEntity{
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)

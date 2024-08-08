@@ -1,7 +1,7 @@
 package am.devvibes.buyandsell.dto.businessPage;
 
 import am.devvibes.buyandsell.dto.item.ItemResponseDto;
-import am.devvibes.buyandsell.entity.location.Location;
+import am.devvibes.buyandsell.dto.location.LocationDto;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Builder;
@@ -30,7 +30,7 @@ public class BusinessPageResponseDto {
 
 	private String description;
 
-	private Location location;
+	private LocationDto locationDto;
 
 	private Long categoryId;
 

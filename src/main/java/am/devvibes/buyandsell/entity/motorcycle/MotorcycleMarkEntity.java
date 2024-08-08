@@ -1,5 +1,6 @@
 package am.devvibes.buyandsell.entity.motorcycle;
 
+import am.devvibes.buyandsell.entity.base.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,11 +18,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class MotorcycleMarkEntity {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+public class MotorcycleMarkEntity extends BaseEntity {
 
 	@Column(nullable = false)
 	private String name;

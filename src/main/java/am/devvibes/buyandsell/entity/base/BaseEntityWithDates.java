@@ -17,7 +17,7 @@ import java.time.ZonedDateTime;
 public abstract class BaseEntityWithDates {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	private ZonedDateTime createdAt;

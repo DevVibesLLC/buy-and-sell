@@ -1,6 +1,5 @@
-package am.devvibes.buyandsell.entity.location;
+package am.devvibes.buyandsell.dto.location;
 
-import am.devvibes.buyandsell.util.LocationEnum;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
@@ -15,7 +14,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Location {
+public class LocationDto {
 
 	@Column(nullable = false)
 	private String country;

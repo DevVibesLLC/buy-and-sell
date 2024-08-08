@@ -17,7 +17,7 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MeasurementEntity extends BaseEntity implements Serializable {
+public class MeasurementEntity extends BaseEntity{
 
 	@Column(nullable = false)
 	private String symbol;

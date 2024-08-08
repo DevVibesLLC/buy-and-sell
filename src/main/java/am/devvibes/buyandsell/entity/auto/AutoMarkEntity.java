@@ -1,5 +1,6 @@
 package am.devvibes.buyandsell.entity.auto;
 
+import am.devvibes.buyandsell.entity.base.BaseEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,11 +23,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AutoMarkEntity {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+public class AutoMarkEntity extends BaseEntity {
 
 	@Column(nullable = false)
 	private String name;

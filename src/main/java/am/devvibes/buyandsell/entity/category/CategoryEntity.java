@@ -32,7 +32,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryEntity extends BaseEntity implements Serializable {
+public class CategoryEntity extends BaseEntity{
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)

@@ -1,9 +1,9 @@
 package am.devvibes.buyandsell.dto.item;
 
 import am.devvibes.buyandsell.classes.price.Price;
+import am.devvibes.buyandsell.dto.location.LocationDto;
 import am.devvibes.buyandsell.dto.priceHistory.PriceHistoryDto;
 import am.devvibes.buyandsell.dto.value.FieldValuesDto;
-import am.devvibes.buyandsell.entity.location.Location;
 import am.devvibes.buyandsell.util.Status;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
-import java.util.Locale;
 
 @Getter
 @Setter
@@ -29,7 +28,7 @@ public class ItemResponseDto {
 
 	private Price price;
 
-	private Location location;
+	private LocationDto locationDto;
 
 	private String userId;
 

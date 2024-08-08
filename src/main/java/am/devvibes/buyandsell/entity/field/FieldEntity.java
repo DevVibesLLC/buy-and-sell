@@ -19,7 +19,7 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FieldEntity extends BaseEntity implements Serializable {
+public class FieldEntity extends BaseEntity{
 
 	@Column(nullable = false)
 	private String fieldValue_eng;

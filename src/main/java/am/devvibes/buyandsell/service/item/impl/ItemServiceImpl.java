@@ -11,7 +11,6 @@ import am.devvibes.buyandsell.entity.businessPage.BusinessPageEntity;
 import am.devvibes.buyandsell.entity.field.FieldEntity;
 import am.devvibes.buyandsell.entity.field.FieldNameEntity;
 import am.devvibes.buyandsell.entity.item.ItemEntity;
-import am.devvibes.buyandsell.entity.location.Location;
 import am.devvibes.buyandsell.entity.priceHistory.PriceHistoryEntity;
 import am.devvibes.buyandsell.entity.user.UserEntity;
 import am.devvibes.buyandsell.exception.NotFoundException;
@@ -28,7 +27,6 @@ import am.devvibes.buyandsell.service.value.ValueService;
 import am.devvibes.buyandsell.util.CategoryEnum;
 import am.devvibes.buyandsell.util.ExceptionConstants;
 import am.devvibes.buyandsell.util.FilterConstants;
-import am.devvibes.buyandsell.util.LocationEnum;
 import am.devvibes.buyandsell.util.Status;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -210,14 +208,29 @@ public class ItemServiceImpl implements ItemService {
 			CriteriaBuilder criteriaBuilder,
 			Root<ItemEntity> itemRoot,
 			List<Predicate> predicates) {
-		if (nonNull(filterDto.getMark()) && !filterDto.getMark().isEmpty()) {
+		if ((nonNull(filterDto.getMark_eng()) && !filterDto.getMark_eng().isEmpty()) || (nonNull(filterDto.getMark_ru()) && !filterDto.getMark_ru().isEmpty()) || (nonNull(filterDto.getMark_hy()) && !filterDto.getMark_hy().isEmpty())) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.mark),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getMark()));
-			predicates.add(predicate);
+
+			Predicate predicate_eng = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_eng"), "Mark"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_eng"),
+							filterDto.getMark_eng()));
+
+			Predicate predicate_ru = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_ru"), "Марка"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_ru"),
+							filterDto.getMark_ru()));
+
+			Predicate predicate_hy = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_hy"), "Մակնիշ"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_hy"),
+							filterDto.getMark_hy()));
+
+			Predicate combinedPredicate = criteriaBuilder.or(predicate_eng, predicate_ru, predicate_hy);
+
+			predicates.add(combinedPredicate);
 		}
 	}
 
@@ -225,14 +238,29 @@ public class ItemServiceImpl implements ItemService {
 			CriteriaBuilder criteriaBuilder,
 			Root<ItemEntity> itemRoot,
 			List<Predicate> predicates) {
-		if (nonNull(filterDto.getModel()) && !filterDto.getModel().isEmpty()) {
+		if ((nonNull(filterDto.getModel_eng()) && !filterDto.getModel_eng().isEmpty()) || (nonNull(filterDto.getModel_ru()) && !filterDto.getModel_ru().isEmpty()) || (nonNull(filterDto.getModel_hy()) && !filterDto.getModel_hy().isEmpty())) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.model),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getModel()));
-			predicates.add(predicate);
+
+			Predicate predicate_eng = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_eng"), "Model"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_eng"),
+							filterDto.getModel_eng()));
+
+			Predicate predicate_ru = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_ru"), "Модель"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_ru"),
+							filterDto.getModel_ru()));
+
+			Predicate predicate_hy = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_hy"), "Մոդել"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_hy"),
+							filterDto.getModel_hy()));
+
+			Predicate combinedPredicate = criteriaBuilder.or(predicate_eng, predicate_ru, predicate_hy);
+
+			predicates.add(combinedPredicate);
 		}
 	}
 
@@ -240,15 +268,29 @@ public class ItemServiceImpl implements ItemService {
 			CriteriaBuilder criteriaBuilder,
 			Root<ItemEntity> itemRoot,
 			List<Predicate> predicates) {
-		if (nonNull(filterDto.getStartYear()) && !filterDto.getStartYear().isEmpty()) {
+		if ((nonNull(filterDto.getStartYear_eng()) && !filterDto.getStartYear_eng().isEmpty()) || (nonNull(filterDto.getStartYear_ru()) && !filterDto.getStartYear_ru().isEmpty()) || (nonNull(filterDto.getStartYear_hy()) && !filterDto.getStartYear_hy().isEmpty())) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.year),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
-							filterDto.getStartYear()));
-			predicates.add(predicate);
+
+			Predicate predicate_eng = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_eng"), "Year"),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue_eng"),
+							filterDto.getStartYear_eng()));
+
+			Predicate predicate_ru = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_ru"), "Год"),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue_ru"),
+							filterDto.getStartYear_ru()));
+
+			Predicate predicate_hy = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_hy"), "Տարեթիվ"),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue_hy"),
+							filterDto.getStartYear_hy()));
+
+			Predicate combinedPredicate = criteriaBuilder.or(predicate_eng, predicate_ru, predicate_hy);
+
+			predicates.add(combinedPredicate);
 		}
 	}
 
@@ -256,15 +298,29 @@ public class ItemServiceImpl implements ItemService {
 			CriteriaBuilder criteriaBuilder,
 			Root<ItemEntity> itemRoot,
 			List<Predicate> predicates) {
-		if (nonNull(filterDto.getEndYear()) && !filterDto.getEndYear().isEmpty()) {
+		if ((nonNull(filterDto.getEndYear_eng()) && !filterDto.getEndYear_eng().isEmpty()) || (nonNull(filterDto.getEndYear_ru()) && !filterDto.getEndYear_ru().isEmpty()) || (nonNull(filterDto.getEndYear_hy()) && !filterDto.getEndYear_hy().isEmpty())) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.year),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
-							filterDto.getEndYear()));
-			predicates.add(predicate);
+
+			Predicate predicate_eng = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_eng"), "Year"),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue_eng"),
+							filterDto.getEndYear_eng()));
+
+			Predicate predicate_ru = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_ru"), "Год"),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue_ru"),
+							filterDto.getEndYear_ru()));
+
+			Predicate predicate_hy = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_hy"), "Տարեթիվ"),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue_hy"),
+							filterDto.getEndYear_hy()));
+
+			Predicate combinedPredicate = criteriaBuilder.or(predicate_eng, predicate_ru, predicate_hy);
+
+			predicates.add(combinedPredicate);
 		}
 	}
 
@@ -272,14 +328,29 @@ public class ItemServiceImpl implements ItemService {
 			CriteriaBuilder criteriaBuilder,
 			Root<ItemEntity> itemRoot,
 			List<Predicate> predicates) {
-		if (nonNull(filterDto.getBodyType()) && !filterDto.getBodyType().isEmpty()) {
+		if ((nonNull(filterDto.getBodyType_eng()) && !filterDto.getBodyType_eng().isEmpty()) || (nonNull(filterDto.getBodyType_ru()) && !filterDto.getBodyType_ru().isEmpty()) || (nonNull(filterDto.getBodyType_hy()) && !filterDto.getBodyType_hy().isEmpty())) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.bodyType),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getBodyType()));
-			predicates.add(predicate);
+
+			Predicate predicate_eng = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_eng"), "Body Type"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_eng"),
+							filterDto.getBodyType_eng()));
+
+			Predicate predicate_ru = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_ru"), "Тип Кузова"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_ru"),
+							filterDto.getBodyType_ru()));
+
+			Predicate predicate_hy = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_hy"), "Թափքի Տեսակ"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_hy"),
+							filterDto.getBodyType_hy()));
+
+			Predicate combinedPredicate = criteriaBuilder.or(predicate_eng, predicate_ru, predicate_hy);
+
+			predicates.add(combinedPredicate);
 		}
 	}
 
@@ -287,15 +358,29 @@ public class ItemServiceImpl implements ItemService {
 			CriteriaBuilder criteriaBuilder,
 			Root<ItemEntity> itemRoot,
 			List<Predicate> predicates) {
-		if (nonNull(filterDto.getStartEngineSize()) && !filterDto.getStartEngineSize().isEmpty()) {
+		if ((nonNull(filterDto.getStartEngineSize_eng()) && !filterDto.getStartEngineSize_eng().isEmpty()) || (nonNull(filterDto.getStartEngineSize_ru()) && !filterDto.getStartEngineSize_ru().isEmpty()) || (nonNull(filterDto.getStartEngineSize_hy()) && !filterDto.getStartEngineSize_hy().isEmpty())) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.engineSize),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
-							filterDto.getStartEngineSize()));
-			predicates.add(predicate);
+
+			Predicate predicate_eng = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_eng"), "Engine Size"),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue_eng"),
+							filterDto.getStartEngineSize_eng()));
+
+			Predicate predicate_ru = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_ru"), "Объём Двигателя"),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue_ru"),
+							filterDto.getStartEngineSize_ru()));
+
+			Predicate predicate_hy = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_hy"), "Շարժիչի Ծավալ"),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue_hy"),
+							filterDto.getStartEngineSize_hy()));
+
+			Predicate combinedPredicate = criteriaBuilder.or(predicate_eng, predicate_ru, predicate_hy);
+
+			predicates.add(combinedPredicate);
 		}
 	}
 
@@ -303,15 +388,29 @@ public class ItemServiceImpl implements ItemService {
 			CriteriaBuilder criteriaBuilder,
 			Root<ItemEntity> itemRoot,
 			List<Predicate> predicates) {
-		if (nonNull(filterDto.getEndEngineSize()) && !filterDto.getEndEngineSize().isEmpty()) {
+		if ((nonNull(filterDto.getEndEngineSize_eng()) && !filterDto.getEndEngineSize_eng().isEmpty()) || (nonNull(filterDto.getEndEngineSize_ru()) && !filterDto.getEndEngineSize_ru().isEmpty()) || (nonNull(filterDto.getEndEngineSize_hy()) && !filterDto.getEndEngineSize_hy().isEmpty())) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.engineSize),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
-							filterDto.getEndEngineSize()));
-			predicates.add(predicate);
+
+			Predicate predicate_eng = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_eng"), "Engine Size"),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue_eng"),
+							filterDto.getEndEngineSize_eng()));
+
+			Predicate predicate_ru = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_ru"), "Объём Двигателя"),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue_ru"),
+							filterDto.getEndEngineSize_ru()));
+
+			Predicate predicate_hy = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_hy"), "Շարժիչի Ծավալ"),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue_hy"),
+							filterDto.getEndEngineSize_hy()));
+
+			Predicate combinedPredicate = criteriaBuilder.or(predicate_eng, predicate_ru, predicate_hy);
+
+			predicates.add(combinedPredicate);
 		}
 	}
 
@@ -319,14 +418,29 @@ public class ItemServiceImpl implements ItemService {
 			CriteriaBuilder criteriaBuilder,
 			Root<ItemEntity> itemRoot,
 			List<Predicate> predicates) {
-		if (nonNull(filterDto.getTransmission()) && !filterDto.getTransmission().isEmpty()) {
+		if ((nonNull(filterDto.getTransmission_eng()) && !filterDto.getTransmission_eng().isEmpty()) || (nonNull(filterDto.getTransmission_ru()) && !filterDto.getTransmission_ru().isEmpty()) || (nonNull(filterDto.getTransmission_hy()) && !filterDto.getTransmission_hy().isEmpty())) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.transmission),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getTransmission()));
-			predicates.add(predicate);
+
+			Predicate predicate_eng = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_eng"), "Transmission"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_eng"),
+							filterDto.getTransmission_eng()));
+
+			Predicate predicate_ru = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_ru"), "Коробка Передач"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_ru"),
+							filterDto.getTransmission_ru()));
+
+			Predicate predicate_hy = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_hy"), "Փոխանցման Տուփ"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_hy"),
+							filterDto.getTransmission_hy()));
+
+			Predicate combinedPredicate = criteriaBuilder.or(predicate_eng, predicate_ru, predicate_hy);
+
+			predicates.add(combinedPredicate);
 		}
 	}
 
@@ -334,14 +448,29 @@ public class ItemServiceImpl implements ItemService {
 			CriteriaBuilder criteriaBuilder,
 			Root<ItemEntity> itemRoot,
 			List<Predicate> predicates) {
-		if (nonNull(filterDto.getDriveType()) && !filterDto.getDriveType().isEmpty()) {
+		if ((nonNull(filterDto.getDriveType_eng()) && !filterDto.getDriveType_eng().isEmpty()) || (nonNull(filterDto.getDriveType_ru()) && !filterDto.getDriveType_ru().isEmpty()) || (nonNull(filterDto.getDriveType_hy()) && !filterDto.getDriveType_hy().isEmpty())) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.driveType),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getDriveType()));
-			predicates.add(predicate);
+
+			Predicate predicate_eng = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_eng"), "Drive Type"),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue_eng"),
+							filterDto.getDriveType_eng()));
+
+			Predicate predicate_ru = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_ru"), "Привод"),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue_ru"),
+							filterDto.getDriveType_ru()));
+
+			Predicate predicate_hy = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_hy"), "Քարշակ"),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue_hy"),
+							filterDto.getDriveType_hy()));
+
+			Predicate combinedPredicate = criteriaBuilder.or(predicate_eng, predicate_ru, predicate_hy);
+
+			predicates.add(combinedPredicate);
 		}
 	}
 
@@ -349,14 +478,29 @@ public class ItemServiceImpl implements ItemService {
 			CriteriaBuilder criteriaBuilder,
 			Root<ItemEntity> itemRoot,
 			List<Predicate> predicates) {
-		if (nonNull(filterDto.getEngineType()) && !filterDto.getEngineType().isEmpty()) {
+		if ((nonNull(filterDto.getEngineType_eng()) && !filterDto.getEngineType_eng().isEmpty()) || (nonNull(filterDto.getEngineType_ru()) && !filterDto.getEngineType_ru().isEmpty()) || (nonNull(filterDto.getEngineType_hy()) && !filterDto.getEngineType_hy().isEmpty())) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.engineType),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getEngineType()));
-			predicates.add(predicate);
+
+			Predicate predicate_eng = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_eng"), "Engine Type"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_eng"),
+							filterDto.getEngineType_eng()));
+
+			Predicate predicate_ru = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_ru"), "Тип Двигателя"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_ru"),
+							filterDto.getEngineType_ru()));
+
+			Predicate predicate_hy = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_hy"), "Շարժիչի Տեսակ"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_hy"),
+							filterDto.getEngineType_hy()));
+
+			Predicate combinedPredicate = criteriaBuilder.or(predicate_eng, predicate_ru, predicate_hy);
+
+			predicates.add(combinedPredicate);
 		}
 	}
 
@@ -364,15 +508,29 @@ public class ItemServiceImpl implements ItemService {
 			CriteriaBuilder criteriaBuilder,
 			Root<ItemEntity> itemRoot,
 			List<Predicate> predicates) {
-		if (nonNull(filterDto.getStartMileage()) && !filterDto.getStartMileage().isEmpty()) {
+		if ((nonNull(filterDto.getStartMileage_eng()) && !filterDto.getStartMileage_eng().isEmpty()) || (nonNull(filterDto.getStartMileage_ru()) && !filterDto.getStartMileage_ru().isEmpty()) || (nonNull(filterDto.getStartMileage_hy()) && !filterDto.getStartMileage_hy().isEmpty())) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.mileage),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
-							filterDto.getStartMileage()));
-			predicates.add(predicate);
+
+			Predicate predicate_eng = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_eng"), "Mileage"),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue_eng"),
+							filterDto.getStartMileage_eng()));
+
+			Predicate predicate_ru = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_ru"), "Пробег"),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue_ru"),
+							filterDto.getStartMileage_ru()));
+
+			Predicate predicate_hy = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_hy"), "Վազք"),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get("fieldValue_hy"),
+							filterDto.getStartMileage_hy()));
+
+			Predicate combinedPredicate = criteriaBuilder.or(predicate_eng, predicate_ru, predicate_hy);
+
+			predicates.add(combinedPredicate);
 		}
 	}
 
@@ -380,15 +538,29 @@ public class ItemServiceImpl implements ItemService {
 			CriteriaBuilder criteriaBuilder,
 			Root<ItemEntity> itemRoot,
 			List<Predicate> predicates) {
-		if (nonNull(filterDto.getEndMileage()) && !filterDto.getEndMileage().isEmpty()) {
+		if ((nonNull(filterDto.getEndMileage_eng()) && !filterDto.getEndMileage_eng().isEmpty()) || (nonNull(filterDto.getEndMileage_ru()) && !filterDto.getEndMileage_ru().isEmpty()) || (nonNull(filterDto.getEndMileage_hy()) && !filterDto.getEndMileage_hy().isEmpty())) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.mileage),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
-							filterDto.getEndMileage()));
-			predicates.add(predicate);
+
+			Predicate predicate_eng = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_eng"), "Mileage"),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue_eng"),
+							filterDto.getEndMileage_eng()));
+
+			Predicate predicate_ru = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_ru"), "Пробег"),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue_ru"),
+							filterDto.getEndMileage_ru()));
+
+			Predicate predicate_hy = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_hy"), "Վազք"),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get("fieldValue_hy"),
+							filterDto.getEndMileage_hy()));
+
+			Predicate combinedPredicate = criteriaBuilder.or(predicate_eng, predicate_ru, predicate_hy);
+
+			predicates.add(combinedPredicate);
 		}
 	}
 
@@ -396,15 +568,29 @@ public class ItemServiceImpl implements ItemService {
 			CriteriaBuilder criteriaBuilder,
 			Root<ItemEntity> itemRoot,
 			List<Predicate> predicates) {
-		if (nonNull(filterDto.getSteeringWheel()) && !filterDto.getSteeringWheel().isEmpty()) {
+		if ((nonNull(filterDto.getSteeringWheel_eng()) && !filterDto.getSteeringWheel_eng().isEmpty()) || (nonNull(filterDto.getSteeringWheel_ru()) && !filterDto.getSteeringWheel_ru().isEmpty()) || (nonNull(filterDto.getSteeringWheel_hy()) && !filterDto.getSteeringWheel_hy().isEmpty())) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.steeringWheel),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
-					 filterDto.getSteeringWheel()));
-			predicates.add(predicate);
+
+			Predicate predicate_eng = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_eng"), "Steering Wheel"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_eng"),
+							filterDto.getSteeringWheel_eng()));
+
+			Predicate predicate_ru = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_ru"), "Руль"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_ru"),
+							filterDto.getSteeringWheel_ru()));
+
+			Predicate predicate_hy = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_hy"), "Ղեկ"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_hy"),
+							filterDto.getSteeringWheel_hy()));
+
+			Predicate combinedPredicate = criteriaBuilder.or(predicate_eng, predicate_ru, predicate_hy);
+
+			predicates.add(combinedPredicate);
 		}
 	}
 
@@ -412,15 +598,29 @@ public class ItemServiceImpl implements ItemService {
 			CriteriaBuilder criteriaBuilder,
 			Root<ItemEntity> itemRoot,
 			List<Predicate> predicates) {
-		if (nonNull(filterDto.getClearedCustom()) && !filterDto.getClearedCustom().isEmpty()) {
+		if ((nonNull(filterDto.getClearedCustom_eng()) && !filterDto.getClearedCustom_eng().isEmpty()) || (nonNull(filterDto.getClearedCustom_ru()) && !filterDto.getClearedCustom_ru().isEmpty()) || (nonNull(filterDto.getClearedCustom_hy()) && !filterDto.getClearedCustom_hy().isEmpty())) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.clearedCustom),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
-					 filterDto.getClearedCustom()));
-			predicates.add(predicate);
+
+			Predicate predicate_eng = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_eng"), "Cleared Custom"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_eng"),
+							filterDto.getClearedCustom_eng()));
+
+			Predicate predicate_ru = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_ru"), "Растаможка"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_ru"),
+							filterDto.getClearedCustom_ru()));
+
+			Predicate predicate_hy = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_hy"), "Մաքսազերծում"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_hy"),
+							filterDto.getClearedCustom_hy()));
+
+			Predicate combinedPredicate = criteriaBuilder.or(predicate_eng, predicate_ru, predicate_hy);
+
+			predicates.add(combinedPredicate);
 		}
 	}
 
@@ -428,14 +628,29 @@ public class ItemServiceImpl implements ItemService {
 			CriteriaBuilder criteriaBuilder,
 			Root<ItemEntity> itemRoot,
 			List<Predicate> predicates) {
-		if (nonNull(filterDto.getColor()) && !filterDto.getColor().isEmpty()) {
+		if ((nonNull(filterDto.getColor_eng()) && !filterDto.getColor_eng().isEmpty()) || (nonNull(filterDto.getColor_ru()) && !filterDto.getColor_ru().isEmpty()) || (nonNull(filterDto.getColor_hy()) && !filterDto.getColor_hy().isEmpty())) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.color),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getColor()));
-			predicates.add(predicate);
+
+			Predicate predicate_eng = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_eng"), "Color"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_eng"),
+							filterDto.getColor_eng()));
+
+			Predicate predicate_ru = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_ru"), "Цвет"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_ru"),
+							filterDto.getColor_ru()));
+
+			Predicate predicate_hy = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_hy"), "Գույն"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_hy"),
+							filterDto.getColor_hy()));
+
+			Predicate combinedPredicate = criteriaBuilder.or(predicate_eng, predicate_ru, predicate_hy);
+
+			predicates.add(combinedPredicate);
 		}
 	}
 
@@ -443,14 +658,29 @@ public class ItemServiceImpl implements ItemService {
 			CriteriaBuilder criteriaBuilder,
 			Root<ItemEntity> itemRoot,
 			List<Predicate> predicates) {
-		if (nonNull(filterDto.getWheelSize()) && !filterDto.getWheelSize().isEmpty()) {
+		if ((nonNull(filterDto.getWheelSize_eng()) && !filterDto.getWheelSize_eng().isEmpty()) || (nonNull(filterDto.getWheelSize_ru()) && !filterDto.getWheelSize_ru().isEmpty()) || (nonNull(filterDto.getWheelSize_hy()) && !filterDto.getWheelSize_hy().isEmpty())) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.wheelSize),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getWheelSize()));
-			predicates.add(predicate);
+
+			Predicate predicate_eng = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_eng"), "Wheel Size"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_eng"),
+							filterDto.getWheelSize_eng()));
+
+			Predicate predicate_ru = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_ru"), "Размер Колес"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_ru"),
+							filterDto.getWheelSize_ru()));
+
+			Predicate predicate_hy = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_hy"), "Անիվի Չափս"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_hy"),
+							filterDto.getWheelSize_hy()));
+
+			Predicate combinedPredicate = criteriaBuilder.or(predicate_eng, predicate_ru, predicate_hy);
+
+			predicates.add(combinedPredicate);
 		}
 	}
 
@@ -458,14 +688,29 @@ public class ItemServiceImpl implements ItemService {
 			CriteriaBuilder criteriaBuilder,
 			Root<ItemEntity> itemRoot,
 			List<Predicate> predicates) {
-		if (nonNull(filterDto.getHeadlights()) && !filterDto.getHeadlights().isEmpty()) {
+		if ((nonNull(filterDto.getHeadlights_eng()) && !filterDto.getHeadlights_eng().isEmpty()) || (nonNull(filterDto.getHeadlights_ru()) && !filterDto.getHeadlights_ru().isEmpty()) || (nonNull(filterDto.getHeadlights_hy()) && !filterDto.getHeadlights_hy().isEmpty())) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.headlights),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getHeadlights()));
-			predicates.add(predicate);
+
+			Predicate predicate_eng = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_eng"), "Headlights"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_eng"),
+							filterDto.getHeadlights_eng()));
+
+			Predicate predicate_ru = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_ru"), "Фары"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_ru"),
+							filterDto.getHeadlights_ru()));
+
+			Predicate predicate_hy = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_hy"), "Լուսարձակներ"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_hy"),
+							filterDto.getHeadlights_hy()));
+
+			Predicate combinedPredicate = criteriaBuilder.or(predicate_eng, predicate_ru, predicate_hy);
+
+			predicates.add(combinedPredicate);
 		}
 	}
 
@@ -473,31 +718,59 @@ public class ItemServiceImpl implements ItemService {
 			CriteriaBuilder criteriaBuilder,
 			Root<ItemEntity> itemRoot,
 			List<Predicate> predicates) {
-		if (nonNull(filterDto.getInteriorColor()) && !filterDto.getInteriorColor().isEmpty()) {
+		if ((nonNull(filterDto.getInteriorColor_eng()) && !filterDto.getInteriorColor_eng().isEmpty()) || (nonNull(filterDto.getInteriorColor_ru()) && !filterDto.getInteriorColor_ru().isEmpty()) || (nonNull(filterDto.getInteriorColor_hy()) && !filterDto.getInteriorColor_hy().isEmpty())) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.interiorColor),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
-					 filterDto.getInteriorColor()));
-			predicates.add(predicate);
+
+			Predicate predicate_eng = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_eng"), "Interior Color"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_eng"),
+							filterDto.getInteriorColor_eng()));
+
+			Predicate predicate_ru = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_ru"), "Цвет Салона"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_ru"),
+							filterDto.getInteriorColor_ru()));
+
+			Predicate predicate_hy = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_hy"), "Սրահի Գույն"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_hy"),
+							filterDto.getInteriorColor_hy()));
+
+			Predicate combinedPredicate = criteriaBuilder.or(predicate_eng, predicate_ru, predicate_hy);
+
+			predicates.add(combinedPredicate);
 		}
 	}
 
-	private void addExteriorColorPredicate(AutoFilterDto filterDto,
+	private void addInteriorMaterialPredicate(AutoFilterDto filterDto,
 			CriteriaBuilder criteriaBuilder,
 			Root<ItemEntity> itemRoot,
 			List<Predicate> predicates) {
-		if (nonNull(filterDto.getExteriorColor()) && !filterDto.getExteriorColor().isEmpty()) {
+		if ((nonNull(filterDto.getInteriorMaterial_eng()) && !filterDto.getInteriorMaterial_eng().isEmpty()) || (nonNull(filterDto.getInteriorMaterial_ru()) && !filterDto.getInteriorMaterial_ru().isEmpty()) || (nonNull(filterDto.getInteriorMaterial_hy()) && !filterDto.getInteriorMaterial_hy().isEmpty())) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.exteriorColor),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
-					 filterDto.getExteriorColor()));
-			predicates.add(predicate);
+
+			Predicate predicate_eng = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_eng"), "Interior Material"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_eng"),
+							filterDto.getInteriorMaterial_eng()));
+
+			Predicate predicate_ru = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_ru"), "Материал Салона"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_ru"),
+							filterDto.getInteriorMaterial_ru()));
+
+			Predicate predicate_hy = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_hy"), "Սրահ"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_hy"),
+							filterDto.getInteriorMaterial_hy()));
+
+			Predicate combinedPredicate = criteriaBuilder.or(predicate_eng, predicate_ru, predicate_hy);
+
+			predicates.add(combinedPredicate);
 		}
 	}
 
@@ -505,14 +778,29 @@ public class ItemServiceImpl implements ItemService {
 			CriteriaBuilder criteriaBuilder,
 			Root<ItemEntity> itemRoot,
 			List<Predicate> predicates) {
-		if (nonNull(filterDto.getSunroof()) && !filterDto.getSunroof().isEmpty()) {
+		if ((nonNull(filterDto.getSunroof_eng()) && !filterDto.getSunroof_eng().isEmpty()) || (nonNull(filterDto.getSunroof_ru()) && !filterDto.getSunroof_ru().isEmpty()) || (nonNull(filterDto.getSunroof_hy()) && !filterDto.getSunroof_hy().isEmpty())) {
 			Join<ItemEntity, FieldEntity> itemFieldJoin = itemRoot.join(FilterConstants.fields, JoinType.INNER);
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
-			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.sunroof),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getSunroof()));
-			predicates.add(predicate);
+
+			Predicate predicate_eng = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_eng"), "Sunroof"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_eng"),
+							filterDto.getSunroof_eng()));
+
+			Predicate predicate_ru = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_ru"), "Люк"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_ru"),
+							filterDto.getSunroof_ru()));
+
+			Predicate predicate_hy = criteriaBuilder.and(
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_hy"), "Լյուկ"),
+					criteriaBuilder.equal(itemFieldJoin.get("fieldValue_hy"),
+							filterDto.getSunroof_hy()));
+
+			Predicate combinedPredicate = criteriaBuilder.or(predicate_eng, predicate_ru, predicate_hy);
+
+			predicates.add(combinedPredicate);
 		}
 	}
 
@@ -621,7 +909,7 @@ public class ItemServiceImpl implements ItemService {
 		addWheelSizePredicate(filterDto, criteriaBuilder, itemRoot, predicates);
 		addHeadlightsPredicate(filterDto, criteriaBuilder, itemRoot, predicates);
 		addInteriorColorPredicate(filterDto, criteriaBuilder, itemRoot, predicates);
-		addExteriorColorPredicate(filterDto, criteriaBuilder, itemRoot, predicates);
+		addInteriorMaterialPredicate(filterDto, criteriaBuilder, itemRoot, predicates);
 		addSunroofPredicate(filterDto, criteriaBuilder, itemRoot, predicates);
 
 		Predicate combinedPredicate = criteriaBuilder.and(predicates.toArray(new Predicate[0]));
@@ -649,7 +937,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.mark),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getMark()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getMark()));
 			predicates.add(predicate);
 		}
 
@@ -659,7 +947,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.model),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getModel()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getModel()));
 			predicates.add(predicate);
 		}
 
@@ -670,7 +958,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.chassisConfiguration),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getChassiesConfiguration()));
 			predicates.add(predicate);
 		}
@@ -681,7 +969,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.year),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getStartYear()));
 			predicates.add(predicate);
 		}
@@ -692,7 +980,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.year),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getEndYear()));
 			predicates.add(predicate);
 		}
@@ -745,7 +1033,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.steeringWheel),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 					 filterDto.getSteeringWheel()));
 			predicates.add(predicate);
 		}
@@ -756,7 +1044,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.transmission),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getTransmission()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getTransmission()));
 			predicates.add(predicate);
 		}
 
@@ -766,7 +1054,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.engineType),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getEngineType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getEngineType()));
 			predicates.add(predicate);
 		}
 
@@ -776,7 +1064,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.mileage),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getStartMileage()));
 			predicates.add(predicate);
 		}
@@ -787,7 +1075,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.mileage),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getEndMileage()));
 			predicates.add(predicate);
 		}
@@ -798,7 +1086,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.clearedCustom),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 					 filterDto.getClearedCustom()));
 			predicates.add(predicate);
 		}
@@ -809,7 +1097,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.color),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getColor()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getColor()));
 			predicates.add(predicate);
 		}
 
@@ -840,7 +1128,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.mark),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getMark()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getMark()));
 			predicates.add(predicate);
 		}
 
@@ -850,7 +1138,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.model),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getModel()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getModel()));
 			predicates.add(predicate);
 		}
 
@@ -860,7 +1148,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.year),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getStartYear()));
 			predicates.add(predicate);
 		}
@@ -871,7 +1159,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.year),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getEndYear()));
 			predicates.add(predicate);
 		}
@@ -924,7 +1212,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.steeringWheel),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 					 filterDto.getSteeringWheel()));
 			predicates.add(predicate);
 		}
@@ -935,7 +1223,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.transmission),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getTransmission()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getTransmission()));
 			predicates.add(predicate);
 		}
 
@@ -945,7 +1233,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.engineType),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getEngineType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getEngineType()));
 			predicates.add(predicate);
 		}
 
@@ -955,7 +1243,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.mileage),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getStartMileage()));
 			predicates.add(predicate);
 		}
@@ -966,7 +1254,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.mileage),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getEndMileage()));
 			predicates.add(predicate);
 		}
@@ -977,7 +1265,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.clearedCustom),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 					 filterDto.getClearedCustom()));
 			predicates.add(predicate);
 		}
@@ -988,7 +1276,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.color),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getColor()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getColor()));
 			predicates.add(predicate);
 		}
 
@@ -1061,7 +1349,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.elevator),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getElevator()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getElevator()));
 			predicates.add(predicate);
 		}
 
@@ -1072,7 +1360,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.constructionType),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getConstructionType()));
 			predicates.add(predicate);
 		}
@@ -1084,7 +1372,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.newConstruction),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getNewConstruction()));
 			predicates.add(predicate);
 		}
@@ -1096,7 +1384,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.floorsInTheBuilding),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getFloorsInTheBuilding()));
 			predicates.add(predicate);
 		}
@@ -1107,7 +1395,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.appliances),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getAppliances()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getAppliances()));
 			predicates.add(predicate);
 		}
 
@@ -1117,7 +1405,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.floor),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getStartFloor()));
 			predicates.add(predicate);
 		}
@@ -1128,7 +1416,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.floor),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getEndFloor()));
 			predicates.add(predicate);
 		}
@@ -1139,7 +1427,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.balcony),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getBalcony()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getBalcony()));
 			predicates.add(predicate);
 		}
 
@@ -1149,7 +1437,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.ceilingHeight),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 					 filterDto.getCeilingHeight()));
 			predicates.add(predicate);
 		}
@@ -1160,7 +1448,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.furniture),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getFurniture()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getFurniture()));
 			predicates.add(predicate);
 		}
 
@@ -1170,7 +1458,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.floorArea),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getStartFloorArea()));
 			predicates.add(predicate);
 		}
@@ -1181,7 +1469,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.floorArea),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getEndFloorArea()));
 			predicates.add(predicate);
 		}
@@ -1192,7 +1480,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.renovation),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getRenovation()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getRenovation()));
 			predicates.add(predicate);
 		}
 
@@ -1202,7 +1490,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.parking),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getParking()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getParking()));
 			predicates.add(predicate);
 		}
 
@@ -1212,7 +1500,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.windowsViews),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getWindowViews()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getWindowViews()));
 			predicates.add(predicate);
 		}
 
@@ -1222,7 +1510,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.numberOfRooms),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 					 filterDto.getNumberOfRooms()));
 			predicates.add(predicate);
 		}
@@ -1234,7 +1522,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.numberOfBathrooms),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getNumberOfBathrooms()));
 			predicates.add(predicate);
 		}
@@ -1245,7 +1533,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.theHouseHas),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getTheHouseHas()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getTheHouseHas()));
 			predicates.add(predicate);
 		}
 
@@ -1317,7 +1605,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.elevator),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getElevator()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getElevator()));
 			predicates.add(predicate);
 		}
 
@@ -1328,7 +1616,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.constructionType),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getConstructionType()));
 			predicates.add(predicate);
 		}
@@ -1340,7 +1628,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.newConstruction),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getNewConstruction()));
 			predicates.add(predicate);
 		}
@@ -1352,7 +1640,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.floorsInTheBuilding),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getFloorsInTheBuilding()));
 			predicates.add(predicate);
 		}
@@ -1363,7 +1651,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.appliances),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getAppliances()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getAppliances()));
 			predicates.add(predicate);
 		}
 
@@ -1373,7 +1661,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.amenities),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getAmenities()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getAmenities()));
 			predicates.add(predicate);
 		}
 
@@ -1383,7 +1671,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.floor),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getStartFloor()));
 			predicates.add(predicate);
 		}
@@ -1394,7 +1682,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.floor),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getEndFloor()));
 			predicates.add(predicate);
 		}
@@ -1405,7 +1693,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.balcony),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getBalcony()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getBalcony()));
 			predicates.add(predicate);
 		}
 
@@ -1415,7 +1703,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.ceilingHeight),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 					 filterDto.getCeilingHeight()));
 			predicates.add(predicate);
 		}
@@ -1426,7 +1714,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.furniture),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getFurniture()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getFurniture()));
 			predicates.add(predicate);
 		}
 
@@ -1436,7 +1724,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.floorArea),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getStartFloorArea()));
 			predicates.add(predicate);
 		}
@@ -1447,7 +1735,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.floorArea),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getEndFloorArea()));
 			predicates.add(predicate);
 		}
@@ -1458,7 +1746,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.renovation),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getRenovation()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getRenovation()));
 			predicates.add(predicate);
 		}
 
@@ -1468,7 +1756,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.parking),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getParking()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getParking()));
 			predicates.add(predicate);
 		}
 
@@ -1478,7 +1766,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.windowsViews),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getWindowViews()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getWindowViews()));
 			predicates.add(predicate);
 		}
 
@@ -1488,7 +1776,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.numberOfRooms),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 					 filterDto.getNumberOfRooms()));
 			predicates.add(predicate);
 		}
@@ -1500,7 +1788,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.numberOfBathrooms),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getNumberOfBathrooms()));
 			predicates.add(predicate);
 		}
@@ -1511,7 +1799,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.theHouseHas),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getTheHouseHas()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getTheHouseHas()));
 			predicates.add(predicate);
 		}
 
@@ -1521,7 +1809,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.withPets),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getWithPets()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getWithPets()));
 			predicates.add(predicate);
 		}
 
@@ -1531,7 +1819,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.withChildren),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getWithChildren()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getWithChildren()));
 			predicates.add(predicate);
 		}
 
@@ -1541,7 +1829,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.prepayment),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getPrepayment()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getPrepayment()));
 			predicates.add(predicate);
 		}
 
@@ -1552,7 +1840,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.utilityPayments),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getUtilityPayments()));
 			predicates.add(predicate);
 		}
@@ -1626,7 +1914,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -1637,7 +1925,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.constructionType),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getConstructionType()));
 			predicates.add(predicate);
 		}
@@ -1648,7 +1936,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.furniture),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getFurniture()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getFurniture()));
 			predicates.add(predicate);
 		}
 
@@ -1658,7 +1946,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.houseArea),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getStartHouseArea()));
 			predicates.add(predicate);
 		}
@@ -1669,7 +1957,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.houseArea),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getEndHouseArea()));
 			predicates.add(predicate);
 		}
@@ -1680,7 +1968,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.renovation),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getRenovation()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getRenovation()));
 			predicates.add(predicate);
 		}
 
@@ -1690,7 +1978,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -1700,7 +1988,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.garage),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getGarage()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getGarage()));
 			predicates.add(predicate);
 		}
 
@@ -1710,7 +1998,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.appliances),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getAppliances()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getAppliances()));
 			predicates.add(predicate);
 		}
 
@@ -1720,7 +2008,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.facilities),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getFacilities()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getFacilities()));
 			predicates.add(predicate);
 		}
 
@@ -1730,7 +2018,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.serviceLines),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getServiceLines()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getServiceLines()));
 			predicates.add(predicate);
 		}
 
@@ -1740,7 +2028,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.landArea),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getStartLandArea()));
 			predicates.add(predicate);
 		}
@@ -1751,7 +2039,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.landArea),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getEndLandArea()));
 			predicates.add(predicate);
 		}
@@ -1763,7 +2051,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.floorsInTheBuilding),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getFloorsInTheBuilding()));
 			predicates.add(predicate);
 		}
@@ -1774,7 +2062,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.numberOfRooms),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 					 filterDto.getNumberOfRooms()));
 			predicates.add(predicate);
 		}
@@ -1786,7 +2074,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.numberOfBathrooms),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getNumberOfBathrooms()));
 			predicates.add(predicate);
 		}
@@ -1859,7 +2147,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -1870,7 +2158,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.constructionType),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getConstructionType()));
 			predicates.add(predicate);
 		}
@@ -1881,7 +2169,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.furniture),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getFurniture()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getFurniture()));
 			predicates.add(predicate);
 		}
 
@@ -1891,7 +2179,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.houseArea),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getStartHouseArea()));
 			predicates.add(predicate);
 		}
@@ -1902,7 +2190,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.houseArea),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getEndHouseArea()));
 			predicates.add(predicate);
 		}
@@ -1913,7 +2201,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.renovation),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getRenovation()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getRenovation()));
 			predicates.add(predicate);
 		}
 
@@ -1923,7 +2211,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.garage),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getGarage()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getGarage()));
 			predicates.add(predicate);
 		}
 
@@ -1933,7 +2221,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.appliances),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getAppliances()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getAppliances()));
 			predicates.add(predicate);
 		}
 
@@ -1943,7 +2231,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.amenities),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getAmenities()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getAmenities()));
 			predicates.add(predicate);
 		}
 
@@ -1953,7 +2241,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.facilities),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getFacilities()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getFacilities()));
 			predicates.add(predicate);
 		}
 
@@ -1963,7 +2251,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.serviceLines),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getServiceLines()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getServiceLines()));
 			predicates.add(predicate);
 		}
 
@@ -1973,7 +2261,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.landArea),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getStartLandArea()));
 			predicates.add(predicate);
 		}
@@ -1984,7 +2272,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.landArea),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getEndLandArea()));
 			predicates.add(predicate);
 		}
@@ -1996,7 +2284,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.floorsInTheBuilding),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getFloorsInTheBuilding()));
 			predicates.add(predicate);
 		}
@@ -2007,7 +2295,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.numberOfRooms),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 					 filterDto.getNumberOfRooms()));
 			predicates.add(predicate);
 		}
@@ -2019,7 +2307,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.numberOfBathrooms),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getNumberOfBathrooms()));
 			predicates.add(predicate);
 		}
@@ -2030,7 +2318,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.withChildren),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getWithChildren()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getWithChildren()));
 			predicates.add(predicate);
 		}
 
@@ -2040,7 +2328,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.withPets),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getWithPets()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getWithPets()));
 			predicates.add(predicate);
 		}
 
@@ -2051,7 +2339,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.utilityPayments),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getUtilityPayments()));
 			predicates.add(predicate);
 		}
@@ -2062,7 +2350,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.prepayment),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getPrepayment()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getPrepayment()));
 			predicates.add(predicate);
 		}
 
@@ -2135,7 +2423,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -2146,7 +2434,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.constructionType),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getConstructionType()));
 			predicates.add(predicate);
 		}
@@ -2157,7 +2445,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.floorArea),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getStartFloorArea()));
 			predicates.add(predicate);
 		}
@@ -2168,7 +2456,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.floorArea),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getEndFloorArea()));
 			predicates.add(predicate);
 		}
@@ -2179,7 +2467,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.parking),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getParking()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getParking()));
 			predicates.add(predicate);
 		}
 
@@ -2189,7 +2477,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.furniture),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getFurniture()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getFurniture()));
 			predicates.add(predicate);
 		}
 
@@ -2199,7 +2487,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.elevator),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getElevator()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getElevator()));
 			predicates.add(predicate);
 		}
 
@@ -2209,7 +2497,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.entrance),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getEntrance()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getEntrance()));
 			predicates.add(predicate);
 		}
 
@@ -2220,7 +2508,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.locationFromTheStreet),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getLocationFromTheStreet()));
 			predicates.add(predicate);
 		}
@@ -2293,7 +2581,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -2303,7 +2591,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.floorArea),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getStartFloorArea()));
 			predicates.add(predicate);
 		}
@@ -2314,7 +2602,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.floorArea),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getEndFloorArea()));
 			predicates.add(predicate);
 		}
@@ -2325,7 +2613,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.parking),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getParking()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getParking()));
 			predicates.add(predicate);
 		}
 
@@ -2335,7 +2623,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.furniture),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getFurniture()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getFurniture()));
 			predicates.add(predicate);
 		}
 
@@ -2345,7 +2633,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.elevator),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getElevator()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getElevator()));
 			predicates.add(predicate);
 		}
 
@@ -2355,7 +2643,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.entrance),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getEntrance()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getEntrance()));
 			predicates.add(predicate);
 		}
 
@@ -2366,7 +2654,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.locationFromTheStreet),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getLocationFromTheStreet()));
 			predicates.add(predicate);
 		}
@@ -2378,7 +2666,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.utilityPayments),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getUtilityPayments()));
 			predicates.add(predicate);
 		}
@@ -2389,7 +2677,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.prepayment),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getPrepayment()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getPrepayment()));
 			predicates.add(predicate);
 		}
 
@@ -2400,7 +2688,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.maximumRentalPeriod),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getMinimumRentalPeriod()));
 			predicates.add(predicate);
 		}
@@ -2411,7 +2699,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.leaseType),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getLeaseType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getLeaseType()));
 			predicates.add(predicate);
 		}
 
@@ -2483,7 +2771,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -2493,7 +2781,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.floorArea),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getStartFloorArea()));
 			predicates.add(predicate);
 		}
@@ -2504,7 +2792,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.floorArea),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getEndFloorArea()));
 			predicates.add(predicate);
 		}
@@ -2515,7 +2803,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.amenities),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getAmenities()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getAmenities()));
 			predicates.add(predicate);
 		}
 
@@ -2525,7 +2813,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.utilities),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getUtilities()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getUtilities()));
 			predicates.add(predicate);
 		}
 
@@ -2597,7 +2885,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -2607,7 +2895,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.floorArea),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getStartFloorArea()));
 			predicates.add(predicate);
 		}
@@ -2618,7 +2906,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.floorArea),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getEndFloorArea()));
 			predicates.add(predicate);
 		}
@@ -2629,7 +2917,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.amenities),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getAmenities()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getAmenities()));
 			predicates.add(predicate);
 		}
 
@@ -2639,7 +2927,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.utilities),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getUtilities()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getUtilities()));
 			predicates.add(predicate);
 		}
 
@@ -2649,7 +2937,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.prepayment),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getPrepayment()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getPrepayment()));
 			predicates.add(predicate);
 		}
 
@@ -2721,7 +3009,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -2731,7 +3019,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.landArea),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getStartLandArea()));
 			predicates.add(predicate);
 		}
@@ -2742,7 +3030,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.landArea),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getEndLandArea()));
 			predicates.add(predicate);
 		}
@@ -2753,7 +3041,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.serviceLines),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getServiceLines()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getServiceLines()));
 			predicates.add(predicate);
 		}
 
@@ -2825,7 +3113,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -2835,7 +3123,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.landArea),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getStartLandArea()));
 			predicates.add(predicate);
 		}
@@ -2846,7 +3134,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.landArea),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getEndLandArea()));
 			predicates.add(predicate);
 		}
@@ -2857,7 +3145,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.serviceLines),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getServiceLines()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getServiceLines()));
 			predicates.add(predicate);
 		}
 
@@ -2867,7 +3155,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.prepayment),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getPrepayment()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getPrepayment()));
 			predicates.add(predicate);
 		}
 
@@ -2939,7 +3227,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.elevator),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getElevator()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getElevator()));
 			predicates.add(predicate);
 		}
 
@@ -2950,7 +3238,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.constructionType),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getConstructionType()));
 			predicates.add(predicate);
 		}
@@ -2962,7 +3250,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.floorsInTheBuilding),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getFloorsInTheBuilding()));
 			predicates.add(predicate);
 		}
@@ -2973,7 +3261,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.floor),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getStartFloor()));
 			predicates.add(predicate);
 		}
@@ -2984,7 +3272,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.floor),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getEndFloor()));
 			predicates.add(predicate);
 		}
@@ -2995,7 +3283,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.theHouseHas),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getTheHouseHas()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getTheHouseHas()));
 			predicates.add(predicate);
 		}
 
@@ -3005,7 +3293,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.balcony),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getBalcony()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getBalcony()));
 			predicates.add(predicate);
 		}
 
@@ -3015,7 +3303,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.ceilingHeight),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 					 filterDto.getCeilingHeight()));
 			predicates.add(predicate);
 		}
@@ -3026,7 +3314,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.floorArea),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getStartFloorArea()));
 			predicates.add(predicate);
 		}
@@ -3037,7 +3325,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.floorArea),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getEndFloorArea()));
 			predicates.add(predicate);
 		}
@@ -3048,7 +3336,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.parking),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getParking()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getParking()));
 			predicates.add(predicate);
 		}
 
@@ -3058,7 +3346,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.numberOfRooms),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 					 filterDto.getNumberOfRooms()));
 			predicates.add(predicate);
 		}
@@ -3070,7 +3358,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.numberOfBathrooms),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getNumberOfBathrooms()));
 			predicates.add(predicate);
 		}
@@ -3082,7 +3370,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.interiorFinishing),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getInteriorFinishing()));
 			predicates.add(predicate);
 		}
@@ -3094,7 +3382,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.mortgageIsPossible),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getMortgageIsPossible()));
 			predicates.add(predicate);
 		}
@@ -3167,7 +3455,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -3178,7 +3466,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.constructionType),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getConstructionType()));
 			predicates.add(predicate);
 		}
@@ -3190,7 +3478,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.floorsInTheBuilding),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getFloorsInTheBuilding()));
 			predicates.add(predicate);
 		}
@@ -3201,7 +3489,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.houseArea),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getStartHouseArea()));
 			predicates.add(predicate);
 		}
@@ -3212,7 +3500,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.houseArea),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getEndHouseArea()));
 			predicates.add(predicate);
 		}
@@ -3223,7 +3511,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.landArea),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getStartLandArea()));
 			predicates.add(predicate);
 		}
@@ -3234,7 +3522,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.landArea),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getEndLandArea()));
 			predicates.add(predicate);
 		}
@@ -3245,7 +3533,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.garage),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getGarage()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getGarage()));
 			predicates.add(predicate);
 		}
 
@@ -3255,7 +3543,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.numberOfRooms),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 					 filterDto.getNumberOfRooms()));
 			predicates.add(predicate);
 		}
@@ -3267,7 +3555,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.numberOfBathrooms),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getNumberOfBathrooms()));
 			predicates.add(predicate);
 		}
@@ -3278,7 +3566,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.serviceLines),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getServiceLines()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getServiceLines()));
 			predicates.add(predicate);
 		}
 
@@ -3289,7 +3577,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.interiorFinishing),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getInteriorFinishing()));
 			predicates.add(predicate);
 		}
@@ -3301,7 +3589,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.mortgageIsPossible),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getMortgageIsPossible()));
 			predicates.add(predicate);
 		}
@@ -3375,7 +3663,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.constructionType),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getConstructionType()));
 			predicates.add(predicate);
 		}
@@ -3387,7 +3675,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.newConstruction),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getNewConstruction()));
 			predicates.add(predicate);
 		}
@@ -3398,7 +3686,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.theHouseHas),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getTheHouseHas()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getTheHouseHas()));
 			predicates.add(predicate);
 		}
 
@@ -3409,7 +3697,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.floorsInTheBuilding),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getFloorsInTheBuilding()));
 			predicates.add(predicate);
 		}
@@ -3420,7 +3708,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.floorArea),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getStartFloorArea()));
 			predicates.add(predicate);
 		}
@@ -3431,7 +3719,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.floorArea),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getEndFloorArea()));
 			predicates.add(predicate);
 		}
@@ -3442,7 +3730,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.floor),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getStartFloor()));
 			predicates.add(predicate);
 		}
@@ -3453,7 +3741,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.floor),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getEndFloor()));
 			predicates.add(predicate);
 		}
@@ -3464,7 +3752,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.parking),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getParking()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getParking()));
 			predicates.add(predicate);
 		}
 
@@ -3474,7 +3762,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.amenities),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getAmenities()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getAmenities()));
 			predicates.add(predicate);
 		}
 
@@ -3484,7 +3772,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.appliances),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getAppliances()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getAppliances()));
 			predicates.add(predicate);
 		}
 
@@ -3494,7 +3782,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.windowViews),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getWindowViews()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getWindowViews()));
 			predicates.add(predicate);
 		}
 
@@ -3504,7 +3792,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.withPets),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getWithPets()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getWithPets()));
 			predicates.add(predicate);
 		}
 
@@ -3514,7 +3802,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.withChildren),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getWithChildren()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getWithChildren()));
 			predicates.add(predicate);
 		}
 
@@ -3525,7 +3813,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 					 FilterConstants.numberOfGuests),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getNumberOfGuests()));
 			predicates.add(predicate);
 		}
@@ -3536,7 +3824,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.renovation),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getRenovation()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getRenovation()));
 			predicates.add(predicate);
 		}
 
@@ -3546,7 +3834,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.balcony),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getBalcony()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getBalcony()));
 			predicates.add(predicate);
 		}
 
@@ -3556,7 +3844,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.elevator),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getElevator()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getElevator()));
 			predicates.add(predicate);
 		}
 
@@ -3566,7 +3854,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.ceilingHeight),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 					 filterDto.getCeilingHeight()));
 			predicates.add(predicate);
 		}
@@ -3577,7 +3865,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.numberOfRooms),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 					 filterDto.getNumberOfRooms()));
 			predicates.add(predicate);
 		}
@@ -3589,7 +3877,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.numberOfBathrooms),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getNumberOfBathrooms()));
 			predicates.add(predicate);
 		}
@@ -3600,7 +3888,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.comfort),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getComfort()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getComfort()));
 			predicates.add(predicate);
 		}
 
@@ -3672,7 +3960,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -3683,7 +3971,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.constructionType),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getConstructionType()));
 			predicates.add(predicate);
 		}
@@ -3695,7 +3983,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.floorsInTheBuilding),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getFloorsInTheBuilding()));
 			predicates.add(predicate);
 		}
@@ -3706,7 +3994,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.houseArea),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getStartHouseArea()));
 			predicates.add(predicate);
 		}
@@ -3717,7 +4005,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.houseArea),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getEndHouseArea()));
 			predicates.add(predicate);
 		}
@@ -3728,7 +4016,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.garage),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getGarage()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getGarage()));
 			predicates.add(predicate);
 		}
 
@@ -3738,7 +4026,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.amenities),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getAmenities()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getAmenities()));
 			predicates.add(predicate);
 		}
 
@@ -3748,7 +4036,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.appliances),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getAppliances()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getAppliances()));
 			predicates.add(predicate);
 		}
 
@@ -3758,7 +4046,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.withPets),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getWithPets()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getWithPets()));
 			predicates.add(predicate);
 		}
 
@@ -3768,7 +4056,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.withChildren),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getWithChildren()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getWithChildren()));
 			predicates.add(predicate);
 		}
 
@@ -3779,7 +4067,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 					 FilterConstants.numberOfGuests),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getNumberOfGuests()));
 			predicates.add(predicate);
 		}
@@ -3790,7 +4078,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.renovation),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getRenovation()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getRenovation()));
 			predicates.add(predicate);
 		}
 
@@ -3800,7 +4088,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.numberOfRooms),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 					 filterDto.getNumberOfRooms()));
 			predicates.add(predicate);
 		}
@@ -3812,7 +4100,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.numberOfBathrooms),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getNumberOfBathrooms()));
 			predicates.add(predicate);
 		}
@@ -3823,7 +4111,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.comfort),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getComfort()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getComfort()));
 			predicates.add(predicate);
 		}
 
@@ -3895,7 +4183,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.mark),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getMark()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getMark()));
 			predicates.add(predicate);
 		}
 
@@ -3905,7 +4193,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.model),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getModel()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getModel()));
 			predicates.add(predicate);
 		}
 
@@ -3915,7 +4203,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -3925,7 +4213,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.storage),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getStorage()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getStorage()));
 			predicates.add(predicate);
 		}
 
@@ -3935,7 +4223,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.color),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getColor()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getColor()));
 			predicates.add(predicate);
 		}
 
@@ -4007,7 +4295,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.mark),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getMark()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getMark()));
 			predicates.add(predicate);
 		}
 
@@ -4017,7 +4305,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.memory),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getMemory()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getMemory()));
 			predicates.add(predicate);
 		}
 
@@ -4027,7 +4315,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.memoryRam),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getMemoryRAM()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getMemoryRAM()));
 			predicates.add(predicate);
 		}
 
@@ -4037,7 +4325,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.processor),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getProcessor()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getProcessor()));
 			predicates.add(predicate);
 		}
 
@@ -4047,7 +4335,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -4057,7 +4345,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.screenSize),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getScreenSize()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getScreenSize()));
 			predicates.add(predicate);
 		}
 
@@ -4068,7 +4356,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.screenResolution),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getScreenResolution()));
 			predicates.add(predicate);
 		}
@@ -4141,7 +4429,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.memory),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getMemory()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getMemory()));
 			predicates.add(predicate);
 		}
 
@@ -4151,7 +4439,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.memoryRam),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getMemoryRAM()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getMemoryRAM()));
 			predicates.add(predicate);
 		}
 
@@ -4161,7 +4449,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.processor),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getProcessor()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getProcessor()));
 			predicates.add(predicate);
 		}
 
@@ -4171,7 +4459,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -4181,7 +4469,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.screenSize),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getScreenSize()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getScreenSize()));
 			predicates.add(predicate);
 		}
 
@@ -4192,7 +4480,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.screenResolution),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getScreenResolution()));
 			predicates.add(predicate);
 		}
@@ -4265,7 +4553,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.mark),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getMark()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getMark()));
 			predicates.add(predicate);
 		}
 
@@ -4275,7 +4563,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -4285,7 +4573,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.color),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getColor()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getColor()));
 			predicates.add(predicate);
 		}
 
@@ -4357,7 +4645,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.mark),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getMark()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getMark()));
 			predicates.add(predicate);
 		}
 
@@ -4367,7 +4655,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.screenSize),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getScreenSize()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getScreenSize()));
 			predicates.add(predicate);
 		}
 
@@ -4377,7 +4665,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.memory),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getMemory()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getMemory()));
 			predicates.add(predicate);
 		}
 
@@ -4387,7 +4675,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -4397,7 +4685,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.color),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getColor()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getColor()));
 			predicates.add(predicate);
 		}
 
@@ -4469,7 +4757,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.mark),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getMark()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getMark()));
 			predicates.add(predicate);
 		}
 
@@ -4479,7 +4767,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.screenSize),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getScreenSize()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getScreenSize()));
 			predicates.add(predicate);
 		}
 
@@ -4489,7 +4777,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -4561,7 +4849,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.mark),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getMark()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getMark()));
 			predicates.add(predicate);
 		}
 
@@ -4571,7 +4859,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -4581,7 +4869,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -4653,7 +4941,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.mark),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getMark()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getMark()));
 			predicates.add(predicate);
 		}
 
@@ -4664,7 +4952,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 					 FilterConstants.connectionType),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getConnectionType()));
 			predicates.add(predicate);
 		}
@@ -4675,7 +4963,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.color),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getColor()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getColor()));
 			predicates.add(predicate);
 		}
 
@@ -4685,7 +4973,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -4757,7 +5045,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -4767,7 +5055,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -4839,7 +5127,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.mark),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getMark()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getMark()));
 			predicates.add(predicate);
 		}
 
@@ -4849,7 +5137,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -4921,7 +5209,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -4931,7 +5219,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -5003,7 +5291,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.mark),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getMark()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getMark()));
 			predicates.add(predicate);
 		}
 
@@ -5013,7 +5301,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -5023,7 +5311,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -5095,7 +5383,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.mark),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getMark()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getMark()));
 			predicates.add(predicate);
 		}
 
@@ -5105,7 +5393,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -5116,7 +5404,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.maximumLaundryCapacity),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getMaximumLaundryCapacity()));
 			predicates.add(predicate);
 		}
@@ -5128,7 +5416,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.laundryLoadType),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getLaundryLoadType()));
 			predicates.add(predicate);
 		}
@@ -5139,7 +5427,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -5211,7 +5499,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -5283,7 +5571,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -5293,7 +5581,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -5365,7 +5653,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.mark),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getMark()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getMark()));
 			predicates.add(predicate);
 		}
 
@@ -5375,7 +5663,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -5385,7 +5673,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -5457,7 +5745,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -5529,7 +5817,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -5601,7 +5889,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -5673,7 +5961,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -5683,7 +5971,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.burnerType),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getBurnerType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getBurnerType()));
 			predicates.add(predicate);
 		}
 
@@ -5693,7 +5981,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -5765,7 +6053,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -5775,7 +6063,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -5847,7 +6135,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -5857,7 +6145,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -5929,7 +6217,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -6001,7 +6289,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -6073,7 +6361,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -6145,7 +6433,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -6217,7 +6505,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -6289,7 +6577,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -6361,7 +6649,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -6371,7 +6659,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -6443,7 +6731,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -6453,7 +6741,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -6525,7 +6813,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -6535,7 +6823,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -6607,7 +6895,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -6679,7 +6967,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -6689,7 +6977,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.upholstery),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getUpholstery()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getUpholstery()));
 			predicates.add(predicate);
 		}
 
@@ -6699,7 +6987,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.color),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getColor()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getColor()));
 			predicates.add(predicate);
 		}
 
@@ -6709,7 +6997,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -6781,7 +7069,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -6791,7 +7079,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -6863,7 +7151,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -6873,7 +7161,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -6945,7 +7233,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -6955,7 +7243,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -7027,7 +7315,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -7037,7 +7325,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.color),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getColor()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getColor()));
 			predicates.add(predicate);
 		}
 
@@ -7047,7 +7335,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -7119,7 +7407,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -7129,7 +7417,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -7201,7 +7489,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -7273,7 +7561,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -7345,7 +7633,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -7417,7 +7705,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -7427,7 +7715,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -7499,7 +7787,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -7509,7 +7797,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -7581,7 +7869,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -7591,7 +7879,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.rugWidth),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getRugWidth()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getRugWidth()));
 			predicates.add(predicate);
 		}
 
@@ -7601,7 +7889,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.rugLength),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getRugLength()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getRugLength()));
 			predicates.add(predicate);
 		}
 
@@ -7611,7 +7899,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -7683,7 +7971,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -7693,7 +7981,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -7765,7 +8053,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -7775,7 +8063,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -7847,7 +8135,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -7857,7 +8145,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -7929,7 +8217,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -8001,7 +8289,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -8073,7 +8361,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -8145,7 +8433,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -8155,7 +8443,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.mark),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getMark()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getMark()));
 			predicates.add(predicate);
 		}
 
@@ -8165,7 +8453,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.originality),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getOriginality()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getOriginality()));
 			predicates.add(predicate);
 		}
 
@@ -8175,7 +8463,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.partSide),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getPartSide()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getPartSide()));
 			predicates.add(predicate);
 		}
 
@@ -8185,7 +8473,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.partPosition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getPartPosition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getPartPosition()));
 			predicates.add(predicate);
 		}
 
@@ -8195,7 +8483,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -8267,7 +8555,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -8277,7 +8565,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.season),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getSeason()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getSeason()));
 			predicates.add(predicate);
 		}
 
@@ -8287,7 +8575,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.width),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getWidth()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getWidth()));
 			predicates.add(predicate);
 		}
 
@@ -8297,7 +8585,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.height),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getHeight()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getHeight()));
 			predicates.add(predicate);
 		}
 
@@ -8307,7 +8595,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.diameter),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getDiameter()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getDiameter()));
 			predicates.add(predicate);
 		}
 
@@ -8317,7 +8605,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -8389,7 +8677,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -8399,7 +8687,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.diameter),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getDiameter()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getDiameter()));
 			predicates.add(predicate);
 		}
 
@@ -8409,7 +8697,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -8481,7 +8769,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.voltage),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getVoltage()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getVoltage()));
 			predicates.add(predicate);
 		}
 
@@ -8491,7 +8779,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.capacity),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getStartCapacity()));
 			predicates.add(predicate);
 		}
@@ -8502,7 +8790,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.capacity),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getEndCapacity()));
 			predicates.add(predicate);
 		}
@@ -8513,7 +8801,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -8585,7 +8873,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -8595,7 +8883,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -8667,7 +8955,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -8739,7 +9027,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -8811,7 +9099,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -8821,7 +9109,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -8893,7 +9181,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -8903,7 +9191,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -8975,7 +9263,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -8985,7 +9273,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -9057,7 +9345,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -9067,7 +9355,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -9139,7 +9427,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -9211,7 +9499,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -9221,7 +9509,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.floorArea),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getStartFloorArea()));
 			predicates.add(predicate);
 		}
@@ -9232,7 +9520,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.floorArea),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getEndFloorArea()));
 			predicates.add(predicate);
 		}
@@ -9244,7 +9532,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.exteriorFinishing),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getExteriorFinish()));
 			predicates.add(predicate);
 		}
@@ -9317,7 +9605,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -9327,7 +9615,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.floorArea),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getStartFloorArea()));
 			predicates.add(predicate);
 		}
@@ -9338,7 +9626,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.floorArea),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getEndFloorArea()));
 			predicates.add(predicate);
 		}
@@ -9350,7 +9638,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 					 FilterConstants.numberOfGuests),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getNumberOfGuests()));
 			predicates.add(predicate);
 		}
@@ -9361,7 +9649,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.eventTypes),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getEventTypes()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getEventTypes()));
 			predicates.add(predicate);
 		}
 
@@ -9371,7 +9659,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.equipment),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getEquipment()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getEquipment()));
 			predicates.add(predicate);
 		}
 
@@ -9381,7 +9669,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.facilities),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getFacilities()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getFacilities()));
 			predicates.add(predicate);
 		}
 
@@ -9392,7 +9680,7 @@ public class ItemServiceImpl implements ItemService {
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName),
 							FilterConstants.noiseAfterHours),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getNoiseAfterHours()));
 			predicates.add(predicate);
 		}
@@ -9403,7 +9691,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.withPets),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getWithPets()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getWithPets()));
 			predicates.add(predicate);
 		}
 
@@ -9474,7 +9762,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -9484,7 +9772,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.size),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getSize()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getSize()));
 			predicates.add(predicate);
 		}
 
@@ -9494,7 +9782,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.color),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getColor()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getColor()));
 			predicates.add(predicate);
 		}
 
@@ -9504,7 +9792,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -9575,7 +9863,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -9585,7 +9873,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.size),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getSize()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getSize()));
 			predicates.add(predicate);
 		}
 
@@ -9595,7 +9883,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.color),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getColor()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getColor()));
 			predicates.add(predicate);
 		}
 
@@ -9605,7 +9893,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -9676,7 +9964,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -9686,7 +9974,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.season),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getSeason()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getSeason()));
 			predicates.add(predicate);
 		}
 
@@ -9696,7 +9984,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.shoeSize),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getShoeSize()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getShoeSize()));
 			predicates.add(predicate);
 		}
 
@@ -9706,7 +9994,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.color),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getColor()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getColor()));
 			predicates.add(predicate);
 		}
 
@@ -9716,7 +10004,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -9787,7 +10075,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -9797,7 +10085,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -9868,7 +10156,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -9878,7 +10166,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.size),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getSize()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getSize()));
 			predicates.add(predicate);
 		}
 
@@ -9888,7 +10176,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.color),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getColor()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getColor()));
 			predicates.add(predicate);
 		}
 
@@ -9898,7 +10186,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -9969,7 +10257,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -9979,7 +10267,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.season),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getSeason()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getSeason()));
 			predicates.add(predicate);
 		}
 
@@ -9989,7 +10277,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.shoeSize),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getShoeSize()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getShoeSize()));
 			predicates.add(predicate);
 		}
 
@@ -9999,7 +10287,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.color),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getColor()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getColor()));
 			predicates.add(predicate);
 		}
 
@@ -10009,7 +10297,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -10080,7 +10368,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -10090,7 +10378,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -10161,7 +10449,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -10171,7 +10459,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.gender),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getGender()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getGender()));
 			predicates.add(predicate);
 		}
 
@@ -10181,7 +10469,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -10252,7 +10540,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -10262,7 +10550,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.gender),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getGender()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getGender()));
 			predicates.add(predicate);
 		}
 
@@ -10272,7 +10560,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.color),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getColor()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getColor()));
 			predicates.add(predicate);
 		}
 
@@ -10282,7 +10570,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -10353,7 +10641,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -10363,7 +10651,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.gender),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getGender()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getGender()));
 			predicates.add(predicate);
 		}
 
@@ -10373,7 +10661,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.clockFace),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getClockFace()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getClockFace()));
 			predicates.add(predicate);
 		}
 
@@ -10383,7 +10671,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.color),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getColor()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getColor()));
 			predicates.add(predicate);
 		}
 
@@ -10393,7 +10681,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -10464,7 +10752,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -10474,7 +10762,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.gender),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getGender()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getGender()));
 			predicates.add(predicate);
 		}
 
@@ -10484,7 +10772,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.material),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getMaterial()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getMaterial()));
 			predicates.add(predicate);
 		}
 
@@ -10494,7 +10782,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.color),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getColor()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getColor()));
 			predicates.add(predicate);
 		}
 
@@ -10504,7 +10792,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -10575,7 +10863,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -10585,7 +10873,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.size),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getSize()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getSize()));
 			predicates.add(predicate);
 		}
 
@@ -10595,7 +10883,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.gender),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getGender()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getGender()));
 			predicates.add(predicate);
 		}
 
@@ -10605,7 +10893,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.color),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getColor()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getColor()));
 			predicates.add(predicate);
 		}
 
@@ -10615,7 +10903,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -10686,7 +10974,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -10696,7 +10984,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.size),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getSize()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getSize()));
 			predicates.add(predicate);
 		}
 
@@ -10706,7 +10994,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.gender),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getGender()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getGender()));
 			predicates.add(predicate);
 		}
 
@@ -10716,7 +11004,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.color),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getColor()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getColor()));
 			predicates.add(predicate);
 		}
 
@@ -10726,7 +11014,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -10797,7 +11085,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -10807,7 +11095,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.size),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getSize()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getSize()));
 			predicates.add(predicate);
 		}
 
@@ -10817,7 +11105,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -10888,7 +11176,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -10898,7 +11186,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.shoeSize),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getShoeSize()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getShoeSize()));
 			predicates.add(predicate);
 		}
 
@@ -10908,7 +11196,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -10979,7 +11267,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -10989,7 +11277,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -11060,7 +11348,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -11131,7 +11419,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -11202,7 +11490,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -11273,7 +11561,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -11302,7 +11590,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -11312,7 +11600,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.mark),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getMark()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getMark()));
 			predicates.add(predicate);
 		}
 
@@ -11322,7 +11610,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.year),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getStartYear()));
 			predicates.add(predicate);
 		}
@@ -11333,7 +11621,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.year),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getEndYear()));
 			predicates.add(predicate);
 		}
@@ -11386,7 +11674,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.engineSize),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getStartEngineSize()));
 			predicates.add(predicate);
 		}
@@ -11397,7 +11685,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.engineSize),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getEndEngineSize()));
 			predicates.add(predicate);
 		}
@@ -11408,7 +11696,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.transmission),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getTransmission()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getTransmission()));
 			predicates.add(predicate);
 		}
 
@@ -11418,7 +11706,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.engineType),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getEngineType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getEngineType()));
 			predicates.add(predicate);
 		}
 
@@ -11428,7 +11716,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.mileage),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getStartMileage()));
 			predicates.add(predicate);
 		}
@@ -11439,7 +11727,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.mileage),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getEndMileage()));
 			predicates.add(predicate);
 		}
@@ -11450,7 +11738,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.color),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getColor()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getColor()));
 			predicates.add(predicate);
 		}
 
@@ -11522,7 +11810,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -11593,7 +11881,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -11603,7 +11891,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -11674,7 +11962,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -11684,7 +11972,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -11755,7 +12043,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -11765,7 +12053,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -11836,7 +12124,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -11846,7 +12134,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -11917,7 +12205,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -11927,7 +12215,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -11998,7 +12286,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -12008,7 +12296,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -12079,7 +12367,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -12089,7 +12377,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -12160,7 +12448,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -12231,7 +12519,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -12302,7 +12590,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -12373,7 +12661,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -12444,7 +12732,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -12515,7 +12803,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -12586,7 +12874,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -12657,7 +12945,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -12728,7 +13016,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -12799,7 +13087,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -12931,7 +13219,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -13002,7 +13290,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -13073,7 +13361,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.gender),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getGender()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getGender()));
 			predicates.add(predicate);
 		}
 
@@ -13083,7 +13371,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.age),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getAge()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getAge()));
 			predicates.add(predicate);
 		}
 
@@ -13154,7 +13442,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.gender),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getGender()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getGender()));
 			predicates.add(predicate);
 		}
 
@@ -13164,7 +13452,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.age),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getAge()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getAge()));
 			predicates.add(predicate);
 		}
 
@@ -13235,7 +13523,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.gender),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getGender()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getGender()));
 			predicates.add(predicate);
 		}
 
@@ -13245,7 +13533,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.nutritionType),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 					 filterDto.getNutritionType()));
 			predicates.add(predicate);
 		}
@@ -13317,7 +13605,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.nutritionType),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 					 filterDto.getNutritionType()));
 			predicates.add(predicate);
 		}
@@ -13389,7 +13677,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.gender),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getGender()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getGender()));
 			predicates.add(predicate);
 		}
 
@@ -13460,7 +13748,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -13531,7 +13819,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.gender),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getGender()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getGender()));
 			predicates.add(predicate);
 		}
 
@@ -13541,7 +13829,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.age),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getAge()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getAge()));
 			predicates.add(predicate);
 		}
 
@@ -13612,7 +13900,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.gender),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getGender()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getGender()));
 			predicates.add(predicate);
 		}
 
@@ -13622,7 +13910,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.age),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getAge()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getAge()));
 			predicates.add(predicate);
 		}
 
@@ -13693,7 +13981,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.gender),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getGender()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getGender()));
 			predicates.add(predicate);
 		}
 
@@ -13703,7 +13991,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.age),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getAge()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getAge()));
 			predicates.add(predicate);
 		}
 
@@ -13774,7 +14062,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.gender),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getGender()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getGender()));
 			predicates.add(predicate);
 		}
 
@@ -13784,7 +14072,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.age),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getAge()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getAge()));
 			predicates.add(predicate);
 		}
 
@@ -13855,7 +14143,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.gender),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getGender()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getGender()));
 			predicates.add(predicate);
 		}
 
@@ -13865,7 +14153,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.age),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getAge()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getAge()));
 			predicates.add(predicate);
 		}
 
@@ -13936,7 +14224,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -14007,7 +14295,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -14078,7 +14366,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -14149,7 +14437,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.season),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getSeason()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getSeason()));
 			predicates.add(predicate);
 		}
 
@@ -14159,7 +14447,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.shoeSize),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getShoeSize()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getShoeSize()));
 			predicates.add(predicate);
 		}
 
@@ -14169,7 +14457,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -14240,7 +14528,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.season),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getSeason()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getSeason()));
 			predicates.add(predicate);
 		}
 
@@ -14250,7 +14538,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.shoeSize),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getShoeSize()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getShoeSize()));
 			predicates.add(predicate);
 		}
 
@@ -14260,7 +14548,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -14331,7 +14619,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -14402,7 +14690,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -14473,7 +14761,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -14544,7 +14832,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -14615,7 +14903,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -14686,7 +14974,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -14757,7 +15045,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -14828,7 +15116,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -14899,7 +15187,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -14909,7 +15197,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.forAges),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getForAges()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getForAges()));
 			predicates.add(predicate);
 		}
 
@@ -14919,7 +15207,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.numberOfSeats),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 					 filterDto.getNumberOfSeats()));
 			predicates.add(predicate);
 		}
@@ -14930,7 +15218,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -15001,7 +15289,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -15072,7 +15360,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -15143,7 +15431,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -15214,7 +15502,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -15285,7 +15573,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -15356,7 +15644,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -15427,7 +15715,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -15498,7 +15786,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -15569,7 +15857,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -15640,7 +15928,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -15711,7 +15999,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -15782,7 +16070,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -15853,7 +16141,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -15924,7 +16212,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -15995,7 +16283,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -16066,7 +16354,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -16137,7 +16425,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -16208,7 +16496,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -16279,7 +16567,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -16289,7 +16577,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -16360,7 +16648,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -16370,7 +16658,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -16441,7 +16729,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -16451,7 +16739,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -16522,7 +16810,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -16532,7 +16820,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -16603,7 +16891,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -16613,7 +16901,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -16684,7 +16972,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -16694,7 +16982,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -16765,7 +17053,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -16775,7 +17063,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -16846,7 +17134,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -16856,7 +17144,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -16927,7 +17215,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -16937,7 +17225,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -17008,7 +17296,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -17018,7 +17306,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -17089,7 +17377,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -17099,7 +17387,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -17170,7 +17458,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -17241,7 +17529,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -17312,7 +17600,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -17383,7 +17671,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -17454,7 +17742,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -17525,7 +17813,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -17596,7 +17884,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -17606,7 +17894,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -17677,7 +17965,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -17687,7 +17975,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -17758,7 +18046,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -17768,7 +18056,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -17839,7 +18127,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -17910,7 +18198,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -17981,7 +18269,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -18052,7 +18340,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -18123,7 +18411,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -18194,7 +18482,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -18265,7 +18553,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -18336,7 +18624,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -18407,7 +18695,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -18478,7 +18766,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -18549,7 +18837,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -18620,7 +18908,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.condition),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getCondition()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getCondition()));
 			predicates.add(predicate);
 		}
 
@@ -18691,7 +18979,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -18762,7 +19050,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.type),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getType()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getType()));
 			predicates.add(predicate);
 		}
 
@@ -18791,7 +19079,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.mark),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getMark()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getMark()));
 			predicates.add(predicate);
 		}
 
@@ -18801,7 +19089,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.model),
-					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue), filterDto.getModel()));
+					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getModel()));
 			predicates.add(predicate);
 		}
 
@@ -18811,7 +19099,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.year),
-					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getStartYear()));
 			predicates.add(predicate);
 		}
@@ -18822,7 +19110,7 @@ public class ItemServiceImpl implements ItemService {
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
 					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.year),
-					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue),
+					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getEndYear()));
 			predicates.add(predicate);
 		}
