@@ -14,7 +14,9 @@ import lombok.Setter;
 public class CityDto {
 
 	private Long id;
-	private String name;
+	private String name_eng;
+	private String name_ru;
+	private String name_hy;
 	private Long regionId;
 
 }

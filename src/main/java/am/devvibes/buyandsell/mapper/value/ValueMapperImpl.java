@@ -1,5 +1,7 @@
 package am.devvibes.buyandsell.mapper.value;
 
+import am.devvibes.buyandsell.dto.field.FieldNameDto;
+import am.devvibes.buyandsell.dto.field.FieldValueDto;
 import am.devvibes.buyandsell.dto.value.FieldValuesDto;
 import am.devvibes.buyandsell.entity.field.FieldNameEntity;
 import am.devvibes.buyandsell.entity.field.FieldEntity;
@@ -23,9 +25,9 @@ public class ValueMapperImpl implements ValueMapper{
 				.orElseThrow(() -> new NotFoundException(ExceptionConstants.FIELD_NOT_FOUND));
 		return FieldEntity.builder()
 				.fieldName(fieldNameEntity)
-				.fieldValue_eng(fieldValuesDto.getFieldValue_eng())
-				.fieldValue_ru(fieldValuesDto.getFieldValue_ru())
-				.fieldValue_hy(fieldValuesDto.getFieldValue_hy())
+				.fieldValue_eng(fieldValuesDto.getFieldValues().getFieldValue_eng())
+				.fieldValue_ru(fieldValuesDto.getFieldValues().getFieldValue_ru())
+				.fieldValue_hy(fieldValuesDto.getFieldValues().getFieldValue_hy())
 				.build();
 	}
 
@@ -38,12 +40,16 @@ public class ValueMapperImpl implements ValueMapper{
 	public FieldValuesDto mapEntityToDto(FieldEntity valueEntity) {
 		return FieldValuesDto.builder()
 				.fieldId(valueEntity.getFieldName().getId())
-				.fieldValue_eng(valueEntity.getFieldValue_eng())
-				.fieldValue_ru(valueEntity.getFieldValue_ru())
-				.fieldValue_hy(valueEntity.getFieldValue_hy())
-				.fieldName_eng(valueEntity.getFieldName().getFieldName_eng())
-				.fieldName_ru(valueEntity.getFieldName().getFieldName_ru())
-				.fieldName_hy(valueEntity.getFieldName().getFieldName_hy())
+				.fieldNames(FieldNameDto.builder()
+						.fieldName_eng(valueEntity.getFieldName().getFieldName_eng())
+						.fieldName_ru(valueEntity.getFieldName().getFieldName_ru())
+						.fieldName_hy(valueEntity.getFieldName().getFieldName_hy())
+						.build())
+				.fieldValues(FieldValueDto.builder()
+						.fieldValue_eng(valueEntity.getFieldValue_eng())
+						.fieldValue_ru(valueEntity.getFieldValue_ru())
+						.fieldValue_hy(valueEntity.getFieldValue_hy())
+						.build())
 				.build();
 	}
 

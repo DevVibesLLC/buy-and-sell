@@ -3,6 +3,9 @@ package am.devvibes.buyandsell.mapper.item;
 import am.devvibes.buyandsell.classes.price.Price;
 import am.devvibes.buyandsell.dto.item.ItemRequestDto;
 import am.devvibes.buyandsell.dto.item.ItemResponseDto;
+import am.devvibes.buyandsell.dto.location.LocationCityDto;
+import am.devvibes.buyandsell.dto.location.LocationCountryDto;
+import am.devvibes.buyandsell.dto.location.LocationRegionDto;
 import am.devvibes.buyandsell.entity.businessPage.BusinessPageEntity;
 import am.devvibes.buyandsell.entity.item.ItemEntity;
 import am.devvibes.buyandsell.dto.location.LocationDto;
@@ -97,9 +100,21 @@ public class ItemMapperImpl implements ItemMapper {
 				.userId(Objects.nonNull(itemEntity.getUserEntity()) ? itemEntity.getUserEntity().getId() : null )
 				.status(itemEntity.getStatus())
 				.locationDto(LocationDto.builder()
-						.country(itemEntity.getCity().getRegion().getCountry().getName())
-						.region(itemEntity.getCity().getRegion().getName())
-						.city(itemEntity.getCity().getName())
+						.country(LocationCountryDto.builder()
+								.country_eng(itemEntity.getCity().getRegion().getCountry().getName_eng())
+								.country_ru(itemEntity.getCity().getRegion().getCountry().getName_ru())
+								.country_hy(itemEntity.getCity().getRegion().getCountry().getName_hy())
+								.build())
+						.region(LocationRegionDto.builder()
+								.region_eng(itemEntity.getCity().getRegion().getName_eng())
+								.region_ru(itemEntity.getCity().getRegion().getName_ru())
+								.region_hy(itemEntity.getCity().getRegion().getName_hy())
+								.build())
+						.city(LocationCityDto.builder()
+								.city_eng(itemEntity.getCity().getName_eng())
+								.city_ru(itemEntity.getCity().getName_ru())
+								.city_hy(itemEntity.getCity().getName_hy())
+								.build())
 						.address(itemEntity.getAddress())
 						.lat(itemEntity.getLat())
 						.lon(itemEntity.getLon())

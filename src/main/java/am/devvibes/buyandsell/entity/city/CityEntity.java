@@ -21,7 +21,13 @@ import lombok.Setter;
 public class CityEntity  extends BaseEntity {
 
     @Column(nullable = false)
-    private String name;
+    private String name_eng;
+
+    @Column(nullable = false)
+    private String name_ru;
+
+    @Column(nullable = false)
+    private String name_hy;
 
     @ManyToOne
     @JoinColumn(name = "region_id", nullable = false)

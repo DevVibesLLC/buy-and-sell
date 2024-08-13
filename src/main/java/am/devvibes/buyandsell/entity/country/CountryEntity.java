@@ -23,8 +23,14 @@ import java.util.List;
 @Setter
 public class CountryEntity  extends BaseEntity {
 
-    @Column(nullable = false, unique = true)
-    private String name;
+    @Column(nullable = false)
+    private String name_eng;
+
+    @Column(nullable = false)
+    private String name_ru;
+
+    @Column(nullable = false)
+    private String name_hy;
 
     @OneToMany(mappedBy = "country", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<RegionEntity> regions;

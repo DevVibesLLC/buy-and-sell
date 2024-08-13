@@ -1,5 +1,8 @@
 package am.devvibes.buyandsell.dto.value;
 
+import am.devvibes.buyandsell.dto.field.FieldNameDto;
+import am.devvibes.buyandsell.dto.field.FieldValueDto;
+import jakarta.persistence.Embedded;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -18,22 +21,10 @@ public class FieldValuesDto {
 	@NotNull
 	private Long fieldId;
 
-	@NotBlank
-	private String fieldName_eng;
+	@Embedded
+	private FieldNameDto fieldNames;
 
-	@NotBlank
-	private String fieldName_ru;
-
-	@NotBlank
-	private String fieldName_hy;
-
-	@NotBlank
-	private String fieldValue_eng;
-
-	@NotBlank
-	private String fieldValue_ru;
-
-	@NotBlank
-	private String fieldValue_hy;
+	@Embedded
+	private FieldValueDto fieldValues;
 
 }

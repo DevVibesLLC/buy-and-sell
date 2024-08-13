@@ -2,6 +2,9 @@ package am.devvibes.buyandsell.mapper.businessPage;
 
 import am.devvibes.buyandsell.dto.businessPage.BusinessPageRequestDto;
 import am.devvibes.buyandsell.dto.businessPage.BusinessPageResponseDto;
+import am.devvibes.buyandsell.dto.location.LocationCityDto;
+import am.devvibes.buyandsell.dto.location.LocationCountryDto;
+import am.devvibes.buyandsell.dto.location.LocationRegionDto;
 import am.devvibes.buyandsell.entity.businessPage.BusinessPageEntity;
 import am.devvibes.buyandsell.dto.location.LocationDto;
 import am.devvibes.buyandsell.mapper.item.ItemMapper;
@@ -37,9 +40,21 @@ public class BusinessPageMapperImpl implements BusinessPageMapper{
 				.workingDaysAndHours(businessPageEntity.getWorkingDaysAndHours())
 				.socialMediaLinks(businessPageEntity.getSocialMediaLinks())
 				.locationDto(LocationDto.builder()
-						.country(businessPageEntity.getCity().getRegion().getCountry().getName())
-						.region(businessPageEntity.getCity().getRegion().getName())
-						.city(businessPageEntity.getCity().getName())
+						.country(LocationCountryDto.builder()
+								.country_eng(businessPageEntity.getCity().getRegion().getCountry().getName_eng())
+								.country_ru(businessPageEntity.getCity().getRegion().getCountry().getName_ru())
+								.country_hy(businessPageEntity.getCity().getRegion().getCountry().getName_hy())
+								.build())
+						.region(LocationRegionDto.builder()
+								.region_eng(businessPageEntity.getCity().getRegion().getName_eng())
+								.region_ru(businessPageEntity.getCity().getRegion().getName_ru())
+								.region_hy(businessPageEntity.getCity().getRegion().getName_hy())
+								.build())
+						.city(LocationCityDto.builder()
+								.city_eng(businessPageEntity.getCity().getName_eng())
+								.city_ru(businessPageEntity.getCity().getName_ru())
+								.city_hy(businessPageEntity.getCity().getName_hy())
+								.build())
 						.address(businessPageEntity.getAddress())
 						.lat(businessPageEntity.getLat())
 						.lon(businessPageEntity.getLon())

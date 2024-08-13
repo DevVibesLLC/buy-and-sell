@@ -16,6 +16,8 @@ import java.util.List;
 public class CountryDto {
 
 	private Long id;
-	private String name;
+	private String name_eng;
+	private String name_ru;
+	private String name_hy;
 
 }

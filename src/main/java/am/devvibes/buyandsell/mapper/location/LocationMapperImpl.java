@@ -17,7 +17,9 @@ public class LocationMapperImpl implements LocationMapper{
 	public CountryDto mapCountryEntityToDto(CountryEntity countryEntity) {
 		return CountryDto.builder()
 				.id(countryEntity.getId())
-				.name(countryEntity.getName())
+				.name_eng(countryEntity.getName_eng())
+				.name_ru(countryEntity.getName_ru())
+				.name_hy(countryEntity.getName_hy())
 				.build();
 	}
 
@@ -25,7 +27,9 @@ public class LocationMapperImpl implements LocationMapper{
 	public RegionDto mapRegionEntityToDto(RegionEntity regionEntity) {
 		return RegionDto.builder()
 				.id(regionEntity.getId())
-				.name(regionEntity.getName())
+				.name_eng(regionEntity.getName_eng())
+				.name_ru(regionEntity.getName_ru())
+				.name_hy(regionEntity.getName_hy())
 				.countryId(regionEntity.getCountry().getId())
 				.build();
 	}
@@ -34,7 +38,9 @@ public class LocationMapperImpl implements LocationMapper{
 	public CityDto mapCityEntityToDto(CityEntity cityEntity) {
 		return CityDto.builder()
 				.id(cityEntity.getId())
-				.name(cityEntity.getName())
+				.name_eng(cityEntity.getName_eng())
+				.name_ru(cityEntity.getName_ru())
+				.name_hy(cityEntity.getName_hy())
 				.regionId(cityEntity.getRegion().getId())
 				.build();
 	}

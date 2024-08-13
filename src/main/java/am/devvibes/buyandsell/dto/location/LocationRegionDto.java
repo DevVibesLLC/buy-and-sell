@@ -2,7 +2,6 @@ package am.devvibes.buyandsell.dto.location;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import jakarta.persistence.Embedded;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,28 +10,17 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Embeddable
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
-public class LocationDto {
-
-	@Embedded
-	private LocationCountryDto country;
-
-	@Embedded
-	private LocationRegionDto region;
-
-	@Embedded
-	private LocationCityDto city;
+@NoArgsConstructor
+@AllArgsConstructor
+@Embeddable
+public class LocationRegionDto {
 
 	@Column(nullable = false)
-	private String address;
-
+	private String region_eng;
 	@Column(nullable = false)
-	private Double lat;
-
+	private String region_ru;
 	@Column(nullable = false)
-	private Double lon;
+	private String region_hy;
 
 }

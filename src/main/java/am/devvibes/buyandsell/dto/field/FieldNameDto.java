@@ -1,8 +1,6 @@
 package am.devvibes.buyandsell.dto.field;
 
-import am.devvibes.buyandsell.entity.base.BaseEntity;
 import jakarta.persistence.Embeddable;
-import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,17 +12,13 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Embeddable
-public class FieldValueDto{
+@Builder
+public class FieldNameDto {
 
-	@NotBlank
-	private String fieldValue_eng;
+	private String fieldName_eng;
 
-	@NotBlank
-	private String fieldValue_ru;
+	private String fieldName_ru;
 
-	@NotBlank
-	private String fieldValue_hy;
-
+	private String fieldName_hy;
 }

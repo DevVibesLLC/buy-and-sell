@@ -60,9 +60,9 @@ public class CategoryMapperImpl implements CategoryMapper {
 	private List<FieldValueDto> mapFieldValueToDto(List<FieldValueEntity> fieldValues) {
 		return fieldValues.stream()
 				.map(fieldValue -> FieldValueDto.builder()
-						.value_eng(fieldValue.getValue_eng())
-						.value_ru(fieldValue.getValue_ru())
-						.value_hy(fieldValue.getValue_hy())
+						.fieldValue_eng(fieldValue.getValue_eng())
+						.fieldValue_ru(fieldValue.getValue_ru())
+						.fieldValue_hy(fieldValue.getValue_hy())
 						.build())
 				.toList();
 	}

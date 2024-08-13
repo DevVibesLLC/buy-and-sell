@@ -34,7 +34,6 @@ public class ItemRequestDto {
 
 	private List<FieldValuesDto> fieldsValue;
 
-
 	private List<String> imgKeys;
 
 	@NotNull
