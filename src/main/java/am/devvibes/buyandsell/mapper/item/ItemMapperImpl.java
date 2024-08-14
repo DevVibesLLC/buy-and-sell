@@ -99,7 +99,7 @@ public class ItemMapperImpl implements ItemMapper {
 				.businessPageId(Objects.nonNull(itemEntity.getBusinessPage())? itemEntity.getBusinessPage().getId() : null)
 				.userId(Objects.nonNull(itemEntity.getUserEntity()) ? itemEntity.getUserEntity().getId() : null )
 				.status(itemEntity.getStatus())
-				.locationDto(LocationDto.builder()
+				.location(LocationDto.builder()
 						.country(LocationCountryDto.builder()
 								.country_eng(itemEntity.getCity().getRegion().getCountry().getName_eng())
 								.country_ru(itemEntity.getCity().getRegion().getCountry().getName_ru())

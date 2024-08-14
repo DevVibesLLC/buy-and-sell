@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface UserService {
 
-	UserRepresentation saveUser(UserRequestDto signUpDto);
+	UserRepresentation registerUser(UserRequestDto signUpDto);
 
 	UserEntity findUserById(String id);
 

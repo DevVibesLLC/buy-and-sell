@@ -7,6 +7,7 @@ import am.devvibes.buyandsell.mapper.story.StoryMapper;
 import am.devvibes.buyandsell.service.story.StoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,9 +31,9 @@ public class StoryController {
 	@PostMapping
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@Operation(summary = "Save Story")
-	public ResponseEntity<StoryResponseDto> createItem(@RequestBody StoryRequestDto storyRequestDto) {
+	public ResponseEntity<StoryResponseDto> createStory(@RequestBody StoryRequestDto storyRequestDto) {
 		StoryEntity storyEntity = storyService.saveStory(storyRequestDto);
-		return ResponseEntity.ok(storyMapper.mapEntityToDto(storyEntity));
+		return ResponseEntity.status(HttpStatus.CREATED).body(storyMapper.mapEntityToDto(storyEntity));
 	}
 
 	@GetMapping("/{userId}")

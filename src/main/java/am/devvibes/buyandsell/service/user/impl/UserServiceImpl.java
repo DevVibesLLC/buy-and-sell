@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
-	public UserRepresentation saveUser(UserRequestDto signUpDto) {
+	public UserRepresentation registerUser(UserRequestDto signUpDto) {
 		validateUser(signUpDto);
 		UserRepresentation userRepresentation = userMapper.mapDtoToRepresentation(signUpDto);
 		UsersResource usersResource = getUsersResource();

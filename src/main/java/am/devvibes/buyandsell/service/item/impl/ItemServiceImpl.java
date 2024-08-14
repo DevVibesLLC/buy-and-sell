@@ -19078,7 +19078,7 @@ public class ItemServiceImpl implements ItemService {
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.mark),
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_eng"), FilterConstants.mark),
 					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getMark()));
 			predicates.add(predicate);
 		}
@@ -19088,7 +19088,7 @@ public class ItemServiceImpl implements ItemService {
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.model),
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_eng"), FilterConstants.model),
 					criteriaBuilder.equal(itemFieldJoin.get(FilterConstants.fieldValue_eng), filterDto.getModel()));
 			predicates.add(predicate);
 		}
@@ -19098,7 +19098,7 @@ public class ItemServiceImpl implements ItemService {
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.year),
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_eng"), FilterConstants.year),
 					criteriaBuilder.greaterThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getStartYear()));
 			predicates.add(predicate);
@@ -19109,7 +19109,7 @@ public class ItemServiceImpl implements ItemService {
 			Join<FieldEntity, FieldNameEntity> fieldNameJoin =
 					itemFieldJoin.join(FilterConstants.fieldName, JoinType.INNER);
 			Predicate predicate = criteriaBuilder.and(
-					criteriaBuilder.equal(fieldNameJoin.get(FilterConstants.fieldName), FilterConstants.year),
+					criteriaBuilder.equal(fieldNameJoin.get("fieldName_eng"), FilterConstants.year),
 					criteriaBuilder.lessThanOrEqualTo(itemFieldJoin.get(FilterConstants.fieldValue_eng),
 							filterDto.getEndYear()));
 			predicates.add(predicate);

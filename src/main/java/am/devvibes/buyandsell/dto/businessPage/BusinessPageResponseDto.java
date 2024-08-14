@@ -2,6 +2,7 @@ package am.devvibes.buyandsell.dto.businessPage;
 
 import am.devvibes.buyandsell.dto.item.ItemResponseDto;
 import am.devvibes.buyandsell.dto.location.LocationDto;
+import jakarta.persistence.Embedded;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Builder;
@@ -20,11 +21,9 @@ public class BusinessPageResponseDto {
 
 	private Long id;
 
+	private Long categoryId;
+
 	private String ownerId;
-
-	private String bannerKey;
-
-	private String logoKey;
 
 	private String title;
 
@@ -32,15 +31,14 @@ public class BusinessPageResponseDto {
 
 	private LocationDto locationDto;
 
-	private Long categoryId;
-
-	private String email;
-
-	private List<String> phoneNumbers;
+	@Embedded
+	private BusinessPageContactsDto contacts;
 
 	private Map<String, String> workingDaysAndHours;
 
-	private Map<String, String> socialMediaLinks;
+	private String bannerKey;
+
+	private String logoKey;
 
 	private List<ItemResponseDto> adds;
 

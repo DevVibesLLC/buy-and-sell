@@ -9,6 +9,7 @@ import am.devvibes.buyandsell.mapper.businessPage.BusinessPageMapper;
 import am.devvibes.buyandsell.service.businessPage.BusinessPageService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,16 +32,18 @@ public class BusinessPageController {
 	@PostMapping("/{categoryId}")
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@Operation(summary = "Register Business Page")
-	public ResponseEntity<BusinessPageResponseDto> registerPage(@PathVariable Long categoryId,
+	public ResponseEntity<BusinessPageResponseDto> registerBusinessPage(@PathVariable Long categoryId,
 			@RequestBody BusinessPageRequestDto businessPageRequestDto) {
-		return ResponseEntity.ok(businessPageMapper.mapEntityToDto(
+		return ResponseEntity
+				.status(HttpStatus.CREATED)
+				.body(businessPageMapper.mapEntityToDto(
 				businessPageService.registerBusinessPage(businessPageRequestDto, categoryId)));
 	}
 
 	@GetMapping("/{pageId}")
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@Operation(summary = "Register Business Page")
-	public ResponseEntity<BusinessPageResponseDto> getPage(@PathVariable Long pageId) {
+	public ResponseEntity<BusinessPageResponseDto> getBusinessPage(@PathVariable Long pageId) {
 		return ResponseEntity.ok(businessPageMapper.mapEntityToDto(businessPageService.findBusinessPageById(pageId)));
 	}
 
@@ -49,14 +52,16 @@ public class BusinessPageController {
 	@Operation(summary = "Create Item from Business Page")
 	public ResponseEntity<BusinessPageResponseDto> createItem(@PathVariable Long businessPageId,
 			@RequestBody ItemRequestDto itemRequestDto) {
-		return ResponseEntity.ok(businessPageMapper.mapEntityToDto(
-				businessPageService.addItemFromBusinessPage(itemRequestDto, businessPageId)));
+		return ResponseEntity
+				.status(HttpStatus.CREATED)
+				.body(businessPageMapper.mapEntityToDto(
+						businessPageService.addItemFromBusinessPage(itemRequestDto, businessPageId)));
 	}
 
 	@PutMapping("/{businessPageId}/{itemId}")
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@Operation(summary = "Update Item from Business Page")
-	public ResponseEntity<BusinessPageResponseDto> updateItem(@PathVariable Long businessPageId,
+	public ResponseEntity<BusinessPageResponseDto> updateItemFromBusinessPage(@PathVariable Long businessPageId,
 			@PathVariable Long itemId,
 			@RequestBody ItemUpdateDto itemUpdateDto) {
 		return ResponseEntity.ok(businessPageMapper.mapEntityToDto(
@@ -75,7 +80,7 @@ public class BusinessPageController {
 	@DeleteMapping("/{businessPageId}/{itemId}")
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@Operation(summary = "Delete Item from Business Page")
-	public ResponseEntity<Void> deleteItem(@PathVariable Long businessPageId, @PathVariable Long itemId) {
+	public ResponseEntity<Void> deleteItemFromBusinessPage(@PathVariable Long businessPageId, @PathVariable Long itemId) {
 		businessPageService.deleteItemFromBusinessPage(businessPageId, itemId);
 		return ResponseEntity.ok().build();
 	}

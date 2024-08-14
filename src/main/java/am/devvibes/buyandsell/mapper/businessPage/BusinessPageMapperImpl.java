@@ -1,5 +1,6 @@
 package am.devvibes.buyandsell.mapper.businessPage;
 
+import am.devvibes.buyandsell.dto.businessPage.BusinessPageContactsDto;
 import am.devvibes.buyandsell.dto.businessPage.BusinessPageRequestDto;
 import am.devvibes.buyandsell.dto.businessPage.BusinessPageResponseDto;
 import am.devvibes.buyandsell.dto.location.LocationCityDto;
@@ -33,12 +34,14 @@ public class BusinessPageMapperImpl implements BusinessPageMapper{
 				.adds(itemMapper.mapEntityListToDtoList(businessPageEntity.getAdds()))
 				.title(businessPageEntity.getTitle())
 				.description(businessPageEntity.getDescription())
-				.email(businessPageEntity.getEmail())
-				.phoneNumbers(businessPageEntity.getPhoneNumbers())
+				.contacts(BusinessPageContactsDto.builder()
+						.email(businessPageEntity.getEmail())
+						.phoneNumbers(businessPageEntity.getPhoneNumbers())
+						.socialMediaLinks(businessPageEntity.getSocialMediaLinks())
+						.build())
 				.logoKey(businessPageEntity.getLogoKey())
 				.bannerKey(businessPageEntity.getBannerKey())
 				.workingDaysAndHours(businessPageEntity.getWorkingDaysAndHours())
-				.socialMediaLinks(businessPageEntity.getSocialMediaLinks())
 				.locationDto(LocationDto.builder()
 						.country(LocationCountryDto.builder()
 								.country_eng(businessPageEntity.getCity().getRegion().getCountry().getName_eng())

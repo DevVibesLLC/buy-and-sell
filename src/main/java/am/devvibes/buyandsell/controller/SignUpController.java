@@ -26,7 +26,7 @@ public class SignUpController {
 	@PostMapping
 	@Operation(summary = "Register user")
 	public ResponseEntity<UserResponseDto> registerUser(@RequestBody @Valid UserRequestDto userRequestDto) {
-		UserRepresentation userRepresentation = userService.saveUser(userRequestDto);
+		UserRepresentation userRepresentation = userService.registerUser(userRequestDto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.mapRepresentationToDto(userRepresentation));
 	}
 

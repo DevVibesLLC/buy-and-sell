@@ -22,23 +22,19 @@ public class ItemResponseDto {
 
 	private Long id;
 
-	private String title;
-
-	private String description;
-
-	private Price price;
-
-	private LocationDto locationDto;
-
 	private String userId;
 
 	private Long businessPageId;
 
 	private Status status;
 
-	private List<FieldValuesDto> fields;
+	private String title;
 
-	private List<String> imgUrls;
+	private String description;
+
+	private Price price;
+
+	private LocationDto location;
 
 	private List<String> phoneNumbers;
 
@@ -47,5 +43,9 @@ public class ItemResponseDto {
 	private Boolean isViewed;
 
 	private List<PriceHistoryDto> priceHistory;
+
+	private List<FieldValuesDto> fields;
+
+	private List<String> imgUrls;
 
 }
