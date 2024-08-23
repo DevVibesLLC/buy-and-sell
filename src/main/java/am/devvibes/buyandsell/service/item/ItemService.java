@@ -27,7 +27,7 @@ public interface ItemService {
 
 	Page<ItemResponseDto> findAllItems(PageRequest pageRequest);
 
-	void deleteById(Long id);
+	ItemEntity deleteById(Long id);
 
 	ItemEntity update(ItemUpdateDto itemUpdateDto, Long categoryId, Long itemId);
 

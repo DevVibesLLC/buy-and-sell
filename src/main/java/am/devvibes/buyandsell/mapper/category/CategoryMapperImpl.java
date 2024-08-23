@@ -8,7 +8,6 @@ import am.devvibes.buyandsell.entity.category.CategoryEntity;
 import am.devvibes.buyandsell.entity.description.DescriptionEntity;
 import am.devvibes.buyandsell.entity.field.FieldNameEntity;
 import am.devvibes.buyandsell.entity.field.FieldValueEntity;
-import am.devvibes.buyandsell.service.measurement.MeasurementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,13 +18,13 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class CategoryMapperImpl implements CategoryMapper {
 
-	private final MeasurementService measurementService;
-
 	@Override
 	public CategoryDto mapToDto(CategoryEntity category) {
 
 		return CategoryDto.builder()
-				.name(category.getName())
+				.categoryName_eng(category.getName().getEnglish())
+				.categoryName_ru(category.getName().getRussian())
+				.categoryName_hy(category.getName().getArmenian())
 				.descriptions(mapDescriptionsToDto(category.getDescriptions()))
 				.build();
 	}
@@ -38,7 +37,9 @@ public class CategoryMapperImpl implements CategoryMapper {
 	private List<DescriptionDto> mapDescriptionsToDto(List<DescriptionEntity> descriptions) {
 		return descriptions.stream()
 				.map(descriptionEntity -> DescriptionDto.builder()
-						.header(descriptionEntity.getHeader())
+						.header_eng(descriptionEntity.getHeader().getEnglish())
+						.header_ru(descriptionEntity.getHeader().getRussian())
+						.header_hy(descriptionEntity.getHeader().getArmenian())
 						.fields(mapFieldsToDto(descriptionEntity.getFields()))
 						.build())
 				.toList();
@@ -51,8 +52,12 @@ public class CategoryMapperImpl implements CategoryMapper {
 						.fieldName_ru(fieldEntity.getFieldName_ru())
 						.fieldName_hy(fieldEntity.getFieldName_hy())
 						.value(mapFieldValueToDto(fieldEntity.getValues()))
-						.measurement(Objects.nonNull(fieldEntity.getMeasurement()) ?
-								fieldEntity.getMeasurement().getSymbol() : null)
+						.measurement_eng(Objects.nonNull(fieldEntity.getMeasurement()) ?
+								fieldEntity.getMeasurement().getSymbol_eng() : null)
+						.measurement_ru(Objects.nonNull(fieldEntity.getMeasurement()) ?
+								fieldEntity.getMeasurement().getSymbol_ru() : null)
+						.measurement_hy(Objects.nonNull(fieldEntity.getMeasurement()) ?
+								fieldEntity.getMeasurement().getSymbol_hy() : null)
 						.build())
 				.toList();
 	}

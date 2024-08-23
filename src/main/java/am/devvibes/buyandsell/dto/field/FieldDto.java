@@ -19,6 +19,8 @@ public class FieldDto {
 	private String fieldName_ru;
 	private String fieldName_hy;
 	private List<FieldValueDto> value;
-	private String measurement;
+	private String measurement_eng;
+	private String measurement_ru;
+	private String measurement_hy;
 
 }

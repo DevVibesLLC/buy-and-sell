@@ -20,7 +20,13 @@ import java.io.Serializable;
 public class MeasurementEntity extends BaseEntity{
 
 	@Column(nullable = false)
-	private String symbol;
+	private String symbol_eng;
+
+	@Column(nullable = false)
+	private String symbol_ru;
+
+	@Column(nullable = false)
+	private String symbol_hy;
 
 	@Column(nullable = false)
 	private String category;

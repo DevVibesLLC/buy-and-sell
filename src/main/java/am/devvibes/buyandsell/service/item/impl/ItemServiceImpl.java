@@ -119,7 +119,7 @@ public class ItemServiceImpl implements ItemService {
 
 	@Override
 	@Transactional
-	public void deleteById(Long id) {
+	public ItemEntity deleteById(Long id) {
 		String currentUserId = securityService.getCurrentUserId();
 		ItemEntity itemEntity = getItemByIdOrElseThrow(id);
 
@@ -128,7 +128,7 @@ public class ItemServiceImpl implements ItemService {
 		}
 
 		itemEntity.setStatus(Status.DELETED);
-		itemRepository.save(itemEntity);
+		return itemRepository.save(itemEntity);
 	}
 
 	@Override

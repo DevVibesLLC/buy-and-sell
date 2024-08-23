@@ -1,4 +1,4 @@
-package am.devvibes.buyandsell.configuration;
+package am.devvibes.buyandsell.jpa.configuration;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;

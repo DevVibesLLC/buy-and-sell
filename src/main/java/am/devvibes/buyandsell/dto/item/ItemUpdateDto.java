@@ -3,6 +3,7 @@ package am.devvibes.buyandsell.dto.item;
 import am.devvibes.buyandsell.dto.value.FieldValuesDto;
 import am.devvibes.buyandsell.util.CurrencyEnum;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class ItemUpdateDto {

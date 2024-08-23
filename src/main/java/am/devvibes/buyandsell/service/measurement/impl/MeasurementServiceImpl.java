@@ -20,7 +20,8 @@ public class MeasurementServiceImpl implements MeasurementService {
 	@Override
 	@Transactional
 	public MeasurementEntity addMeasurement(String symbol, String category) {
-		return measurementRepository.save(MeasurementEntity.builder().category(category).symbol(symbol).build());
+		//return measurementRepository.save(MeasurementEntity.builder().category(category).symbol(symbol).build());
+		return null;
 	}
 
 	@Override

@@ -17,7 +17,9 @@ import java.util.List;
 @Builder
 public class CategoryDto {
 
-	private CategoryEnum name;
+	private String categoryName_eng;
+	private String categoryName_ru;
+	private String categoryName_hy;
 	private List<DescriptionDto> descriptions;
 
 }

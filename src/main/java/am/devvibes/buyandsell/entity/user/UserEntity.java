@@ -3,6 +3,7 @@ package am.devvibes.buyandsell.entity.user;
 import am.devvibes.buyandsell.entity.abstracts.AbstractUser;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

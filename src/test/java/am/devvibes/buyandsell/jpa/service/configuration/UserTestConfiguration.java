@@ -1,12 +1,12 @@
-package am.devvibes.buyandsell.service.configuration;
+package am.devvibes.buyandsell.jpa.service.configuration;
 
-import am.devvibes.buyandsell.mapper.user.UserMapper;
 import am.devvibes.buyandsell.repository.item.ItemRepository;
 import am.devvibes.buyandsell.repository.user.UserRepository;
 import am.devvibes.buyandsell.service.favoriteItems.FavoriteItemsService;
 import am.devvibes.buyandsell.service.security.SecurityService;
 import am.devvibes.buyandsell.service.user.UserService;
 import am.devvibes.buyandsell.service.user.impl.UserServiceImpl;
+import am.devvibes.buyandsell.mapper.user.UserMapper;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
@@ -59,10 +59,11 @@ public class UserTestConfiguration {
 
 
 	@Bean
-	public UserService userService(UserRepository userRepository,
+	public UserService userService(
+			UserRepository userRepository,
 			UserMapper userMapper,
-		    SecurityService securityService,
-			Keycloak keycloak,
+		    Keycloak keycloak,
+			SecurityService securityService,
             ItemRepository itemRepository,
             FavoriteItemsService favoriteItemsService
 		) {

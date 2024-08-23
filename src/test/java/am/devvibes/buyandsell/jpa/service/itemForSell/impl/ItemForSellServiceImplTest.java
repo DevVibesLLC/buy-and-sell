@@ -1,6 +1,6 @@
-package am.devvibes.buyandsell.service.itemForSell.impl;
+package am.devvibes.buyandsell.jpa.service.itemForSell.impl;
 
-import am.devvibes.buyandsell.BaseRepositoryTest;
+import am.devvibes.buyandsell.jpa.service.BaseRepositoryTest;
 import am.devvibes.buyandsell.service.configuration.ItemForSellTestConfiguration;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ContextConfiguration;

@@ -5,6 +5,7 @@ import am.devvibes.buyandsell.dto.item.ItemRequestDto;
 import am.devvibes.buyandsell.dto.item.ItemResponseDto;
 import am.devvibes.buyandsell.dto.item.ItemUpdateDto;
 import am.devvibes.buyandsell.dto.search.SearchDto;
+import am.devvibes.buyandsell.entity.item.ItemEntity;
 import am.devvibes.buyandsell.mapper.item.ItemMapper;
 import am.devvibes.buyandsell.service.item.ItemService;
 import am.devvibes.buyandsell.util.page.CustomPageRequest;
@@ -79,9 +80,9 @@ public class ItemController {
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@Operation(summary = "Delete Item by Id")
-	public ResponseEntity<List<ItemResponseDto>> deleteItemById(@PathVariable Long id) {
-		itemService.deleteById(id);
-		return ResponseEntity.ok().build();
+	public ResponseEntity<ItemResponseDto> deleteItemById(@PathVariable Long id) {
+		ItemEntity deletedItem = itemService.deleteById(id);
+		return ResponseEntity.ok(itemMapper.mapEntityToDto(deletedItem));
 	}
 
 	@PostMapping("/search")

@@ -1,7 +1,7 @@
-package am.devvibes.buyandsell.service.user.impl;
+package am.devvibes.buyandsell.jpa.service.user.impl;
 
-import am.devvibes.buyandsell.BaseRepositoryTest;
-import am.devvibes.buyandsell.service.configuration.UserTestConfiguration;
+import am.devvibes.buyandsell.jpa.service.BaseRepositoryTest;
+import am.devvibes.buyandsell.jpa.service.configuration.UserTestConfiguration;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ContextConfiguration;
 
