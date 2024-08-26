@@ -8,17 +8,24 @@ import am.devvibes.buyandsell.dto.search.SearchDto;
 import am.devvibes.buyandsell.entity.businessPage.BusinessPageEntity;
 import am.devvibes.buyandsell.entity.item.ItemEntity;
 import am.devvibes.buyandsell.entity.priceHistory.PriceHistoryEntity;
+import am.devvibes.buyandsell.entity.user.UserEntity;
+import am.devvibes.buyandsell.exception.NotFoundException;
+import am.devvibes.buyandsell.exception.SomethingWentWrongException;
 import am.devvibes.buyandsell.repository.item.ItemRepository;
 import am.devvibes.buyandsell.repository.priceHistory.PriceHistoryRepository;
+import am.devvibes.buyandsell.repository.user.UserRepository;
+import am.devvibes.buyandsell.service.favoriteItems.FavoriteItemsService;
 import am.devvibes.buyandsell.service.item.impl.ItemServiceImpl;
 import am.devvibes.buyandsell.service.security.SecurityService;
 import am.devvibes.buyandsell.service.value.ValueService;
 import am.devvibes.buyandsell.mapper.item.ItemMapper;
 import am.devvibes.buyandsell.util.CurrencyEnum;
+import am.devvibes.buyandsell.util.ExceptionConstants;
 import am.devvibes.buyandsell.util.Status;
 import am.devvibes.buyandsell.util.page.CustomPageRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.keycloak.representations.idm.UserRepresentation;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -37,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -55,10 +63,16 @@ class ItemServiceTest {
 	private PriceHistoryRepository priceHistoryRepository;
 
 	@Mock
+	private FavoriteItemsService favoriteItemsService;
+
+	@Mock
 	private ValueService valueService;
 
 	@Mock
 	private SecurityService securityService;
+
+	@Mock
+	private UserRepository userRepository;
 
 	@InjectMocks
 	private ItemServiceImpl itemService;
@@ -161,6 +175,124 @@ class ItemServiceTest {
 	}
 
 	@Test
+	void findItemById() {
+		itemEntity = ItemEntity.builder()
+				.title("New Item")
+				.description("This is the new item for unit test")
+				.status(Status.CREATED)
+				.viewedUsersId(List.of("UserId1", "UserId2"))
+				.countOfViews(15L)
+				.price(Price.builder()
+						.price(new BigDecimal(1500))
+						.currency(CurrencyEnum.USD)
+						.build())
+				.phoneNumbers(List.of("+37499999999"))
+				.build();
+		itemEntity.setId(1L);
+
+		when(itemRepository.save(itemEntity)).thenReturn(itemEntity);
+		when(itemRepository.findById(itemEntity.getId())).thenReturn(Optional.of(itemEntity));
+		when(securityService.getCurrentUserId()).thenReturn("UserId1");
+
+		itemRepository.save(itemEntity);
+		ItemEntity entity = itemService.findById(itemEntity.getId());
+
+		assertNotNull(entity);
+		assertEquals(itemEntity.getId(),entity.getId());
+
+		verify(itemRepository, times(1)).findById(entity.getId());
+
+	}
+
+	@Test
+	void findItemByIdWithoutViewedUserId() {
+		List<String> list = new ArrayList<>();
+		list.add("UserId1");
+		list.add("UserId2");
+
+		itemEntity = ItemEntity.builder()
+				.title("New Item")
+				.description("This is the new item for unit test")
+				.status(Status.CREATED)
+				.viewedUsersId(list)
+				.countOfViews(15L)
+				.price(Price.builder()
+						.price(new BigDecimal(1500))
+						.currency(CurrencyEnum.USD)
+						.build())
+				.phoneNumbers(List.of("+37499999999"))
+				.build();
+		itemEntity.setId(1L);
+
+		when(itemRepository.save(itemEntity)).thenReturn(itemEntity);
+		when(itemRepository.findById(itemEntity.getId())).thenReturn(Optional.of(itemEntity));
+		when(securityService.getCurrentUserId()).thenReturn("UserId3");
+
+		itemRepository.save(itemEntity);
+		ItemEntity entity = itemService.findById(itemEntity.getId());
+
+		assertNotNull(entity);
+		assertEquals(itemEntity.getId(),entity.getId());
+
+		verify(itemRepository, times(1)).findById(entity.getId());
+
+	}
+
+	@Test
+	void findEntityById() {
+
+		itemEntity = ItemEntity.builder()
+				.title("New Item")
+				.description("This is the new item for unit test")
+				.status(Status.CREATED)
+				.viewedUsersId(List.of("UserId1", "UserId2"))
+				.countOfViews(15L)
+				.price(Price.builder()
+						.price(new BigDecimal(1500))
+						.currency(CurrencyEnum.USD)
+						.build())
+				.phoneNumbers(List.of("+37499999999"))
+				.build();
+		itemEntity.setId(1L);
+
+		when(itemRepository.save(itemEntity)).thenReturn(itemEntity);
+		when(itemRepository.findById(itemEntity.getId())).thenReturn(Optional.of(itemEntity));
+
+		itemRepository.save(itemEntity);
+		ItemEntity entity = itemService.findEntityById(itemEntity.getId());
+
+		assertNotNull(entity);
+		assertEquals(entity.getId(),entity.getId());
+
+		verify(itemRepository, times(1)).findById(entity.getId());
+	}
+
+
+	@Test
+	void findItemByIdWithDeletedStatus() {
+		itemEntity = ItemEntity.builder()
+				.title("New Item")
+				.description("This is the new item for unit test")
+				.status(Status.DELETED)
+				.viewedUsersId(List.of("UserId1", "UserId2"))
+				.countOfViews(15L)
+				.price(Price.builder()
+						.price(new BigDecimal(1500))
+						.currency(CurrencyEnum.USD)
+						.build())
+				.phoneNumbers(List.of("+37499999999"))
+				.build();
+		itemEntity.setId(1L);
+
+		when(itemRepository.findById(itemEntity.getId())).thenReturn(Optional.of(itemEntity));
+
+		assertThrows(NotFoundException.class, () -> itemService.findById(itemEntity.getId()), ExceptionConstants.ITEM_NOT_FOUND.getString());
+
+		verify(itemRepository, times(1)).findById(itemEntity.getId());
+
+	}
+
+	@Test
 	void updateItem() {
 
 		categoryId = 1L;
@@ -206,6 +338,78 @@ class ItemServiceTest {
 	}
 
 	@Test
+	void updateItemWithDeletedStatus() {
+
+		categoryId = 1L;
+		itemRequestDto = ItemRequestDto.builder()
+				.title("New Item")
+				.description("This is the new item for unit test")
+				.price(new BigDecimal(1500))
+				.currency(CurrencyEnum.USD)
+				.cityId(15L)
+				.phoneNumbers(List.of("+37499999999"))
+				.build();
+
+		itemEntity = ItemEntity.builder()
+				.title("New Item")
+				.description("This is the new item for unit test")
+				.status(Status.DELETED)
+				.price(Price.builder()
+						.price(new BigDecimal(1500))
+						.currency(CurrencyEnum.USD)
+						.build())
+				.phoneNumbers(List.of("+37499999999"))
+				.build();
+		itemEntity.setId(1L);
+
+		ItemUpdateDto itemUpdateDto = ItemUpdateDto.builder()
+				.title("New Item updated title")
+				.build();
+
+
+		when(itemRepository.findById(itemEntity.getId())).thenReturn(Optional.of(itemEntity));
+
+		assertThrows(SomethingWentWrongException.class, () ->
+				itemService.update(itemUpdateDto, categoryId, itemEntity.getId()), ExceptionConstants.INVALID_ACTION.getString());
+
+		verify(itemRepository, times(0)).save(any(ItemEntity.class));
+
+	}
+
+	@Test
+	void updateItemWithPriceChange() {
+
+		Long categoryId = 1L;
+
+		itemEntity = ItemEntity.builder()
+				.title("New Item")
+				.description("This is the new item for unit test")
+				.status(Status.CREATED)
+				.price(Price.builder()
+						.price(new BigDecimal(1500)) // Original price
+						.currency(CurrencyEnum.USD)
+						.build())
+				.phoneNumbers(List.of("+37499999999"))
+				.build();
+		itemEntity.setId(1L); // Set the ID for the itemEntity
+
+		ItemUpdateDto itemUpdateDto = ItemUpdateDto.builder()
+				.title("New Item updated title")
+				.price(new BigDecimal(2000)) // New price, different from the old price
+				.build();
+
+		when(itemRepository.findById(itemEntity.getId())).thenReturn(Optional.of(itemEntity));
+		when(itemRepository.save(any(ItemEntity.class))).thenReturn(itemEntity);
+
+		ItemEntity updatedEntity = itemService.update(itemUpdateDto, categoryId, itemEntity.getId());
+
+		assertNotNull(updatedEntity);
+		assertEquals(itemUpdateDto.getPrice(), updatedEntity.getPrice().getPrice());
+		verify(favoriteItemsService, times(1)).getUsersIdsByItemId(updatedEntity.getId());
+		verify(itemRepository, times(2)).save(any(ItemEntity.class));
+	}
+
+	@Test
 	void updateItemFromBusinessPage() {
 
 		BusinessPageEntity businessPage = BusinessPageEntity.builder()
@@ -246,7 +450,7 @@ class ItemServiceTest {
 
 		ItemEntity result = itemService.saveFromBusiness(itemRequestDto, businessPage);
 
-		when(itemRepository.findById(result.getId())).thenReturn(Optional.of(result));
+		when(itemRepository.findById(result.getId())).thenReturn(Optional.of(itemEntity));
 
 		ItemEntity updatedEntity = itemService.updateFromBusiness(itemUpdateDto, businessPage, result.getId());
 
@@ -258,6 +462,120 @@ class ItemServiceTest {
 		verify(itemRepository, times(2)).save(itemEntity);
 
 	}
+
+	@Test
+	void updateItemFromBusinessPageWithDeletedStatus() {
+
+		BusinessPageEntity businessPage = BusinessPageEntity.builder()
+				.title("Business Page title")
+				.description("Business Page description for unit test")
+				.phoneNumbers(List.of("+37499999999"))
+				.email("businessPage@gmail.com")
+				.build();
+		businessPage.setId(1L);
+
+		itemRequestDto = ItemRequestDto.builder()
+				.title("New Item")
+				.description("This is the new item for unit test")
+				.price(new BigDecimal(1500))
+				.currency(CurrencyEnum.USD)
+				.cityId(15L)
+				.phoneNumbers(List.of("+37499999999"))
+				.build();
+
+		itemEntity = ItemEntity.builder()
+				.title("New Item")
+				.description("This is the new item for unit test")
+				.status(Status.DELETED)
+				.businessPage(businessPage)
+				.price(Price.builder()
+						.price(new BigDecimal(1500))
+						.currency(CurrencyEnum.USD)
+						.build())
+				.phoneNumbers(List.of("+37499999999"))
+				.build();
+		itemEntity.setId(1L);
+
+		ItemUpdateDto itemUpdateDto = ItemUpdateDto.builder()
+				.title("New Item updated title")
+				.build();
+
+
+		when(itemRepository.findById(itemEntity.getId())).thenReturn(Optional.of(itemEntity));
+
+		assertThrows(SomethingWentWrongException.class, () ->
+			itemService.updateFromBusiness(itemUpdateDto, businessPage, itemEntity.getId()), ExceptionConstants.INVALID_ACTION.getString());
+
+		verify(itemRepository, times(0)).save(any(ItemEntity.class));
+
+	}
+
+	@Test
+	void updateItemFromBusinessPageWithPriceChange() {
+
+		BusinessPageEntity businessPage = BusinessPageEntity.builder()
+				.title("Business Page title")
+				.description("Business Page description for unit test")
+				.phoneNumbers(List.of("+37499999999"))
+				.email("businessPage@gmail.com")
+				.build();
+		businessPage.setId(1L);
+
+		itemRequestDto = ItemRequestDto.builder()
+				.title("New Item")
+				.description("This is the new item for unit test")
+				.price(new BigDecimal(1500))
+				.currency(CurrencyEnum.USD)
+				.cityId(15L)
+				.phoneNumbers(List.of("+37499999999"))
+				.build();
+
+		itemEntity = ItemEntity.builder()
+				.title("New Item")
+				.description("This is the new item for unit test")
+				.status(Status.CREATED)
+				.businessPage(businessPage)
+				.price(Price.builder()
+						.price(new BigDecimal(1500))
+						.currency(CurrencyEnum.USD)
+						.build())
+				.phoneNumbers(List.of("+37499999999"))
+				.build();
+		itemEntity.setId(1L);
+
+		ItemUpdateDto itemUpdateDto = ItemUpdateDto.builder()
+				.title("New Item updated title")
+				.price(new BigDecimal(2000))
+				.build();
+
+		UserEntity user1 = new UserEntity();
+		user1.setId("user1");
+		user1.setEmail("user1@example.com");
+
+		UserEntity user2 = new UserEntity();
+		user2.setId("user2");
+		user2.setEmail("user2@example.com");
+
+		List<String> userIds = List.of("user1", "user2");
+		List<UserEntity> userEntities = List.of(user1, user2);
+
+		when(itemRepository.findById(itemEntity.getId())).thenReturn(Optional.of(itemEntity));
+		when(favoriteItemsService.getUsersIdsByItemId(itemEntity.getId())).thenReturn(userIds);
+		when(userRepository.findAllById(userIds)).thenReturn(userEntities);
+		when(itemRepository.save(any(ItemEntity.class))).thenReturn(itemEntity);
+
+		ItemEntity updatedEntity = itemService.updateFromBusiness(itemUpdateDto, businessPage, itemEntity.getId());
+
+		assertNotNull(updatedEntity);
+		assertEquals(itemUpdateDto.getPrice(), updatedEntity.getPrice().getPrice());
+
+		verify(favoriteItemsService, times(1)).getUsersIdsByItemId(updatedEntity.getId());
+		verify(userRepository, times(1)).findAllById(userIds);
+		verify(itemRepository, times(2)).save(any(ItemEntity.class));
+
+	}
+
+
 
 	@Test
 	void getAllItems() {
@@ -385,6 +703,38 @@ class ItemServiceTest {
 		verify(itemMapper, times(1)).mapDtoToEntity(itemRequestDto, categoryId);
 		verify(itemRepository, times(1)).save(itemEntity);
 		verify(itemRepository, times(1)).findAll(any(Specification.class));
+	}
+
+	@Test
+	void findUsersItems() {
+
+		itemEntity = ItemEntity.builder()
+				.title("New Item")
+				.description("This is the new item for unit test")
+				.status(Status.CREATED)
+				.price(Price.builder()
+						.price(new BigDecimal(1500))
+						.currency(CurrencyEnum.USD)
+						.build())
+				.phoneNumbers(List.of("+37499999999"))
+				.build();
+
+		UserEntity userEntity = new UserEntity();
+		userEntity.setId("userId");
+		userEntity.setEmail("user@gmail.com");
+
+		when(securityService.getCurrentUserId()).thenReturn("userId");
+		when(userRepository.findById(userEntity.getId())).thenReturn(Optional.of(userEntity));
+		when(itemRepository.findByUserEntity(userEntity)).thenReturn(List.of(itemEntity));
+
+		List<ItemEntity> usersItems = itemService.findUsersItems();
+
+		assertNotNull(usersItems);
+		assertEquals(1,usersItems.size());
+
+		verify(securityService, times(1)).getCurrentUserId();
+		verify(userRepository, times(1)).findById(userEntity.getId());
+		verify(itemRepository, times(1)).findByUserEntity(userEntity);
 	}
 
 }
