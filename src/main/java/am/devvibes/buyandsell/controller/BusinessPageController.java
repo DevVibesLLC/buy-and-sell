@@ -4,8 +4,11 @@ import am.devvibes.buyandsell.dto.businessPage.BusinessPageRequestDto;
 import am.devvibes.buyandsell.dto.businessPage.BusinessPageResponseDto;
 import am.devvibes.buyandsell.dto.businessPage.BusinessPageUpdateDto;
 import am.devvibes.buyandsell.dto.item.ItemRequestDto;
+import am.devvibes.buyandsell.dto.item.ItemResponseDto;
 import am.devvibes.buyandsell.dto.item.ItemUpdateDto;
+import am.devvibes.buyandsell.entity.item.ItemEntity;
 import am.devvibes.buyandsell.mapper.businessPage.BusinessPageMapper;
+import am.devvibes.buyandsell.mapper.item.ItemMapper;
 import am.devvibes.buyandsell.service.businessPage.BusinessPageService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +31,7 @@ public class BusinessPageController {
 
 	private final BusinessPageService businessPageService;
 	private final BusinessPageMapper businessPageMapper;
+	private final ItemMapper itemMapper;
 
 	@PostMapping("/{categoryId}")
 	@PreAuthorize("hasRole('ROLE_USER')")
@@ -80,9 +84,9 @@ public class BusinessPageController {
 	@DeleteMapping("/{businessPageId}/{itemId}")
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@Operation(summary = "Delete Item from Business Page")
-	public ResponseEntity<Void> deleteItemFromBusinessPage(@PathVariable Long businessPageId, @PathVariable Long itemId) {
-		businessPageService.deleteItemFromBusinessPage(businessPageId, itemId);
-		return ResponseEntity.ok().build();
+	public ResponseEntity<ItemResponseDto> deleteItemFromBusinessPage(@PathVariable Long businessPageId, @PathVariable Long itemId) {
+		ItemEntity deletedItem = businessPageService.deleteItemFromBusinessPage(businessPageId, itemId);
+		return ResponseEntity.ok(itemMapper.mapEntityToDto(deletedItem));
 	}
 
 }

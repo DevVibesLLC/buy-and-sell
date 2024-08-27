@@ -5,6 +5,7 @@ import am.devvibes.buyandsell.dto.businessPage.BusinessPageUpdateDto;
 import am.devvibes.buyandsell.dto.item.ItemRequestDto;
 import am.devvibes.buyandsell.dto.item.ItemUpdateDto;
 import am.devvibes.buyandsell.entity.businessPage.BusinessPageEntity;
+import am.devvibes.buyandsell.entity.item.ItemEntity;
 
 public interface BusinessPageService {
 
@@ -18,6 +19,6 @@ public interface BusinessPageService {
 
 	BusinessPageEntity updateBusinessPage(BusinessPageUpdateDto businessPageUpdateDto, Long businessPageId);
 
-	void deleteItemFromBusinessPage(Long businessPageId, Long itemId);
+	ItemEntity deleteItemFromBusinessPage(Long businessPageId, Long itemId);
 
 }

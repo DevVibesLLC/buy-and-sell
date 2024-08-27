@@ -11,6 +11,6 @@ public interface StoryService {
 
 	List<StoryEntity> getStoriesByUserId(String userId);
 
-	void deleteStory(Long storyId);
+	StoryEntity deleteStory(Long storyId);
 
 }

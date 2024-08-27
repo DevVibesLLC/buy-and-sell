@@ -77,7 +77,7 @@ public class BusinessPageServiceImpl implements BusinessPageService {
 
 	@Override
 	@Transactional
-	public void deleteItemFromBusinessPage(Long businessPageId, Long itemId) {
+	public ItemEntity deleteItemFromBusinessPage(Long businessPageId, Long itemId) {
 		BusinessPageEntity businessPageEntity = findBusinessPageById(businessPageId);
 		if (securityService.getCurrentUserId().equals(businessPageEntity.getOwner().getId())) {
 			ItemEntity itemEntity = businessPageEntity.getAdds()
@@ -87,8 +87,9 @@ public class BusinessPageServiceImpl implements BusinessPageService {
 					.orElseThrow(() -> new NotFoundException(ExceptionConstants.ITEM_NOT_FOUND));
 
 			itemEntity.setStatus(Status.DELETED);
-			itemRepository.save(itemEntity);
+			return itemRepository.save(itemEntity);
 		}
+		throw new SomethingWentWrongException(ExceptionConstants.INVALID_ACTION);
 	}
 
 	private BusinessPageEntity updateBusinessPage(BusinessPageUpdateDto businessPageUpdateDto,

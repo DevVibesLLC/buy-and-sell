@@ -25,7 +25,6 @@ import am.devvibes.buyandsell.util.Status;
 import am.devvibes.buyandsell.util.page.CustomPageRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.keycloak.representations.idm.UserRepresentation;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -82,7 +81,7 @@ class ItemServiceTest {
 	private ItemEntity itemEntity;
 
 	@Test
-	void saveItem() {
+	void saveItem__success() {
 
 		categoryId = 1L;
 		itemRequestDto = ItemRequestDto.builder()
@@ -125,7 +124,7 @@ class ItemServiceTest {
 	}
 
 	@Test
-	void saveItemFromBusinessPage() {
+	void saveItemFromBusinessPage__sucess() {
 
 		BusinessPageEntity businessPage = BusinessPageEntity.builder()
 				.title("Business Page title")
@@ -175,7 +174,7 @@ class ItemServiceTest {
 	}
 
 	@Test
-	void findItemById() {
+	void findItemById__sucess() {
 		itemEntity = ItemEntity.builder()
 				.title("New Item")
 				.description("This is the new item for unit test")
@@ -205,7 +204,7 @@ class ItemServiceTest {
 	}
 
 	@Test
-	void findItemByIdWithoutViewedUserId() {
+	void findItemById__withoutViewedUserId() {
 		List<String> list = new ArrayList<>();
 		list.add("UserId1");
 		list.add("UserId2");
@@ -239,7 +238,7 @@ class ItemServiceTest {
 	}
 
 	@Test
-	void findEntityById() {
+	void findEntityById__success() {
 
 		itemEntity = ItemEntity.builder()
 				.title("New Item")
@@ -269,7 +268,7 @@ class ItemServiceTest {
 
 
 	@Test
-	void findItemByIdWithDeletedStatus() {
+	void findItemById__itemNotFound() {
 		itemEntity = ItemEntity.builder()
 				.title("New Item")
 				.description("This is the new item for unit test")
@@ -293,7 +292,70 @@ class ItemServiceTest {
 	}
 
 	@Test
-	void updateItem() {
+	void deleteById__success(){
+		UserEntity userEntity = new UserEntity();
+		userEntity.setId("userId");
+
+		itemEntity = ItemEntity.builder()
+				.title("New Item")
+				.description("This is the new item for unit test")
+				.status(Status.CREATED)
+				.viewedUsersId(List.of("UserId1", "UserId2"))
+				.countOfViews(15L)
+				.userEntity(userEntity)
+				.price(Price.builder()
+						.price(new BigDecimal(1500))
+						.currency(CurrencyEnum.USD)
+						.build())
+				.phoneNumbers(List.of("+37499999999"))
+				.build();
+		itemEntity.setId(1L);
+
+		when(securityService.getCurrentUserId()).thenReturn(userEntity.getId());
+		when(itemRepository.findById(itemEntity.getId())).thenReturn(Optional.of(itemEntity));
+		when(itemRepository.save(itemEntity)).thenReturn(itemEntity);
+
+		ItemEntity deleted = itemService.deleteById(itemEntity.getId());
+
+		assertNotNull(deleted);
+		assertEquals(Status.DELETED,deleted.getStatus());
+
+		verify(itemRepository, times(1)).save(itemEntity);
+		verify(itemRepository, times(1)).findById(itemEntity.getId());
+	}
+
+	@Test
+	void deleteById__wrongUserId(){
+		UserEntity userEntity = new UserEntity();
+		userEntity.setId("userId");
+
+		itemEntity = ItemEntity.builder()
+				.title("New Item")
+				.description("This is the new item for unit test")
+				.status(Status.CREATED)
+				.viewedUsersId(List.of("UserId1", "UserId2"))
+				.countOfViews(15L)
+				.userEntity(userEntity)
+				.price(Price.builder()
+						.price(new BigDecimal(1500))
+						.currency(CurrencyEnum.USD)
+						.build())
+				.phoneNumbers(List.of("+37499999999"))
+				.build();
+		itemEntity.setId(1L);
+
+		when(securityService.getCurrentUserId()).thenReturn("userId2");
+		when(itemRepository.findById(itemEntity.getId())).thenReturn(Optional.of(itemEntity));
+
+		assertThrows(SomethingWentWrongException.class,
+				() -> itemService.deleteById(itemEntity.getId()), ExceptionConstants.INVALID_ACTION.getString());
+
+		verify(itemRepository, times(1)).findById(itemEntity.getId());
+		verify(itemRepository, times(0)).save(itemEntity);
+	}
+
+	@Test
+	void updateItem__success() {
 
 		categoryId = 1L;
 		itemRequestDto = ItemRequestDto.builder()
@@ -338,7 +400,7 @@ class ItemServiceTest {
 	}
 
 	@Test
-	void updateItemWithDeletedStatus() {
+	void updateItem__invalidAction() {
 
 		categoryId = 1L;
 		itemRequestDto = ItemRequestDto.builder()
@@ -377,7 +439,7 @@ class ItemServiceTest {
 	}
 
 	@Test
-	void updateItemWithPriceChange() {
+	void updateItem__withPriceChange() {
 
 		Long categoryId = 1L;
 
@@ -410,7 +472,7 @@ class ItemServiceTest {
 	}
 
 	@Test
-	void updateItemFromBusinessPage() {
+	void updateItemFromBusinessPage__success() {
 
 		BusinessPageEntity businessPage = BusinessPageEntity.builder()
 				.title("Business Page title")
@@ -464,7 +526,7 @@ class ItemServiceTest {
 	}
 
 	@Test
-	void updateItemFromBusinessPageWithDeletedStatus() {
+	void updateItemFromBusinessPage__invalidAction() {
 
 		BusinessPageEntity businessPage = BusinessPageEntity.builder()
 				.title("Business Page title")
@@ -511,7 +573,7 @@ class ItemServiceTest {
 	}
 
 	@Test
-	void updateItemFromBusinessPageWithPriceChange() {
+	void updateItemFromBusinessPage__withPriceChange() {
 
 		BusinessPageEntity businessPage = BusinessPageEntity.builder()
 				.title("Business Page title")
@@ -575,10 +637,8 @@ class ItemServiceTest {
 
 	}
 
-
-
 	@Test
-	void getAllItems() {
+	void getAllItems__success() {
 
 		categoryId = 1L;
 		itemRequestDto = ItemRequestDto.builder()
@@ -621,7 +681,7 @@ class ItemServiceTest {
 	}
 
 	@Test
-	void searchAndThereIsResult() {
+	void searchItem__success() {
 
 		categoryId = 1L;
 		itemRequestDto = ItemRequestDto.builder()
@@ -664,7 +724,7 @@ class ItemServiceTest {
 	}
 
 	@Test
-	void searchAndThereIsNoResult() {
+	void searchItem__noResult() {
 
 		categoryId = 1L;
 		itemRequestDto = ItemRequestDto.builder()
@@ -706,7 +766,7 @@ class ItemServiceTest {
 	}
 
 	@Test
-	void findUsersItems() {
+	void findUsersItems__success() {
 
 		itemEntity = ItemEntity.builder()
 				.title("New Item")

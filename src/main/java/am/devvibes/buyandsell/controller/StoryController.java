@@ -47,9 +47,9 @@ public class StoryController {
 	@DeleteMapping("/{storyId}")
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@Operation(summary = "Delete Users Story")
-	public ResponseEntity<Void> deleteUserStory(@PathVariable Long storyId) {
-		storyService.deleteStory(storyId);
-		return ResponseEntity.ok().build();
+	public ResponseEntity<StoryResponseDto> deleteUserStory(@PathVariable Long storyId) {
+		StoryEntity storyEntity = storyService.deleteStory(storyId);
+		return ResponseEntity.ok(storyMapper.mapEntityToDto(storyEntity));
 	}
 
 }

@@ -35,12 +35,12 @@ public class StoryServiceImpl implements StoryService {
 
 	@Override
 	@Transactional
-	public void deleteStory(Long storyId) {
+	public StoryEntity deleteStory(Long storyId) {
 		StoryEntity storyEntity = storyRepository.findById(storyId)
 				.orElseThrow(() -> new NotFoundException(ExceptionConstants.STORY_NOT_FOUND));
 
 		storyEntity.setStatus(Status.DELETED);
-		storyRepository.save(storyEntity);
+		return storyRepository.save(storyEntity);
 	}
 
 }
