@@ -83,7 +83,7 @@ public class BusinessPageMapperImpl implements BusinessPageMapper{
 				.address(businessPageRequestDto.getAddress())
 				.lat(businessPageRequestDto.getLat())
 				.lon(businessPageRequestDto.getLon())
-				.category(categoryService.findCategoryEntityOrElseThrow(categoryId))
+				.category(categoryService.findCategoryById(categoryId))
 				.build();
 	}
 

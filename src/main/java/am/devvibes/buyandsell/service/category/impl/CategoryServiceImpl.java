@@ -19,22 +19,8 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Override
 	@Transactional
-	public CategoryEntity addCategory(String category) {
-		//todo save method isn't working
-		return categoryRepository.save(CategoryEntity.builder().build());
-	}
-
-	@Override
-	@Transactional
 	public List<CategoryEntity> findAllCategories() {
 		return categoryRepository.findAll();
-	}
-
-	@Override
-	@Transactional
-	public CategoryEntity findCategoryEntityOrElseThrow(Long categoryId) {
-		return categoryRepository.findById(categoryId)
-				.orElseThrow(() -> new NotFoundException(ExceptionConstants.CATEGORY_NOT_FOUND));
 	}
 
 	@Override
@@ -44,10 +30,5 @@ public class CategoryServiceImpl implements CategoryService {
 				.orElseThrow(() -> new NotFoundException(ExceptionConstants.CATEGORY_NOT_FOUND));
 	}
 
-	@Override
-	@Transactional
-	public void deleteCategoryById(Long id) {
-		categoryRepository.deleteById(id);
-	}
 
 }

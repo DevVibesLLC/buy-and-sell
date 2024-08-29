@@ -1,5 +1,6 @@
 package am.devvibes.buyandsell.service.measurement.impl;
 
+import am.devvibes.buyandsell.dto.measurement.MeasurementRequestDto;
 import am.devvibes.buyandsell.entity.measurement.MeasurementEntity;
 import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.repository.measurement.MeasurementRepository;
@@ -19,9 +20,15 @@ public class MeasurementServiceImpl implements MeasurementService {
 
 	@Override
 	@Transactional
-	public MeasurementEntity addMeasurement(String symbol, String category) {
-		//return measurementRepository.save(MeasurementEntity.builder().category(category).symbol(symbol).build());
-		return null;
+	public MeasurementEntity addMeasurement(MeasurementRequestDto measurementRequestDto) {
+		MeasurementEntity measurementEntity =
+				MeasurementEntity.builder()
+						.category(measurementRequestDto.getCategory())
+						.symbol_eng(measurementRequestDto.getSymbol_eng())
+						.symbol_ru(measurementRequestDto.getSymbol_ru())
+						.symbol_hy(measurementRequestDto.getSymbol_hy())
+						.build();
+		return measurementRepository.save(measurementEntity);
 	}
 
 	@Override
@@ -40,7 +47,8 @@ public class MeasurementServiceImpl implements MeasurementService {
 	@Override
 	@Transactional
 	public void deleteMeasurementById(Long id) {
-		measurementRepository.deleteById(id);
+		if (measurementRepository.existsById(id))
+			measurementRepository.deleteById(id);
 	}
 
 }

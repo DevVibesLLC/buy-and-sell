@@ -1,5 +1,6 @@
 package am.devvibes.buyandsell.entity.favoriteItems;
 
+import am.devvibes.buyandsell.entity.base.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,11 +18,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FavoriteItemsEntity {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+public class FavoriteItemsEntity extends BaseEntity {
 
 	@Column(nullable = false)
 	private String userId;

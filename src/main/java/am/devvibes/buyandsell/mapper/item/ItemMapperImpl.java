@@ -53,7 +53,7 @@ public class ItemMapperImpl implements ItemMapper {
 				.lat(itemRequestDto.getLat())
 				.lon(itemRequestDto.getLon())
 				.imgKeys(itemRequestDto.getImgKeys())
-				.category(categoryService.findCategoryEntityOrElseThrow(categoryId))
+				.category(categoryService.findCategoryById(categoryId))
 				.fields(valueService.saveAllValues(itemRequestDto.getFieldsValue()))
 				.phoneNumbers(itemRequestDto.getPhoneNumbers())
 				.countOfViews(0L)

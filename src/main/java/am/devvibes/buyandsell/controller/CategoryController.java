@@ -27,14 +27,6 @@ public class CategoryController {
 	private final CategoryService categoryService;
 	private final CategoryMapper categoryMapper;
 
-	@PostMapping("/{category}")
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	@Operation(summary = "Create Category")
-	public ResponseEntity<CategoryDto> createCategory(@PathVariable @NotBlank String category) {
-		CategoryEntity savedCategory = categoryService.addCategory(category);
-		return ResponseEntity.ok(categoryMapper.mapToDto(savedCategory));
-	}
-
 	@GetMapping("/{id}")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@Operation(summary = "Find Category by Id")
@@ -51,13 +43,6 @@ public class CategoryController {
 		return ResponseEntity.ok(categoryMapper.mapEntityListToDtoList(categories));
 	}
 
-	@DeleteMapping("/{id}")
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	@Operation(summary = "Delete Category by Id")
-	public ResponseEntity<Void> deleteCategoryById(@PathVariable @Positive Long id) {
-		categoryService.deleteCategoryById(id);
-		return ResponseEntity.ok().build();
-	}
 
 }
 

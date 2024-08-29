@@ -448,16 +448,16 @@ class ItemServiceTest {
 				.description("This is the new item for unit test")
 				.status(Status.CREATED)
 				.price(Price.builder()
-						.price(new BigDecimal(1500)) // Original price
+						.price(new BigDecimal(1500))
 						.currency(CurrencyEnum.USD)
 						.build())
 				.phoneNumbers(List.of("+37499999999"))
 				.build();
-		itemEntity.setId(1L); // Set the ID for the itemEntity
+		itemEntity.setId(1L);
 
 		ItemUpdateDto itemUpdateDto = ItemUpdateDto.builder()
 				.title("New Item updated title")
-				.price(new BigDecimal(2000)) // New price, different from the old price
+				.price(new BigDecimal(2000))
 				.build();
 
 		when(itemRepository.findById(itemEntity.getId())).thenReturn(Optional.of(itemEntity));

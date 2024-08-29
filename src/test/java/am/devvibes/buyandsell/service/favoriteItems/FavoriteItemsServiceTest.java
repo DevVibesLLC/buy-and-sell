@@ -69,10 +69,10 @@ public class FavoriteItemsServiceTest {
 		itemEntity.setId(1L);
 
 		FavoriteItemsEntity favoriteItems = FavoriteItemsEntity.builder()
-				.id(1L)
 				.userId("userId")
 				.itemId(itemEntity.getId())
 				.build();
+		favoriteItems.setId(1L);
 
 		when(favoriteItemsRepository.findByUserId(userEntity.getId())).thenReturn(List.of(favoriteItems));
 		when(itemRepository.findAllById(List.of(itemEntity.getId()))).thenReturn(List.of(itemEntity));
