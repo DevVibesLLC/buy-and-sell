@@ -4,8 +4,6 @@ import am.devvibes.buyandsell.entity.auto.AutoMarkEntity;
 import am.devvibes.buyandsell.entity.auto.AutoModelEntity;
 import am.devvibes.buyandsell.entity.bus.BusMarkEntity;
 import am.devvibes.buyandsell.entity.bus.BusModelEntity;
-import am.devvibes.buyandsell.entity.field.FieldNameEntity;
-import am.devvibes.buyandsell.entity.field.FieldValueEntity;
 import am.devvibes.buyandsell.entity.mobile.MobilePhoneMarkEntity;
 import am.devvibes.buyandsell.entity.mobile.MobilePhoneModelEntity;
 import am.devvibes.buyandsell.entity.motorcycle.MotorcycleMarkEntity;
@@ -16,7 +14,6 @@ import am.devvibes.buyandsell.exception.NotFoundException;
 import am.devvibes.buyandsell.repository.auto.AutoMarkRepository;
 import am.devvibes.buyandsell.repository.bus.BusMarkRepository;
 import am.devvibes.buyandsell.repository.category.CategoryRepository;
-import am.devvibes.buyandsell.repository.field.FieldNameRepository;
 import am.devvibes.buyandsell.repository.mobile.MobilePhoneMarkRepository;
 import am.devvibes.buyandsell.repository.truck.TruckMarkRepository;
 import am.devvibes.buyandsell.service.category.ConstCategoryService;
@@ -37,7 +34,6 @@ public class ConstCategoryServiceImpl implements ConstCategoryService {
 	private final TruckMarkRepository truckMarkRepository;
 	private final BusMarkRepository busMarkRepository;
 	private final MobilePhoneMarkRepository mobilePhoneMarkRepository;
-	private final FieldNameRepository fieldRepository;
 
 	@Override
 	@Transactional
@@ -110,13 +106,6 @@ public class ConstCategoryServiceImpl implements ConstCategoryService {
 		return mobilePhoneMarkRepository.findById(markId)
 				.map(MobilePhoneMarkEntity::getModels)
 				.orElseThrow(() -> new NotFoundException(ExceptionConstants.MODEL_NOT_FOUND));
-	}
-
-	@Override
-	public List<FieldValueEntity> findByFieldNameId(Long id) {
-		FieldNameEntity fieldNameEntity = fieldRepository.findById(id)
-				.orElseThrow(() -> new NotFoundException(ExceptionConstants.FIELD_NAME_NOT_FOUND));
-		return fieldNameEntity.getValues();
 	}
 
 }

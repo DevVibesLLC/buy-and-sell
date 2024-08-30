@@ -21,13 +21,13 @@ import static java.util.Objects.isNull;
 @RequiredArgsConstructor
 public class ValueServiceImpl implements ValueService {
 
-	private final FieldRepository valueRepository;
+	private final FieldRepository fieldRepository;
 	private final ValueMapper valueMapper;
 
 	@Override
 	@Transactional
 	public FieldEntity saveValue(FieldValuesDto fieldValuesDto) {
-		return valueRepository.save(valueMapper.mapDtoToEntity(fieldValuesDto));
+		return fieldRepository.save(valueMapper.mapDtoToEntity(fieldValuesDto));
 	}
 
 	@Override
@@ -39,20 +39,23 @@ public class ValueServiceImpl implements ValueService {
 	@Override
 	@Transactional
 	public FieldEntity findValueById(Long id) {
-		return valueRepository.findById(id)
-				.orElseThrow(() -> new NotFoundException(ExceptionConstants.VALUE_NOT_FOUND));
+		return fieldRepository.findById(id)
+				.orElseThrow(() -> new NotFoundException(ExceptionConstants.FIELD_NOT_FOUND));
 	}
 
 	@Override
 	@Transactional
 	public List<FieldEntity> findAllValues() {
-		return valueRepository.findAll();
+		return fieldRepository.findAll();
 	}
 
 	@Override
 	@Transactional
 	public void deleteValueById(Long id) {
-		valueRepository.deleteById(id);
+		if(fieldRepository.existsById(id))
+			fieldRepository.deleteById(id);
+		else
+			throw new NotFoundException(ExceptionConstants.FIELD_NOT_FOUND);
 	}
 
 	@Override
@@ -74,7 +77,7 @@ public class ValueServiceImpl implements ValueService {
 			}
 		}
 
-		return valueRepository.saveAll(values);
+		return fieldRepository.saveAll(values);
 	}
 
 }

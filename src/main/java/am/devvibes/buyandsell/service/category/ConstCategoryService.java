@@ -4,7 +4,6 @@ import am.devvibes.buyandsell.entity.auto.AutoMarkEntity;
 import am.devvibes.buyandsell.entity.auto.AutoModelEntity;
 import am.devvibes.buyandsell.entity.bus.BusMarkEntity;
 import am.devvibes.buyandsell.entity.bus.BusModelEntity;
-import am.devvibes.buyandsell.entity.field.FieldValueEntity;
 import am.devvibes.buyandsell.entity.mobile.MobilePhoneMarkEntity;
 import am.devvibes.buyandsell.entity.mobile.MobilePhoneModelEntity;
 import am.devvibes.buyandsell.entity.motorcycle.MotorcycleMarkEntity;
@@ -35,7 +34,5 @@ public interface ConstCategoryService {
 	List<BusModelEntity> findBusModelsByMark(Long markId);
 
 	List<MobilePhoneModelEntity> findMobileModelsByMark(Long markId);
-
-	List<FieldValueEntity> findByFieldNameId(Long id);
 
 }
